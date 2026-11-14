@@ -60,6 +60,9 @@ button{font:inherit;color:inherit}
 /* 확성기 배너 */
 #megabar{left:50%;top:18px;transform:translateX(-50%);max-width:min(620px,70vw);padding:10px 18px 10px 44px;border-radius:999px;font-size:14px;font-weight:700;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(180deg,#ffb769,#ec7a2e);color:#fff;box-shadow:0 10px 26px rgba(236,122,46,.45)}
 #megabar:before{content:'📣';position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:17px}
+#megabar .mbaff{display:inline-flex;vertical-align:middle;height:22px;margin:-3px 6px 0 0;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+#megabar .mbaff img{max-height:14px}
+#megabar .mban{font-size:12px;font-weight:800;opacity:.92;margin-right:8px;padding-right:8px;border-right:1px solid rgba(255,255,255,.45)}
 #megabar.pop{animation:mpop .3s ease}
 @keyframes mpop{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 /* 채팅 */
@@ -1059,7 +1062,7 @@ document.querySelectorAll('.tab').forEach(tb => tb.onclick = () => { document.qu
 $('#fold').onclick = () => { folded = !folded; logEl.classList.toggle('fold', folded); $('#fold').textContent = folded ? '펴기' : '접기'; logEl.scrollTop = logEl.scrollHeight; };
 const bq = []; let bBusy = false;
 function banner(text) { bq.push(text); if (!bBusy) nextBanner(); }
-function nextBanner() { const b = $('#megabar'); const it = bq.shift(); if (!it) { b.style.display = 'none'; bBusy = false; return; } bBusy = true; b.textContent = it; b.className = 'hud pop'; b.style.display = 'block'; setTimeout(nextBanner, bq.length > 2 ? 2500 : 5000); }
+function nextBanner() { const b = $('#megabar'); const it = bq.shift(); if (!it) { b.style.display = 'none'; bBusy = false; return; } bBusy = true; b.textContent = ''; if (typeof it === 'object') { if (it.aff) { const ch2 = affChip(it.aff); ch2.classList.add('mbaff'); b.appendChild(ch2); const an = document.createElement('span'); an.className = 'mban'; an.textContent = affName(it.aff); b.appendChild(an); } b.appendChild(document.createTextNode(it.text)); } else b.textContent = it; b.className = 'hud pop'; b.style.display = 'block'; setTimeout(nextBanner, bq.length > 2 ? 2500 : 5000); }
 const NOTICES = ['🎀 꾸미기: 인기도가 오를수록 더 화려한 모자·안경·날개를 만들 수 있어요.', '🎰 입구 오른쪽 끝 뽑기 기계에서 하루 1번 무료 뽑기! 잠긴 아이템이 나올 수도 있어요.', '표정 메뉴의 🎆 또는 /불꽃 — 다 같이 보는 불꽃놀이를 쏴요.', '비상장 자유시장에 오신 걸 환영해요. 입구 방명록에 한마디 남겨주세요!', '입구 건물 1층 문은 시장 1~3방, 2층은 4~6방이에요. 2층은 양쪽 사다리로!', '거래 사기 주의! 운영자는 절대 비밀번호를 묻지 않아요.', '확성기는 매일 자정(한국 시간)에 다시 채워져요.'];
 let noticeI = 0; function nextNotice() { $('#noticeTxt').textContent = '📌 ' + NOTICES[noticeI++ % NOTICES.length]; } nextNotice(); setInterval(nextNotice, 9000);
 let toastTO; function toast(t) { const el = $('#toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toastTO); toastTO = setTimeout(() => el.style.display = 'none', 2600); }
@@ -1084,7 +1087,7 @@ async function initNet() {
     NET.wState.onChange(() => { updCounts(); renderChs(); renderAffBoard(); if ($('#mapWin').style.display === 'block') renderMap(); if ($('#whoWin').style.display === 'block') renderWho(); });
     NET.world.onUserLeave(() => updCounts());
     NET.wMega = NET.world.makeAction('mega');
-    NET.wMega.onMessage((d, { userId }) => { if (!d || !rl('m' + userId, 3, 10000)) return; const all = !!d.all, ch = +d.ch || 0; if (!all && ch !== curCh) return; onMega({ n: str(d.n, NMAX) || '???', t: str(d.t, 80), ch }, all); });
+    NET.wMega.onMessage((d, { userId }) => { if (!d || !rl('m' + userId, 3, 10000)) return; const all = !!d.all, ch = +d.ch || 0; if (!all && ch !== curCh) return; onMega({ n: str(d.n, NMAX) || '???', t: str(d.t, 80), ch, aff: AFF_KEYS.includes(d.aff) ? d.aff : '' }, all); });
     NET.wWsp = NET.world.makeAction('wsp');
     NET.wWsp.onMessage((d, { userId }) => { if (!d || !rl('w' + userId)) return; const t = str(d.t, 80), n = str(d.n, NMAX) || '???'; if (!t || isBlocked(n)) return; logLine(`[귓속말] ${n} >> ${t}`, 'l-wsp', 'wsp'); SFX.wsp(); lastWspFrom = n; });
     NET.world.onError(e => { console.warn('world', e); if (e && e.code === 'identity-failed') setNet('연결 실패 (브라우저 보안 설정)', false); });
@@ -1187,9 +1190,9 @@ function doMega(t, all) {
   if (performance.now() - lastMega < 4000) { sys('확성기는 4초에 한 번만 쓸 수 있어요.'); return; }
   const k = all ? 'h' : 'm'; if (inv[k] <= 0) { sys(`${all ? '큰 확성기' : '확성기'}를 다 썼어요. 자정에 다시 채워져요.`); return; }
   inv[k]--; store.set('fm_inv_' + today(), inv); updStatus(); lastMega = performance.now();
-  const d = { n: me.n, t, ch: curCh, all }; NET.wMega?.send(d)?.catch?.(() => {}); onMega(d, all); gainExp(all ? 15 : 8, all ? '큰 확성기' : '확성기');
+  const d = { n: me.n, t, ch: curCh, all, aff: me.aff || '' }; NET.wMega?.send(d)?.catch?.(() => {}); onMega(d, all); gainExp(all ? 15 : 8, all ? '큰 확성기' : '확성기');
 }
-function onMega(d, all) { if (!d.t || isBlocked(d.n)) return; if (all) { logLine(`[큰 확성기] ${d.n} : ${d.t}`, 'l-megaw', 'mega'); banner(`${d.n} : ${d.t}`); } else logLine(`[확성기] ${d.n} : ${d.t}`, 'l-mega', 'mega'); SFX.mega(); }
+function onMega(d, all) { if (!d.t || isBlocked(d.n)) return; if (all) { const an = d.aff ? affName(d.aff) : ''; logLine(`[큰 확성기] ${an ? '[' + an + '] ' : ''}${d.n} : ${d.t}`, 'l-megaw', 'mega'); banner({ text: `${d.n} : ${d.t}`, aff: d.aff || '' }); } else logLine(`[확성기] ${d.n} : ${d.t}`, 'l-mega', 'mega'); SFX.mega(); }
 function sendChat() {
   const inp = $('#msg'); const raw = inp.value.trim(); inp.value = ''; inp.blur(); $('#whoTo').blur(); if (!raw) return;
   let m;
