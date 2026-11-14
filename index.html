@@ -136,6 +136,15 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 .muted{color:var(--sub);font-size:12px}
 .hide{display:none!important}
 .door.click{pointer-events:auto;cursor:pointer}
+#decoWin{width:min(660px,94vw)}.dtabs{grid-template-columns:repeat(3,1fr);margin-bottom:12px}
+.dinfo{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.22);font-size:12.5px;color:var(--sub);margin-bottom:10px;line-height:1.5}.dinfo>b{color:#ff9aa8;font-size:17px;white-space:nowrap}
+.dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-height:50vh;overflow:auto;padding:2px}
+.dit{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 6px 10px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:12px;text-align:center}
+.dit .gic{font-size:30px}.dit b{font-size:12.5px}.dit span{font-size:11px;color:var(--sub)}
+.dit .req{position:absolute;top:6px;right:6px;font-style:normal;font-size:10.5px;font-weight:800;color:#ff9aa8;background:rgba(0,0,0,.3);padding:1px 6px;border-radius:999px}
+.dit.lock{opacity:.5}.dit.lock .gic{filter:grayscale(1)}.dit.own{border-color:rgba(255,214,120,.45)}.dit.on{border-color:var(--acc2);background:rgba(242,139,60,.18)}
+.dit .btn{font-size:11.5px;padding:4px 12px;margin-top:5px;border-radius:999px}
+.dsec{font-size:12px;font-weight:700;color:var(--sub);margin:12px 2px 6px}
 /* v0.8 추억 콘텐츠 */
 #quiz{left:50%;top:70px;transform:translateX(-50%);width:min(560px,90vw);padding:14px 18px;z-index:6}
 #quiz .qh{font-size:13px;font-weight:800;color:var(--acc2);margin-bottom:6px}
@@ -286,7 +295,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
   <div class="cap hidemini">UNLISTED FREE MARKET</div>
   <h2 id="mapname">자유시장 입구</h2><button class="btn" id="infoFold">접기</button>
   <div class="sub hidemini"><span class="dot off" id="ndot"></span><span id="netTxt">연결 준비 중</span></div>
-  <div class="lvrow hidemini"><span class="fame" id="fameTxt" title="인기도">❤ 0</span><span>인기도</span><span class="fame" id="coinTxt" style="color:#ffd36b;margin-left:10px">🪙 0</span><span>뽑기 동전</span></div><div class="sub hidemini" id="quizNext" style="margin-top:6px"></div>
+  <div class="lvrow hidemini"><span class="fame" id="fameTxt" title="인기도">❤ 0</span><span>인기도</span></div>
   <canvas id="mini" class="hidemini" width="460" height="112"></canvas>
   <div id="noticeTxt" class="hidemini"></div>
 </div>
@@ -301,7 +310,6 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 </div>
 
 <div class="hud" id="megabar"></div>
-<div class="hud glass hide" id="quiz"></div>
 <div class="hud glass hide" id="affBoard"><div class="abh"><b>소속별 접속자</b><span class="muted" id="abTotal"></span><button class="btn" id="abFold">접기</button></div><div id="abList"></div></div>
 
 <div class="hud glass hide" id="chat">
@@ -315,14 +323,14 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 </div>
 
 <div class="hud glass hide" id="dock">
-  <button id="bBow" title="공수 인사 (B)">🙇 인사</button><button id="bEmo">표정</button><button id="bChair">앉기</button><button id="bPin">말풍선 고정</button><button id="bShop">개인상점</button>
+  <button id="bBow" title="공수 인사 (B)">🙇 인사</button><button id="bEmo">표정</button><button id="bChair">앉기</button><button id="bPin">말풍선 고정</button><button id="bShop">개인상점</button><button id="bDeco">🎀 꾸미기</button>
   <span class="sep"></span>
   <button id="bMega">확성기<span class="cnt" id="cM">10</span></button><button id="bMegaW">전채널<span class="cnt" id="cH">3</span></button>
   <span class="sep"></span>
   <button id="bMap">장소 이동</button><button id="bMore">더보기</button>
 </div>
 <div class="hud glass" id="morepop">
-  <button id="bHp">🏠 내 홈피</button><button id="bGacha">🪙 문방구 뽑기</button><button id="bBag">🎒 가방</button><button id="bGB">방명록</button><button id="bAff">소속 바꾸기</button><button id="bWho">접속자 목록</button><button id="bFind">사람 찾기</button><button id="bInfo">내 정보</button><button id="bChan">채널 이동</button>
+  <button id="bGB">방명록</button><button id="bAff">소속 바꾸기</button><button id="bWho">접속자 목록</button><button id="bFind">사람 찾기</button><button id="bInfo">내 정보</button><button id="bChan">채널 이동</button>
   <hr><button id="bInvite">친구 초대 링크 복사</button><button id="bSet">설정 · 차단 목록</button><button id="bHelp2">도움말</button>
 </div>
 <div class="hud glass" id="emopop"></div>
@@ -363,14 +371,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 <div class="modal glass" id="shopView"><h3><span id="svTitle">상점</span><span class="x" data-close>✕</span></h3><div class="muted" id="svOwner"></div>
   <table class="sh"><tr><th>물건</th><th style="width:130px">가격</th></tr><tbody id="svRows"></tbody></table>
   <div style="display:flex;justify-content:flex-end"><button class="btn pri" id="svAsk">귓속말로 흥정하기</button></div></div>
-<div class="modal glass" id="gachaWin"><h3>문방구 뽑기<span class="x" data-close>✕</span></h3>
-  <div class="gm" id="gm"><div class="gm-glass"><span style="--c:#e8435a;left:18px;top:96px"></span><span style="--c:#4a86d0;left:58px;top:112px"></span><span style="--c:#e6c14f;left:100px;top:100px"></span><span style="--c:#5aa36a;left:36px;top:60px"></span><span style="--c:#b06a9e;left:80px;top:68px"></span><span style="--c:#ff8a3c;left:118px;top:58px"></span><span style="--c:#4a86d0;left:64px;top:26px"></span></div><div class="gm-base"><div class="gm-knob"></div></div></div>
-  <div class="gres" id="gRes"></div>
-  <div style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="gBag">🎒 가방</button><button class="btn pri" id="gSpin" style="flex:1">🪙 1개 넣고 돌리기</button></div>
-  <div class="muted" id="gInfo" style="margin-top:10px"></div>
-</div>
-<div class="modal glass" id="bagWin"><h3>🎒 가방<span class="x" data-close>✕</span></h3><div class="muted">눌러서 착용하거나 벗어요. 다른 사람 화면에도 보여요. 모자·얼굴·귀·머리 위 칸마다 하나씩 쓸 수 있어요.</div><div class="baggrid" id="bagGrid"></div></div>
-<div class="modal glass" id="hpWin"><div id="hpBd"></div></div>
+<div class="modal glass" id="decoWin"><h3>🎀 꾸미기<span class="x" data-close>✕</span></h3><div class="chips dtabs" id="decoTabs"></div><div id="decoBd"></div></div>
 <div class="modal glass" id="affWin"><h3>소속 선택<span class="x" data-close>✕</span></h3><div class="muted">이름표 옆에 로고가 붙고, 오른쪽 위 '소속별 접속자'에 집계돼요.</div><div class="affgrid" id="affGrid"></div><div class="muted" style="margin-top:12px">로고는 각 증권사의 상표예요. 재미로 쓰는 용도로만 써주세요.</div></div>
 <div class="modal glass" id="gbWin"><h3><span>방명록 <span class="muted" id="gbCnt"></span></span><span class="x" data-close>✕</span></h3>
   <div class="muted">다녀간 흔적을 남겨주세요. 서버 대신, 접속한 사람들 브라우저에 나눠서 저장돼요.</div>
@@ -399,7 +400,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
   <b>조작</b><br>← → 이동 · Space/Alt 점프 · ↓ 엎드리기 · ↓+점프 발판 아래로<br>↑ 사다리·밧줄 오르기 / 문 들어가기 · Enter 채팅 · F1~F7 감정표현<br>이름표 클릭: 귓속말 · 상점 · 정보 · B 또는 🙇 인사: 공수하고 90도 인사
   <br><br><b>채팅 명령어</b><br>/w 닉네임 내용 · /r 내용 (답장) · /확 내용 · /전확 내용 · /찾기 닉네임<br>/고정 내용 (말풍선 고정) · /고정해제 · /대화 닉네임 (1:1 대화 신청)
   
-  <br><br><b>추억 콘텐츠</b><br>🅾️❎ OX 퀴즈: 매시 정각·30분, 입구 1층 왼쪽 O 구역·오른쪽 X 구역에 서서 답해요. 맞히면 🪙 뽑기 동전.<br>🪙 문방구 뽑기: 입구 오른쪽 끝 기계 앞에서 ↑. 뽑은 모자·안경·왕관은 🎒 가방에서 착용해요.<br>🏠 홈피: TODAY·TOTAL 방문자, 오늘의 기분, 대문글, 일촌(파도타기). 이름표 → 홈피 구경.<br>📣 응원: /응원 — 3명 이상 같이 하면 불꽃놀이!<br><br><b>사람과 어울리기</b><br>이름표를 누르면 1:1 대화 신청 · 귓속말 · 인기도 올리기/내리기 · 차단을 할 수 있어요.<br>인기도는 하루에 한 번, 같은 사람에게는 한 달에 한 번 줄 수 있어요.
+  <br><br><b>꾸미기</b><br>🛠️ 만들기: 인기도에 따라 열려요 (❤0 털모자·야구모자 … ❤30 황금 왕관, 총 32종). 인기도는 다른 사람이 이름표 메뉴에서 ❤를 눌러줘야 올라요.<br>🎰 오늘의 뽑기: 하루 1번, 입구 오른쪽 끝 기계 앞에서 ↑ 또는 /뽑기. 잠긴 아이템이 나올 수도 있어요.<br>🎆 불꽃놀이: 표정 메뉴 또는 /불꽃 (20초에 한 번)<br><br><b>사람과 어울리기</b><br>이름표를 누르면 1:1 대화 신청 · 귓속말 · 인기도 올리기/내리기 · 차단을 할 수 있어요.<br>인기도는 하루에 한 번, 같은 사람에게는 한 달에 한 번 줄 수 있어요.
   <br><br><span class="muted">서버 없이 브라우저끼리 직접(P2P) 연결해요. 그래픽·사운드·이름은 모두 이 게임용으로 새로 만든 것이고, NPC 좌판의 종목명은 가상이며 투자 권유가 아니에요. 채팅·귓속말·1:1 대화는 어디에도 저장되지 않고, 방명록만 접속한 사람들 브라우저에 저장돼요.</span></div>
 <div class="glass" id="ctxmenu"></div>
 <div class="hud glass" id="toast"></div>
@@ -877,7 +878,7 @@ function makePet(type) {
 const LVGEO = new THREE.CylinderGeometry(.75, .75, 8, 32, 1, true);
 function poseAvatar(c, dt) {
   const av = c.av; if (!av) return; const P = av.P, a = c.anim || 'stand', p = c.phase || 0, t = T;
-  if (P.halo) P.halo.position.y = .76 + Math.sin(T * 2.4) * .03;
+  if (P.float) P.float.forEach(f => { f.m.position.y = f.y + Math.sin(T * 2.4) * .03; if (f.spin) f.m.rotation.y += f.spin * dt; });
   const yawT = a === 'climb' ? Math.PI : a === 'prone' ? c.dir * Math.PI / 2 : c.dir * .75;
   av.yaw.rotation.y += (yawT - av.yaw.rotation.y) * Math.min(1, dt * 12);
   const bob = a === 'walk' ? Math.abs(Math.sin(p)) * .06 : (a === 'stand' || a === 'sit' || a === 'chair') ? Math.sin(t * 2.4 + (c.seed || 0)) * .015 : 0;
@@ -941,7 +942,7 @@ const NPCS = [
   { map: 'gate', n: '안내원 미나', pin: '문 앞에서 ↑ 누르면 시장방 입장!', look: { s: 0, hc: 7, hs: 3, t: 7, b: 5, f: 2 }, x: 1640, talk: ['어서 오세요~ 비상장 자유시장이에요!', '건물 문 앞에서 ↑ 누르면 시장방이에요.', '2층은 양쪽 사다리로 올라가요!', '좌판 깔고 싶으면 아래 [개인상점]!'] },
   { map: 'gate', n: '단타왕 이대리', look: { s: 0, hc: 4, hs: 2, t: 1, b: 1, f: 0 }, x: 1500, home: [1000, 1800], pet: 1, talk: ['요즘 공모주 경쟁률 미쳤네요', '상장일 시초가 가즈아~', '확약 걸까 말까...', '균등 배정 1주 받았어요 ㅠㅠ'] },
   { map: 'gate', n: '수요예측 최차장', look: { s: 3, hc: 3, hs: 0, t: 5, b: 0, f: 1 }, x: 2150, home: [1960, 2300], talk: ['구주매출 비중 높은 건 좀...', '유통가능물량 꼭 보세요', '밴드 상단 초과 확정 나왔대요'] },
-  { map: 'gate', n: '문방구 사장님', look: { s: 2, hc: 3, hs: 0, t: 1, b: 3, f: 1 }, x: 2045, talk: ['오늘 뽑기는 했어? 동전 넣고 돌려봐~', '왕관은 아무나 안 나와. 전설이거든!', '옛날엔 한 판에 100원이었는데 말이야~', 'OX 퀴즈 맞히면 동전 준대!'] },
+  { map: 'gate', n: '문방구 사장님', look: { s: 2, hc: 3, hs: 0, t: 1, b: 3, f: 1 }, x: 2045, talk: ['오늘 뽑기는 했어? 하루에 딱 한 번이야~', '왕관은 인기도 30은 돼야 만들 수 있지!', '옛날엔 한 판에 100원이었는데 말이야~', '인기 많은 사람은 꾸미기도 화려하더라~'] },
   { map: 'r1', n: '장외 김부장', look: { s: 1, hc: 0, hs: 0, t: 6, b: 0, f: 1 }, x: 700, sit: true, shop: { title: '뭉게구름테크 구주 팝니다', items: [['뭉게구름테크 보통주 500주', '주당 12,000'], ['뭉게구름테크 보통주 1,000주', '주당 11,800'], ['도토리푸드 200주', '주당 8,500']] }, talk: ['구주 싸게 드려요~', '보호예수 없는 물량입니다'] },
   { map: 'r2', n: '프리IPO 박과장', look: { s: 2, hc: 2, hs: 2, t: 4, b: 1, f: 0 }, x: 760, sit: true, shop: { title: '솜사탕바이오 RCPS 삽니다', items: [['솜사탕바이오 RCPS', '주당 65,000에 매입'], ['꼬마별에너지 CB', '협의']] }, talk: ['RCPS 물량 있으신 분?', '전환가 리픽싱 조건 봅니다'] },
 ].map((d, i) => ({ ...d, npc: true, id: 'npc' + i, y: G, dir: 1, anim: d.sit ? 'sit' : 'stand', phase: 0, seed: i * 1.7, tx: d.x, wait: 2 + i, talkT: 6 + i * 4, pp: { x: d.x - 30, y: G } }));
@@ -1007,7 +1008,7 @@ function overlayStatic() {
   if (MAP.id === 'gate') {
     const e = anchor('gbpill', 'door click'); place(e, proj(X3(1080), 3.95, -2.2)); if (!e._in._b) { e._in._b = 1; e._in.innerHTML = '방명록 <i>✏️ 쓰기</i>'; e._in.onclick = ev => { ev.stopPropagation(); openGB(); }; }
     if (entered && nearBoard() && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ 방명록 보기'); }
-    const gp = anchor('gachapill', 'door click'); place(gp, proj(X3(GACHA_X), 3.1, -1.5)); if (!gp._in._b) { gp._in._b = 1; gp._in.innerHTML = '문방구 뽑기 <i>🪙</i>'; gp._in.onclick = ev => { ev.stopPropagation(); openGacha(); }; }
+    const gp = anchor('gachapill', 'door click'); place(gp, proj(X3(GACHA_X), 3.1, -1.5)); if (!gp._in._b) { gp._in._b = 1; gp._in.innerHTML = '오늘의 뽑기 <i>🎰</i>'; gp._in.onclick = ev => { ev.stopPropagation(); openDeco('gacha'); }; }
     if (entered && nearGacha() && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ 뽑기 돌리기'); }
   }
   [].forEach(p => {
@@ -1025,7 +1026,7 @@ $('#fold').onclick = () => { folded = !folded; logEl.classList.toggle('fold', fo
 const bq = []; let bBusy = false;
 function banner(text) { bq.push(text); if (!bBusy) nextBanner(); }
 function nextBanner() { const b = $('#megabar'); const it = bq.shift(); if (!it) { b.style.display = 'none'; bBusy = false; return; } bBusy = true; b.textContent = it; b.className = 'hud pop'; b.style.display = 'block'; setTimeout(nextBanner, bq.length > 2 ? 2500 : 5000); }
-const NOTICES = ['매시 정각·30분마다 입구에서 OX 퀴즈! 맞히면 뽑기 동전을 줘요.', '입구 오른쪽 끝 문방구 뽑기에서 모자·안경·왕관을 뽑아보세요. 하루 동전 3개 무료!', '이름표를 누르면 홈피 구경 · 일촌 신청 · 1:1 대화를 할 수 있어요.', '표정 메뉴의 📣 또는 /응원 — 3명이 같이 응원하면 불꽃놀이가 터져요!', '비상장 자유시장에 오신 걸 환영해요. 입구 방명록에 한마디 남겨주세요!', '입구 건물 1층 문은 시장 1~3방, 2층은 4~6방이에요. 2층은 양쪽 사다리로!', '거래 사기 주의! 운영자는 절대 비밀번호를 묻지 않아요.', '확성기는 매일 자정(한국 시간)에 다시 채워져요.'];
+const NOTICES = ['🎀 꾸미기: 인기도가 오를수록 더 화려한 모자·안경·날개를 만들 수 있어요.', '🎰 입구 오른쪽 끝 뽑기 기계에서 하루 1번 무료 뽑기! 잠긴 아이템이 나올 수도 있어요.', '표정 메뉴의 🎆 또는 /불꽃 — 다 같이 보는 불꽃놀이를 쏴요.', '비상장 자유시장에 오신 걸 환영해요. 입구 방명록에 한마디 남겨주세요!', '입구 건물 1층 문은 시장 1~3방, 2층은 4~6방이에요. 2층은 양쪽 사다리로!', '거래 사기 주의! 운영자는 절대 비밀번호를 묻지 않아요.', '확성기는 매일 자정(한국 시간)에 다시 채워져요.'];
 let noticeI = 0; function nextNotice() { $('#noticeTxt').textContent = '📌 ' + NOTICES[noticeI++ % NOTICES.length]; } nextNotice(); setInterval(nextNotice, 9000);
 let toastTO; function toast(t) { const el = $('#toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toastTO); toastTO = setTimeout(() => el.style.display = 'none', 2600); }
 
@@ -1088,14 +1089,14 @@ async function joinMapRoom() {
     NET.emo = R.makeAction('emo');
     NET.emo.onMessage((d, { userId }) => { if (R !== NET.room || !rl('e' + userId)) return; const r = getRemote(userId); r.emo = clamp(+d || 0, 0, 7); r.emoT = T + 3; });
     NET.fx = R.makeAction('fx');
-    NET.fx.onMessage((d, { userId }) => { if (R !== NET.room || !rl('f' + userId, 2, 5000)) return; if (d === 'lv') { getRemote(userId).lvT = T; SFX.lvup(); } if (d === 'bow') getRemote(userId).bowT = T; if (d === 'cheer') { const rc = getRemote(userId); if (!isBlocked(rc.n)) onCheer(rc); } });
+    NET.fx.onMessage((d, { userId }) => { if (R !== NET.room || !rl('f' + userId, 2, 5000)) return; if (d === 'lv') { getRemote(userId).lvT = T; SFX.lvup(); } if (d === 'bow') getRemote(userId).bowT = T; if (d === 'fw') { const rc = getRemote(userId); if (!isBlocked(rc.n)) fireworksAt(rc.x); } });
     R.onUserJoin(({ userId }) => sendMv(true, userId));
     R.onUserLeave(({ userId }) => { const r = remotes.get(userId); if (r && r.n !== '...') sys(`${r.n}님이 나갔어요.`); if (r) dropAv(r); remotes.delete(userId); updCounts(); });
     R.onError(e => { console.warn('room', e); if (e && e.code === 'room-full') toast('이 장소가 꽉 찼어요(최대 30명). 다른 채널이나 방을 이용해 주세요.'); });
   } catch (e) { console.warn(e); NET.room = null; sys('연결에 실패했어요. 혼자 구경 모드로 진행해요.'); }
   pushWorld(); updCounts();
 }
-function pushWorld() { NET.wState && NET.wState.set({ ch: curCh, map: MAP.id, n: me.n, fame, a: me.aff || '', h: hpPub(), q: me.qres || null }); }
+function pushWorld() { NET.wState && NET.wState.set({ ch: curCh, map: MAP.id, n: me.n, fame, a: me.aff || '' }); }
 let lastSent = 0, lastPay = '';
 function sendMv(force, target) { if (!NET.room || !NET.mv) return; const p = { x: Math.round(me.x), y: Math.round(me.y), d: me.dir, a: ANIMS.indexOf(me.anim) }; const s = JSON.stringify(p), now = performance.now(); if (force || (s !== lastPay && now - lastSent > 90) || now - lastSent > 1000) { NET.mv.send(p, target ? { target } : undefined)?.catch?.(() => {}); if (!target) { lastSent = now; lastPay = s; } } }
 function pushProfile() { Object.assign(prof, { n: me.n, look: me.look, pet: me.pet, st: me.st, ch: curCh , aff: me.aff || '' , acc: me.acc || {} }); store.set('fm_prof3', prof); if (NET.prof) NET.prof.set(myProfile()); }
@@ -1164,9 +1165,8 @@ function sendChat() {
   if ((m = raw.match(/^\/(확|mega)\s+(.+)$/))) return doMega(m[2], false);
   if ((m = raw.match(/^\/(찾기|find)\s*(.*)$/))) return doFind(m[2].trim());
   if (/^\/(인사|bow)$/.test(raw)) return bow();
-  if (/^\/(응원|cheer)$/.test(raw)) return cheer();
-  if (/^\/홈피$/.test(raw)) return openHp(me.n);
-  if (/^\/뽑기$/.test(raw)) return openGacha();
+  if (/^\/(불꽃|fw)$/.test(raw)) return launchFireworks();
+  if (/^\/(뽑기|꾸미기)$/.test(raw)) return openDeco(raw === '/뽑기' ? 'gacha' : 'make');
   if (/^\/고정해제$/.test(raw)) return setPin('');
   if ((m = raw.match(/^\/(대화|dm)\s+(.+)$/))) return requestDm({ n: m[2].trim() });
   if ((m = raw.match(/^\/(고정|pin)\s+(.+)$/))) return setPin(m[2]);
@@ -1204,11 +1204,10 @@ function charMenu(c, x, y) {
   if (!entered) return; if (c.self) { showInfo(me); return; }
   const m = $('#ctxmenu'); m.innerHTML = ''; const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = c.n + (c.npc ? ' · NPC' : ''); m.appendChild(nm);
   const add = (label, fn) => { const it = document.createElement('div'); it.className = 'it'; it.textContent = label; it.onclick = () => { m.style.display = 'none'; fn(); }; m.appendChild(it); };
-  const hdr = document.createElement('div'); hdr.className = 'muted'; hdr.style.padding = '0 10px 6px'; hdr.textContent = c.npc ? '시장 사람' : `${c.aff ? affName(c.aff) + ' · ' : ''}❤ 인기도 ${c.fame || 0}${!c.npc && ilOf(c.n) ? ' · 💛 ' + ilOf(c.n).nick : ''}`; m.appendChild(hdr);
+  const hdr = document.createElement('div'); hdr.className = 'muted'; hdr.style.padding = '0 10px 6px'; hdr.textContent = c.npc ? '시장 사람' : `${c.aff ? affName(c.aff) + ' · ' : ''}❤ 인기도 ${c.fame || 0}`; m.appendChild(hdr);
   if (c.npc && c.talk) add('말 걸기', () => say(c, pick(c.talk)));
   if (!c.npc) add('💬 1:1 대화 신청', () => requestDm(c));
   add('귓속말', () => startWsp(c.n));
-  if (!c.npc) add('🏠 홈피 구경', () => openHp(c.n));
   if (!c.npc) { add('❤ 인기도 올리기', () => giveFame(c, 1)); add('💔 인기도 내리기', () => giveFame(c, -1)); }
   if (c.shop) add('상점 보기', () => showShop(c)); add('정보 보기', () => showInfo(c));
   if (!c.npc) add(isBlocked(c.n) ? '차단 풀기' : '차단하기', () => setBlock(c.n, !isBlocked(c.n)));
@@ -1223,7 +1222,7 @@ cv.addEventListener('click', e => {
 
 // ===================== 창 관리 =====================
 function openWin(id) { $('#' + id).style.display = 'block'; }
-function closeWins() { closeMore(); ['gachaWin', 'bagWin', 'hpWin', 'affWin', 'chanWin', 'shopEdit', 'shopView', 'helpWin', 'infoWin', 'pinWin', 'mapWin', 'whoWin', 'setWin', 'gbWin'].forEach(id => $('#' + id).style.display = 'none'); $('#ctxmenu').style.display = 'none'; $('#emopop').style.display = 'none'; }
+function closeWins() { closeMore(); ['decoWin', 'affWin', 'chanWin', 'shopEdit', 'shopView', 'helpWin', 'infoWin', 'pinWin', 'mapWin', 'whoWin', 'setWin', 'gbWin'].forEach(id => $('#' + id).style.display = 'none'); $('#ctxmenu').style.display = 'none'; $('#emopop').style.display = 'none'; }
 document.querySelectorAll('[data-close]').forEach(x => x.onclick = closeWins);
 $('#bHelp').onclick = () => openWin('helpWin');
 $('#bChan').onclick = () => { if (entered) openChan(); };
@@ -1284,7 +1283,7 @@ addEventListener('keyup', e => { if (e.key === 'Alt') e.preventDefault(); const 
 addEventListener('blur', () => { keys.l = keys.r = keys.d = keys.u = 0; });
 if (matchMedia('(pointer:coarse)').matches) { $('#touchL').style.display = 'flex'; $('#touchR').style.display = 'flex'; document.querySelectorAll('#touchL button,#touchR button').forEach(b => { const k = b.dataset.k; b.addEventListener('touchstart', e => { e.preventDefault(); if (k === 'j') jumpQ = true; else { keys[k] = 1; if (k === 'u') upPressed(); } }); b.addEventListener('touchend', e => { e.preventDefault(); if (k !== 'j') keys[k] = 0; }); }); }
 function nearBoard() { return MAP.id === 'gate' && me.onGround && me.y === G && Math.abs(me.x - 1080) < 85; }
-function upPressed() { if (!entered || moving || me.shop || me.climb) return; const p = MAP.portals.find(q => Math.abs(me.x - q.x) < 30 && Math.abs(me.y - q.y) < 6); if (p && me.onGround) { keys.u = 0; usePortal(p); return; } if (nearBoard()) { keys.u = 0; openGB(); return; } if (nearGacha()) { keys.u = 0; openGacha(); } }
+function upPressed() { if (!entered || moving || me.shop || me.climb) return; const p = MAP.portals.find(q => Math.abs(me.x - q.x) < 30 && Math.abs(me.y - q.y) < 6); if (p && me.onGround) { keys.u = 0; usePortal(p); return; } if (nearBoard()) { keys.u = 0; openGB(); return; } if (nearGacha()) { keys.u = 0; openDeco('gacha'); } }
 
 // ===================== 물리 (게임 좌표) =====================
 const SPEED = 150, GRAV = 2000, JUMP = 620, CLIMB = 110;
@@ -1391,7 +1390,7 @@ $('#bEnter').onclick = async () => {
   if (/^\[?NPC/i.test(n) || findNpc(n)) { toast('그 닉네임은 쓸 수 없어요.'); return; }
   if (!me.aff) { toast('소속을 골라주세요.'); openAff(); return; }
   me.n = n.slice(0, NMAX); $('#intro').style.display = 'none'; bgmStart();
-  entered = true; ['#info', '#chat', '#dock', '#affBoard'].forEach(s => $(s).classList.remove('hide')); renderAffBoard(); setTimeout(coinDaily, 1500);
+  entered = true; ['#info', '#chat', '#dock', '#affBoard'].forEach(s => $(s).classList.remove('hide')); renderAffBoard();
   sys('비상장 자유시장에 오신 걸 환영해요!'); sys('← → 이동 · Space 점프 · ↑ 사다리/문 · ↓ 엎드리기 · Enter 채팅 · F1~F7 감정표현');
   SFX.join();
   await goMap('gate', 1300 + (Math.random() * 120 - 60), G);
@@ -1525,7 +1524,7 @@ function renderWho(fa = whoFA) {
     const n1 = document.createElement('div'); n1.className = 'nm2'; n1.textContent = nm + (uid ? '' : ' (나)'); { const bd = affBadge(v.a); if (bd) n1.prepend(bd); }
     const l = document.createElement('div'); l.className = 'loc'; l.textContent = `❤ ${v.fame || 0} · ${v.ch}채널 ${(MAPS[v.map] || MAPS.gate).name}`;
     a.append(n1, l); const sp = document.createElement('div'); sp.className = 'sp'; d.append(a, sp);
-    if (uid) { const blk = isBlocked(nm); d.append(mkBtn('홈피', () => { closeWins(); openHp(nm); }), mkBtn('대화 신청', () => { closeWins(); requestDm({ n: nm }); }, !blk), mkBtn('귓속말', () => { closeWins(); startWsp(nm); })); }
+    if (uid) { const blk = isBlocked(nm); d.append(mkBtn('대화 신청', () => { closeWins(); requestDm({ n: nm }); }, !blk), mkBtn('귓속말', () => { closeWins(); startWsp(nm); })); }
     box.appendChild(d);
   });
   if (!NET.wState) { const e = document.createElement('div'); e.className = 'muted'; e.style.padding = '10px 4px'; e.textContent = '오프라인이라 다른 사람 목록을 불러올 수 없어요.'; box.appendChild(e); }
@@ -1657,63 +1656,75 @@ $('#affPick').onclick = openAff;
 $('#bAff').onclick = openAff;
 $('#abFold').onclick = () => { const b = $('#affBoard'); b.classList.toggle('mini'); $('#abFold').textContent = b.classList.contains('mini') ? '펴기' : '접기'; };
 renderAffPick();
-// ===================== v0.8: 추억 콘텐츠 (OX 퀴즈 · 문방구 뽑기 · 홈피 · 응원) =====================
-// ---------- 공용 요청 카드 ----------
-function askCard(title, sub, onAcc, onRej, secs = 30) {
-  const el = document.createElement('div'); el.className = 'reqcard glass';
-  const t = document.createElement('div'); t.className = 't'; t.textContent = title;
-  const s = document.createElement('div'); s.className = 'muted'; s.textContent = sub;
-  const row = document.createElement('div'); row.className = 'row2'; const no = mkBtn('거절'), ok = mkBtn('수락', null, true); row.append(no, ok);
-  const bar = document.createElement('div'); bar.className = 'bar'; const bi = document.createElement('i'); bi.style.width = '100%'; bar.appendChild(bi);
-  el.append(t, s, row, bar); $('#reqs').appendChild(el);
-  requestAnimationFrame(() => requestAnimationFrame(() => { bi.style.transitionDuration = secs + 's'; bi.style.width = '0%'; }));
-  let done = false, to = 0; const fin = acc => { if (done) return; done = true; clearTimeout(to); el.remove(); acc ? onAcc() : onRej(); };
-  to = setTimeout(() => fin(false), secs * 1000); no.onclick = () => fin(false); ok.onclick = () => fin(true);
-  SFX.wsp(); setTimeout(SFX.wsp, 260);
-}
-function uidOf(name) { const tg = findWorld(name); return tg.length ? tg[0][0] : null; }
-function worldOf(name) { const tg = findWorld(name); return tg.length ? tg[0][2] : null; }
-
-// ---------- 뽑기 동전 ----------
-let coins = store.get('fm_coin', { c: 0, day: '' });
-function updCoin() { const el = $('#coinTxt'); if (el) el.textContent = '🪙 ' + coins.c; const b = $('#gSpin'); if (b) { b.disabled = coins.c < 1; b.textContent = coins.c < 1 ? '동전이 없어요' : `🪙 1개 넣고 돌리기 (남은 ${coins.c}개)`; } }
-function addCoin(n, why) { coins.c = Math.min(99, coins.c + n); store.set('fm_coin', coins); updCoin(); if (why) logLine(`🪙 뽑기 동전 +${n} · ${why}`, 'l-exp'); }
-function coinDaily() { if (coins.day !== today()) { coins.day = today(); coins.c = Math.min(99, coins.c + 3); store.set('fm_coin', coins); if (entered) sys('🪙 오늘의 뽑기 동전 3개가 들어왔어요! 입구 오른쪽 끝 문방구 뽑기 기계에서 돌려보세요.'); } updCoin(); }
-
-// ---------- 꾸미기 아이템 ----------
+// ===================== v0.9: 꾸미기 (인기도 공방 · 하루 1번 뽑기) · 불꽃놀이 =====================
+// ---------- 아이템 (q = 만들 때 필요한 인기도) ----------
 const ITEMS = {
-  beanie: { n: '털모자', s: 'h', r: 1, ic: '🧶' }, capb: { n: '거꾸로 야구모자', s: 'h', r: 1, ic: '🧢' }, bandana: { n: '빨간 두건', s: 'h', r: 1, ic: '🟥' },
-  glasses: { n: '뿔테안경', s: 'f', r: 1, ic: '👓' }, headphones: { n: '헤드폰', s: 'e', r: 1, ic: '🎧' },
-  bucket: { n: '벙거지 모자', s: 'h', r: 2, ic: '👒' }, bunny: { n: '토끼 머리띠', s: 'h', r: 2, ic: '🐰' }, sunglasses: { n: '선글라스', s: 'f', r: 2, ic: '🕶️' },
-  crown: { n: '황금 왕관', s: 'h', r: 3, ic: '👑' }, halo: { n: '천사링', s: 't', r: 3, ic: '😇' }
+  beanie: { n: '털모자', s: 'h', q: 0, ic: '🧶' }, capf: { n: '야구모자', s: 'h', q: 0, ic: '🧢' }, sprout: { n: '새싹', s: 't', q: 0, ic: '🌱' }, glasses: { n: '뿔테안경', s: 'f', q: 0, ic: '👓' },
+  capb: { n: '거꾸로 야구모자', s: 'h', q: 1, ic: '🔄' }, bandana: { n: '빨간 두건', s: 'h', q: 1, ic: '🟥' }, tie: { n: '넥타이', s: 'n', q: 1, ic: '👔' }, headphones: { n: '헤드폰', s: 'e', q: 1, ic: '🎧' },
+  ribbon: { n: '리본 핀', s: 'h', q: 2, ic: '🎀' }, scarf: { n: '목도리', s: 'n', q: 2, ic: '🧣' }, mustache: { n: '콧수염', s: 'f', q: 2, ic: '🥸' },
+  bucket: { n: '벙거지', s: 'h', q: 3, ic: '👒' }, straw: { n: '밀짚모자', s: 'h', q: 3, ic: '🌾' }, sunglasses: { n: '선글라스', s: 'f', q: 3, ic: '🕶️' }, bag: { n: '책가방', s: 'b', q: 3, ic: '🎒' },
+  earmuff: { n: '털 귀마개', s: 'e', q: 4, ic: '❄️' }, bowtie: { n: '나비넥타이', s: 'n', q: 4, ic: '🤵' },
+  bunny: { n: '토끼 머리띠', s: 'h', q: 5, ic: '🐰' }, cat: { n: '고양이 머리띠', s: 'h', q: 5, ic: '🐱' },
+  star: { n: '반짝 별', s: 't', q: 6, ic: '⭐' }, phone: { n: '폴더폰 목걸이', s: 'n', q: 6, ic: '📱' },
+  santa: { n: '산타 모자', s: 'h', q: 8, ic: '🎅' }, cloud: { n: '먹구름', s: 't', q: 8, ic: '🌧️' },
+  heartgl: { n: '하트 선글라스', s: 'f', q: 10, ic: '😍' }, cape: { n: '빨간 망토', s: 'b', q: 10, ic: '🦸' },
+  wizard: { n: '마법사 모자', s: 'h', q: 12, ic: '🧙' }, tophat: { n: '신사 모자', s: 'h', q: 15, ic: '🎩' }, devil: { n: '악마 뿔', s: 't', q: 15, ic: '😈' },
+  wings: { n: '천사 날개', s: 'b', q: 20, ic: '🪽' }, batwings: { n: '박쥐 날개', s: 'b', q: 20, ic: '🦇' },
+  halo: { n: '천사링', s: 't', q: 25, ic: '😇' }, crown: { n: '황금 왕관', s: 'h', q: 30, ic: '👑' }
 };
-const RARE = { 1: ['일반', '#9aa3ad'], 2: ['희귀', '#4a9bff'], 3: ['전설', '#ffc83d'] };
-const SLOTN = { h: '모자', f: '얼굴', e: '귀', t: '머리 위' };
-function cleanAcc(a) { const o = {}; if (a && typeof a === 'object') for (const s of ['h', 'f', 'e', 't']) { const id = a[s]; if (typeof id === 'string' && ITEMS[id] && ITEMS[id].s === s) o[s] = id; } return o; }
+const SLOTN = { h: '모자', f: '얼굴', e: '귀', t: '머리 위', n: '목', b: '등' };
+const SLOTS = Object.keys(SLOTN);
+function cleanAcc(a) { const o = {}; if (a && typeof a === 'object') for (const s of SLOTS) { const id = a[s]; if (typeof id === 'string' && ITEMS[id] && ITEMS[id].s === s) o[s] = id; } return o; }
 let bag = (store.get('fm_bag', []) || []).filter(id => ITEMS[id]);
 me.acc = cleanAcc(prof.acc);
+function heartShape(s) { const h = new THREE.Shape(); h.moveTo(0, -s * .9); h.bezierCurveTo(-s * 1.6, s * .2, -s * .6, s * 1.3, 0, s * .35); h.bezierCurveTo(s * .6, s * 1.3, s * 1.6, s * .2, 0, -s * .9); return h; }
+function starShape(r) { const s = new THREE.Shape(); for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, rr2 = i % 2 ? r * .45 : r; const x = Math.cos(a) * rr2, y = Math.sin(a) * rr2; i ? s.lineTo(x, y) : s.moveTo(x, y); } return s; }
 function addAcc(P, acc) {
-  const h = P.head, A = acc || {};
-  const put = (m, x = 0, y = 0, z = 0) => { m.position.set(x, y, z); m.castShadow = true; h.add(m); return m; };
+  const h = P.head, up = P.upper, A = acc || {}; P.float = [];
+  const put = (m, x = 0, y = 0, z = 0, par = h) => { m.position.set(x, y, z); m.castShadow = true; par.add(m); return m; };
   const capG = (r, th) => new THREE.SphereGeometry(r, 32, 16, 0, Math.PI * 2, 0, Math.PI * th);
-  if (A.h === 'beanie') { const c = put(new THREE.Mesh(capG(.475, .52), M('#d8583c'))); c.rotation.x = -.2; const rim = put(new THREE.Mesh(new THREE.TorusGeometry(.445, .06, 10, 36), M('#f3efe6')), 0, .02, -.01); rim.rotation.x = Math.PI / 2 - .2; put(mk(GEO.ball, M('#f3efe6'), 0, 0, 0, .1), 0, .52, -.1); }
-  if (A.h === 'capb') { const c = put(new THREE.Mesh(capG(.47, .48), M('#2f4a8a'))); c.rotation.x = -.25; const b = put(new THREE.Mesh(new THREE.BoxGeometry(.36, .03, .3), M('#2f4a8a')), 0, .12, -.55); b.rotation.x = -.25; put(mk(GEO.ball, M('#e8b923'), 0, 0, 0, .04), 0, .47, -.12); }
-  if (A.h === 'bandana') { const c = put(new THREE.Mesh(capG(.475, .44), M('#c0392b'))); c.rotation.x = -.3; [-1, 1].forEach(sd => put(mk(GEO.ball, M('#c0392b'), 0, 0, 0, .07, .05, .1), sd * .06, -.02, -.47)); }
-  if (A.h === 'bucket') { const g = new THREE.Group(); g.add(new THREE.Mesh(new THREE.CylinderGeometry(.34, .44, .28, 28), M('#d9c49a'))); const br = new THREE.Mesh(new THREE.CylinderGeometry(.66, .66, .035, 32), M('#d9c49a')); br.position.y = -.13; g.add(br); const band = new THREE.Mesh(new THREE.CylinderGeometry(.43, .445, .06, 28), M('#8a6a3a')); band.position.y = -.07; g.add(band); g.children.forEach(m => m.castShadow = true); g.rotation.x = -.12; put(g, 0, .36, -.03); }
-  if (A.h === 'bunny') { const bd = put(new THREE.Mesh(new THREE.TorusGeometry(.45, .028, 8, 32, Math.PI), M('#ff8fb1')), 0, .02, 0); bd.rotation.y = Math.PI / 2; [-1, 1].forEach(sd => { const e = put(new THREE.Mesh(new THREE.CapsuleGeometry(.075, .32, 4, 10), M('#fafafa')), sd * .15, .66, -.02); e.rotation.z = -sd * .18; const inn = put(new THREE.Mesh(new THREE.CapsuleGeometry(.04, .24, 4, 8), M('#ffb3c6')), sd * .15, .66, .045); inn.rotation.z = -sd * .18; }); }
-  if (A.h === 'crown') { const gold = M('#e8b923', { metalness: .6, roughness: .3, emissive: '#5a3a00', emissiveIntensity: .35 }); const ring = put(new THREE.Mesh(new THREE.CylinderGeometry(.27, .29, .17, 24, 1, true), gold), 0, .47, -.02); ring.material.side = THREE.DoubleSide; for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; put(new THREE.Mesh(new THREE.ConeGeometry(.055, .16, 10), gold), Math.sin(a) * .27, .62, -.02 + Math.cos(a) * .27); } put(mk(GEO.ball, M('#e8435a', { roughness: .2 }), 0, 0, 0, .045), 0, .47, .27); }
-  if (A.t === 'halo') { const ring = put(new THREE.Mesh(new THREE.TorusGeometry(.28, .035, 10, 40), new THREE.MeshStandardMaterial({ color: '#ffe48a', emissive: '#ffcf40', emissiveIntensity: 2.2 })), 0, .76, -.02); ring.rotation.x = Math.PI / 2; ring.castShadow = false; P.halo = ring; }
-  if (A.f === 'glasses' || A.f === 'sunglasses') {
-    const sun = A.f === 'sunglasses';
-    [-1, 1].forEach(sd => { if (sun) put(mk(GEO.ball, M('#141414', { roughness: .12, metalness: .4 }), 0, 0, 0, .1, .072, .03), sd * .15, -.01, .43); else { const r = put(new THREE.Mesh(new THREE.TorusGeometry(.085, .017, 8, 24), M('#3a2418')), sd * .15, -.01, .44); r.castShadow = false; } });
-    put(new THREE.Mesh(new THREE.BoxGeometry(.1, .022, .02), M(sun ? '#141414' : '#3a2418')), 0, .0, .45);
+  const ext = (shape, d, mat) => new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: true, bevelSize: .01, bevelThickness: .01, bevelSegments: 1 }), mat);
+  const cap = col => { const c = put(new THREE.Mesh(capG(.47, .48), M(col))); c.rotation.x = -.25; put(mk(GEO.ball, M('#e8b923'), 0, 0, 0, .04), 0, .47, -.12); };
+  // 모자
+  switch (A.h) {
+    case 'beanie': { const c = put(new THREE.Mesh(capG(.475, .52), M('#d8583c'))); c.rotation.x = -.2; const rim = put(new THREE.Mesh(new THREE.TorusGeometry(.445, .06, 10, 36), M('#f3efe6')), 0, .02, -.01); rim.rotation.x = Math.PI / 2 - .2; put(mk(GEO.ball, M('#f3efe6'), 0, 0, 0, .1), 0, .52, -.1); break; }
+    case 'capf': { cap('#d8583c'); const b = put(new THREE.Mesh(new THREE.BoxGeometry(.36, .03, .3), M('#d8583c')), 0, .14, .52); b.rotation.x = .18; break; }
+    case 'capb': { cap('#2f4a8a'); const b = put(new THREE.Mesh(new THREE.BoxGeometry(.36, .03, .3), M('#2f4a8a')), 0, .12, -.55); b.rotation.x = -.25; break; }
+    case 'bandana': { const c = put(new THREE.Mesh(capG(.475, .44), M('#c0392b'))); c.rotation.x = -.3; [-1, 1].forEach(sd => put(mk(GEO.ball, M('#c0392b'), 0, 0, 0, .07, .05, .1), sd * .06, -.02, -.47)); break; }
+    case 'ribbon': { const pink = M('#ff6f91'); [-1, 1].forEach(sd => { const w = put(mk(GEO.ball, pink, 0, 0, 0, .1, .07, .04), .26 + sd * .09, .32, .16); w.rotation.z = sd * .4; }); put(mk(GEO.ball, M('#e8435a'), 0, 0, 0, .045), .26, .32, .18); break; }
+    case 'bucket': case 'straw': { const st = A.h === 'straw', col = st ? '#e8c86a' : '#d9c49a'; const g = new THREE.Group(); g.add(new THREE.Mesh(new THREE.CylinderGeometry(st ? .3 : .34, .44, st ? .22 : .28, 28), M(col))); const br = new THREE.Mesh(new THREE.CylinderGeometry(st ? .8 : .66, st ? .8 : .66, .035, 36), M(col)); br.position.y = -.12; g.add(br); const band = new THREE.Mesh(new THREE.CylinderGeometry(.43, .445, .06, 28), M(st ? '#d8583c' : '#8a6a3a')); band.position.y = -.07; g.add(band); g.children.forEach(m => m.castShadow = true); g.rotation.x = -.12; put(g, 0, .35, -.03); break; }
+    case 'bunny': case 'cat': { const bd = put(new THREE.Mesh(new THREE.TorusGeometry(.45, .028, 8, 32, Math.PI), M(A.h === 'cat' ? '#3a3a3a' : '#ff8fb1')), 0, .02, 0); bd.rotation.y = Math.PI / 2;
+      [-1, 1].forEach(sd => { if (A.h === 'bunny') { const e = put(new THREE.Mesh(new THREE.CapsuleGeometry(.075, .32, 4, 10), M('#fafafa')), sd * .15, .66, -.02); e.rotation.z = -sd * .18; const inn = put(new THREE.Mesh(new THREE.CapsuleGeometry(.04, .24, 4, 8), M('#ffb3c6')), sd * .15, .66, .045); inn.rotation.z = -sd * .18; } else { const e = put(new THREE.Mesh(new THREE.ConeGeometry(.14, .26, 4), M('#3a3a3a')), sd * .27, .44, -.02); e.rotation.z = -sd * .35; e.rotation.y = Math.PI / 4; const inn = put(new THREE.Mesh(new THREE.ConeGeometry(.07, .15, 4), M('#ffb3c6')), sd * .27, .43, .05); inn.rotation.z = -sd * .35; inn.rotation.y = Math.PI / 4; } }); break; }
+    case 'santa': { const c = put(new THREE.Mesh(new THREE.ConeGeometry(.44, .62, 28), M('#d62d2d')), 0, .52, -.08); c.rotation.x = -.35; c.rotation.z = .25; const rim = put(new THREE.Mesh(new THREE.TorusGeometry(.43, .07, 10, 32), M('#fafafa')), 0, .24, -.02); rim.rotation.x = Math.PI / 2 - .1; put(mk(GEO.ball, M('#fafafa'), 0, 0, 0, .09), .2, .82, -.28); break; }
+    case 'wizard': { const c = put(new THREE.Mesh(new THREE.ConeGeometry(.4, .95, 28), M('#5a3ad0')), 0, .7, -.04); c.rotation.x = -.12; const br = put(new THREE.Mesh(new THREE.CylinderGeometry(.72, .72, .035, 36), M('#4a2cb0')), 0, .26, -.02); br.rotation.x = -.12; const st = put(ext(starShape(.08), .02, new THREE.MeshStandardMaterial({ color: '#ffe48a', emissive: '#ffcf40', emissiveIntensity: 1.2 })), .05, .62, .32); st.rotation.x = -.12; break; }
+    case 'tophat': { const g = new THREE.Group(); const k = M('#1e1e22', { roughness: .4 }); g.add(new THREE.Mesh(new THREE.CylinderGeometry(.3, .3, .5, 28), k)); const br = new THREE.Mesh(new THREE.CylinderGeometry(.52, .52, .035, 32), k); br.position.y = -.24; g.add(br); const band = new THREE.Mesh(new THREE.CylinderGeometry(.305, .305, .08, 28), M('#c0392b')); band.position.y = -.16; g.add(band); g.children.forEach(m => m.castShadow = true); g.rotation.x = -.1; put(g, 0, .6, -.03); break; }
+    case 'crown': { const gold = M('#e8b923', { metalness: .6, roughness: .3, emissive: '#5a3a00', emissiveIntensity: .35 }); const ring = put(new THREE.Mesh(new THREE.CylinderGeometry(.27, .29, .17, 24, 1, true), gold), 0, .47, -.02); ring.material.side = THREE.DoubleSide; for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; put(new THREE.Mesh(new THREE.ConeGeometry(.055, .16, 10), gold), Math.sin(a) * .27, .62, -.02 + Math.cos(a) * .27); } put(mk(GEO.ball, M('#e8435a', { roughness: .2 }), 0, 0, 0, .045), 0, .47, .27); break; }
   }
-  if (A.e === 'headphones') { const bd = put(new THREE.Mesh(new THREE.TorusGeometry(.47, .03, 8, 32, Math.PI), M('#2a2a2a')), 0, .02, -.02); [-1, 1].forEach(sd => { const c = put(new THREE.Mesh(new THREE.CylinderGeometry(.12, .12, .09, 20), M('#e8435a')), sd * .46, .0, -.02); c.rotation.z = Math.PI / 2; }); }
+  // 머리 위
+  if (A.t === 'halo') { const ring = put(new THREE.Mesh(new THREE.TorusGeometry(.28, .035, 10, 40), new THREE.MeshStandardMaterial({ color: '#ffe48a', emissive: '#ffcf40', emissiveIntensity: 2.2 })), 0, .76, -.02); ring.rotation.x = Math.PI / 2; ring.castShadow = false; P.float.push({ m: ring, y: .76, spin: 0 }); }
+  if (A.t === 'sprout') { put(new THREE.Mesh(new THREE.CylinderGeometry(.015, .02, .16, 6), M('#4f9a35')), 0, .5, -.02); [-1, 1].forEach(sd => { const l = put(mk(GEO.ball, M('#6cc94f'), 0, 0, 0, .09, .03, .05), sd * .08, .6, -.02); l.rotation.z = sd * .45; }); }
+  if (A.t === 'star') { const s = put(ext(starShape(.14), .04, new THREE.MeshStandardMaterial({ color: '#ffe48a', emissive: '#ffcf40', emissiveIntensity: 1.8 })), 0, .9, -.02); s.castShadow = false; P.float.push({ m: s, y: .9, spin: 1.6 }); }
+  if (A.t === 'cloud') { const g = new THREE.Group(); [[0, 0, .17], [-.17, -.03, .13], [.17, -.03, .13], [.08, .08, .12], [-.08, .07, .11]].forEach(([x, y, r]) => { const b = new THREE.Mesh(GEO.ball, M('#8a93a3', { roughness: .95 })); b.scale.setScalar(r); b.position.set(x, y, 0); g.add(b); }); for (let i = 0; i < 5; i++) { const d = new THREE.Mesh(new THREE.CapsuleGeometry(.012, .06, 2, 6), new THREE.MeshStandardMaterial({ color: '#7fb6ff', emissive: '#3a7ad0', emissiveIntensity: .6 })); d.position.set(-.18 + i * .09, -.2 - (i % 2) * .06, 0); g.add(d); } put(g, 0, 1.0, -.02); P.float.push({ m: g, y: 1.0, spin: 0 }); }
+  if (A.t === 'devil') [-1, 1].forEach(sd => { const c = put(new THREE.Mesh(new THREE.ConeGeometry(.07, .24, 12), M('#c0202a', { roughness: .4 })), sd * .22, .44, .05); c.rotation.z = -sd * .45; });
+  // 얼굴
+  if (A.f === 'glasses' || A.f === 'sunglasses') { const sun = A.f === 'sunglasses'; [-1, 1].forEach(sd => { if (sun) put(mk(GEO.ball, M('#141414', { roughness: .12, metalness: .4 }), 0, 0, 0, .1, .072, .03), sd * .15, -.01, .43); else { const r = put(new THREE.Mesh(new THREE.TorusGeometry(.085, .017, 8, 24), M('#3a2418')), sd * .15, -.01, .44); r.castShadow = false; } }); put(new THREE.Mesh(new THREE.BoxGeometry(.1, .022, .02), M(sun ? '#141414' : '#3a2418')), 0, 0, .45); }
+  if (A.f === 'heartgl') { [-1, 1].forEach(sd => put(ext(heartShape(.07), .02, M('#ff3d6e', { roughness: .2 })), sd * .15, -.01, .43)); put(new THREE.Mesh(new THREE.BoxGeometry(.1, .02, .02), M('#ff3d6e')), 0, .01, .45); }
+  if (A.f === 'mustache') [-1, 1].forEach(sd => { const m = put(mk(GEO.ball, M('#3a2418'), 0, 0, 0, .08, .03, .03), sd * .065, -.12, .41); m.rotation.z = sd * .3; });
+  // 귀
+  if (A.e === 'headphones' || A.e === 'earmuff') { const mf = A.e === 'earmuff'; put(new THREE.Mesh(new THREE.TorusGeometry(.47, mf ? .025 : .03, 8, 32, Math.PI), M(mf ? '#c9c9d6' : '#2a2a2a')), 0, .02, -.02); [-1, 1].forEach(sd => { if (mf) put(mk(GEO.ball, M('#fff0f4', { roughness: 1 }), 0, 0, 0, .15), sd * .46, 0, -.02); else { const c = put(new THREE.Mesh(new THREE.CylinderGeometry(.12, .12, .09, 20), M('#e8435a')), sd * .46, 0, -.02); c.rotation.z = Math.PI / 2; } }); }
+  // 목 (상체 기준)
+  if (A.n === 'scarf') { const t = put(new THREE.Mesh(new THREE.TorusGeometry(.2, .07, 10, 24), M('#2f8a5a')), 0, .38, 0, up); t.rotation.x = Math.PI / 2; put(new THREE.Mesh(new THREE.BoxGeometry(.1, .26, .05), M('#2f8a5a')), .08, .22, .22, up); }
+  if (A.n === 'tie') { put(new THREE.Mesh(new THREE.BoxGeometry(.07, .06, .04), M('#c0392b')), 0, .38, .2, up); const t = put(new THREE.Mesh(new THREE.BoxGeometry(.08, .26, .02), M('#c0392b')), 0, .22, .24, up); t.rotation.x = -.12; }
+  if (A.n === 'bowtie') { [-1, 1].forEach(sd => { const w = put(new THREE.Mesh(new THREE.ConeGeometry(.06, .11, 4), M('#1e1e22')), sd * .06, .38, .21, up); w.rotation.z = sd * Math.PI / 2; }); put(mk(GEO.ball, M('#1e1e22'), 0, 0, 0, .03), 0, .38, .22, up); }
+  if (A.n === 'phone') { const s = put(new THREE.Mesh(new THREE.TorusGeometry(.17, .008, 6, 24), M('#e8435a')), 0, .32, .1, up); s.rotation.x = Math.PI / 2 - .4; put(new THREE.Mesh(new THREE.BoxGeometry(.09, .14, .03), M('#c9d2de', { metalness: .4, roughness: .3 })), 0, .16, .27, up); }
+  // 등 (상체 기준)
+  if (A.b === 'bag') { put(new THREE.Mesh(new RoundedBoxGeometry(.4, .38, .18, 3, .05), M('#d8583c')), 0, .14, -.32, up); [-1, 1].forEach(sd => { const st = put(new THREE.Mesh(new THREE.TorusGeometry(.14, .018, 6, 16, Math.PI), M('#8a3a22')), sd * .13, .2, -.12, up); st.rotation.y = Math.PI / 2; st.rotation.z = Math.PI / 2; }); }
+  if (A.b === 'cape') { const c = put(new THREE.Mesh(new THREE.BoxGeometry(.5, .55, .02), M('#c0202a', { side: THREE.DoubleSide })), 0, .08, -.3, up); c.rotation.x = .25; }
+  if (A.b === 'wings' || A.b === 'batwings') { const bat = A.b === 'batwings'; [-1, 1].forEach(sd => { const w = put(bat ? ext(heartShape(.24), .02, M('#2a2030')) : mk(GEO.ball, M('#fffaf0', { roughness: .55 }), 0, 0, 0, .4, .2, .05), sd * .34, .34, -.3, up); w.rotation.z = sd * (bat ? 2.5 : .6); w.rotation.y = -sd * .55; }); }
 }
 
-// ---------- 3D 소품: 문방구 뽑기 기계 + OX 구역 ----------
+// ---------- 3D 소품: 문방구 뽑기 기계 ----------
 const GACHA_X = 1965;
-let quizDecal = null;
 function addRetroProps(g) {
   const x = X3(GACHA_X), z = -1.5, red = M('#d8583c', { roughness: .45 });
   g.add(box(1.15, 1.25, .95, red, x, .62, z, .1));
@@ -1724,164 +1735,77 @@ function addRetroProps(g) {
   const cols = ['#e8435a', '#4a86d0', '#e6c14f', '#5aa36a', '#b06a9e', '#ff8a3c']; const r = rnd(5);
   for (let i = 0; i < 18; i++) { const a = r() * 6.28, rr2 = r() * .42, yy = 1.45 + r() * .5; const c = new THREE.Mesh(new THREE.SphereGeometry(.12, 14, 10), M(cols[i % 6], { roughness: .35 })); c.position.set(x + Math.cos(a) * rr2, yy, z + Math.sin(a) * rr2); g.add(c); }
   g.add(cyl(.32, .42, .14, red, x, 2.5, z, 24));
-  // OX 구역 (퀴즈 시간에만 보임)
-  quizDecal = new THREE.Group();
-  const zone = (x1, x2, col) => { const w = X3(x2) - X3(x1); const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 3.2), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .22, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.set((X3(x1) + X3(x2)) / 2, .03, .45); quizDecal.add(m); };
-  zone(720, 1240, '#3d8bff'); zone(1360, 1880, '#ff4d4d');
-  const oRing = new THREE.Mesh(new THREE.RingGeometry(.9, 1.25, 48), new THREE.MeshBasicMaterial({ color: '#7fb6ff', transparent: true, opacity: .85, depthWrite: false })); oRing.rotation.x = -Math.PI / 2; oRing.position.set(X3(980), .04, 1.1); quizDecal.add(oRing);
-  [-1, 1].forEach(sd => { const b = new THREE.Mesh(new THREE.PlaneGeometry(2.6, .4), new THREE.MeshBasicMaterial({ color: '#ff8080', transparent: true, opacity: .85, depthWrite: false })); b.rotation.x = -Math.PI / 2; b.rotation.z = sd * Math.PI / 4; b.position.set(X3(1620), .04, 1.1); quizDecal.add(b); });
-  quizDecal.visible = false; g.add(quizDecal);
 }
 function nearGacha() { return MAP.id === 'gate' && me.onGround && me.y === G && Math.abs(me.x - GACHA_X) < 75; }
 
-// ---------- 문방구 뽑기 UI ----------
-function openGacha() { if (!entered) return; coinDaily(); $('#gRes').innerHTML = ''; $('#gInfo').textContent = '하루 3개 무료 · OX 퀴즈 정답마다 1개씩 더 받아요. 이미 있는 아이템이 나오면 동전 1개를 돌려줘요.'; updCoin(); openWin('gachaWin'); }
-function rollItem() { const w = { 1: 70, 2: 25, 3: 5 }; let t = Math.random() * 100, r = 1; for (const k of [1, 2, 3]) { if (t < w[k]) { r = k; break; } t -= w[k]; } const pool = Object.keys(ITEMS).filter(id => ITEMS[id].r === r); return pick(pool); }
-let spinning = false;
+// ---------- 꾸미기 창 (공방 · 가방 · 오늘의 뽑기) ----------
+let decoTab = 'make', spinning = false;
+const canPull = () => store.get('fm_pull', '') !== today();
+function openDeco(tab) { if (!entered) return; if (tab) decoTab = tab; renderDeco(); openWin('decoWin'); }
+function own(id) { return bag.includes(id); }
+function addBag(id) { if (!own(id)) { bag.push(id); store.set('fm_bag', bag); } }
+function equip(id, on) { const it = ITEMS[id]; if (!it) return; me.acc = { ...me.acc }; if (on) me.acc[it.s] = id; else delete me.acc[it.s]; prof.acc = me.acc; pushProfile(); SFX.click(); renderDeco(); }
+function itemCard(id, mode) {
+  const it = ITEMS[id], has = own(id), on = me.acc[it.s] === id, ok = fame >= it.q;
+  const d = document.createElement('div'); d.className = 'dit' + (has ? ' own' : '') + (on ? ' on' : '') + (!has && !ok ? ' lock' : '');
+  const rq = document.createElement('i'); rq.className = 'req'; rq.textContent = '❤ ' + it.q; if (it.q) d.appendChild(rq);
+  const ic = document.createElement('div'); ic.className = 'gic'; ic.textContent = it.ic; const nm = document.createElement('b'); nm.textContent = it.n; const sl = document.createElement('span'); sl.textContent = SLOTN[it.s];
+  d.append(ic, nm, sl);
+  if (has) d.appendChild(mkBtn(on ? '벗기' : '착용', () => equip(id, !on), !on));
+  else if (ok) d.appendChild(mkBtn('만들기', () => { addBag(id); sys(`🎀 [${it.n}]을(를) 만들었어요!`); sfx([[784, .07], [1046, .14]], 'sine', .05); equip(id, true); }, true));
+  else { const l = document.createElement('span'); l.textContent = `🔒 인기도 ${it.q} 필요`; l.style.marginTop = '4px'; d.appendChild(l); }
+  return d;
+}
+function renderDeco() {
+  const tabs = $('#decoTabs'); tabs.innerHTML = '';
+  [['make', '🛠️ 만들기'], ['bag', `🎒 가방 (${bag.length})`], ['gacha', `🎰 오늘의 뽑기${canPull() ? ' · 1' : ''}`]].forEach(([k, t]) => { const c = document.createElement('div'); c.className = 'chip' + (decoTab === k ? ' on' : ''); c.textContent = t; c.onclick = () => { decoTab = k; renderDeco(); }; tabs.appendChild(c); });
+  const bd = $('#decoBd'); bd.innerHTML = '';
+  if (decoTab === 'make') {
+    const ids = Object.keys(ITEMS).sort((a, b) => ITEMS[a].q - ITEMS[b].q), made = ids.filter(id => fame >= ITEMS[id].q).length, nextQ = ids.map(id => ITEMS[id].q).find(q => q > fame);
+    const info = document.createElement('div'); info.className = 'dinfo';
+    info.innerHTML = `<b>❤ ${fame}</b><span>내 인기도로 <b style="color:var(--ink);font-size:13px">${made} / ${ids.length}</b>개를 만들 수 있어요.${nextQ != null ? ` 인기도 ${nextQ}가 되면 ${ids.filter(id => ITEMS[id].q === nextQ).map(id => ITEMS[id].n).join(', ')}이(가) 열려요.` : ' 전부 열렸어요!'}</span>`;
+    bd.appendChild(info);
+    const g = document.createElement('div'); g.className = 'dgrid'; ids.forEach(id => g.appendChild(itemCard(id))); bd.appendChild(g);
+    const tip = document.createElement('div'); tip.className = 'muted'; tip.style.marginTop = '10px'; tip.textContent = '인기도는 다른 사람이 이름표 메뉴에서 ❤ 올려줘야 올라요. 하루 1번 뽑기에서는 아직 잠긴 아이템도 나올 수 있어요.'; bd.appendChild(tip);
+  } else if (decoTab === 'bag') {
+    if (!bag.length) { const e = document.createElement('div'); e.className = 'muted'; e.style.padding = '10px 2px'; e.textContent = '아직 가진 아이템이 없어요. 만들기나 오늘의 뽑기로 얻어보세요!'; bd.appendChild(e); return; }
+    SLOTS.forEach(s => { const ids = bag.filter(id => ITEMS[id].s === s); if (!ids.length) return; const h = document.createElement('div'); h.className = 'dsec'; h.textContent = `${SLOTN[s]}${me.acc[s] ? ' · 착용 중: ' + ITEMS[me.acc[s]].n : ''}`; const g = document.createElement('div'); g.className = 'dgrid'; ids.forEach(id => g.appendChild(itemCard(id))); bd.append(h, g); });
+  } else {
+    bd.innerHTML = `<div class="gm" id="gm"><div class="gm-glass"><span style="--c:#e8435a;left:18px;top:96px"></span><span style="--c:#4a86d0;left:58px;top:112px"></span><span style="--c:#e6c14f;left:100px;top:100px"></span><span style="--c:#5aa36a;left:36px;top:60px"></span><span style="--c:#b06a9e;left:80px;top:68px"></span><span style="--c:#ff8a3c;left:118px;top:58px"></span><span style="--c:#4a86d0;left:64px;top:26px"></span></div><div class="gm-base"><div class="gm-knob"></div></div></div><div class="gres" id="gRes"></div>`;
+    const b = mkBtn(canPull() ? '🎰 오늘의 뽑기 돌리기 (하루 1번)' : '오늘은 이미 뽑았어요 · 내일 자정에 다시', spinGacha, true); b.id = 'gSpin'; b.style.cssText = 'width:100%;margin-top:12px;padding:11px'; b.disabled = !canPull() || spinning; bd.appendChild(b);
+    const tip = document.createElement('div'); tip.className = 'muted'; tip.style.cssText = 'margin-top:10px;text-align:center'; tip.textContent = '아직 안 가진 아이템 중에서 나와요. 인기도가 부족해 잠긴 아이템도 운 좋으면 나와요!'; bd.appendChild(tip);
+  }
+}
+function rollItem() {
+  const pool = Object.keys(ITEMS).filter(id => !own(id)), src = pool.length ? pool : Object.keys(ITEMS);
+  const w = src.map(id => 1 / Math.pow(1 + ITEMS[id].q, .75)); let t = Math.random() * w.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < src.length; i++) { if (t < w[i]) return src[i]; t -= w[i]; } return src[0];
+}
 function spinGacha() {
-  if (spinning || coins.c < 1) return; spinning = true; coins.c--; store.set('fm_coin', coins); updCoin();
+  if (spinning || !canPull()) return; spinning = true; store.set('fm_pull', today());
+  const btn = $('#gSpin'); if (btn) { btn.disabled = true; btn.textContent = '두근두근...'; }
   const gm = $('#gm'); gm.classList.remove('spin'); void gm.offsetWidth; gm.classList.add('spin');
   sfx([[300, .05], [380, .05], [300, .05], [420, .05], [340, .05], [460, .06]], 'square', .03);
-  const id = rollItem(), it = ITEMS[id], dup = bag.includes(id), col = ['#e8435a', '#4a86d0', '#e6c14f', '#5aa36a', '#b06a9e'][Math.floor(Math.random() * 5)];
-  const res = $('#gRes'); res.innerHTML = '';
-  const cap = document.createElement('div'); cap.className = 'gcap'; cap.style.setProperty('--c', col); res.appendChild(cap);
+  const id = rollItem(), it = ITEMS[id], col = ['#e8435a', '#4a86d0', '#e6c14f', '#5aa36a', '#b06a9e'][Math.floor(Math.random() * 5)], locked = fame < it.q;
+  const res = $('#gRes'); const cap = document.createElement('div'); cap.className = 'gcap'; cap.style.setProperty('--c', col); res.appendChild(cap);
   setTimeout(() => {
-    cap.classList.add('open'); const [rn, rc] = RARE[it.r];
-    const card = document.createElement('div'); card.className = 'gcard r' + it.r;
-    const ic = document.createElement('div'); ic.className = 'gic'; ic.textContent = it.ic;
-    const nm = document.createElement('b'); nm.textContent = it.n; const rb = document.createElement('span'); rb.className = 'rbadge'; rb.textContent = rn; rb.style.background = rc;
-    const sub = document.createElement('div'); sub.className = 'muted'; sub.textContent = dup ? '이미 있는 아이템이라 동전 1개를 돌려받았어요.' : `${SLOTN[it.s]} 아이템 · 가방에 넣었어요.`;
-    card.append(ic, rb, nm, sub);
-    if (!dup) { const wear = mkBtn('바로 착용하기', () => { equip(id, true); wear.disabled = true; wear.textContent = '착용했어요'; }, true); card.appendChild(wear); }
-    res.appendChild(card);
-    if (dup) addCoin(1); else { bag.push(id); store.set('fm_bag', bag); }
-    if (it.r === 3) { sfx([[523, .1], [659, .1], [784, .1], [1046, .3]], 'triangle', .06); NET.wGacha?.send({ n: me.n, it: id })?.catch?.(() => {}); onGachaNews(me.n, id); }
-    else sfx(it.r === 2 ? [[784, .08], [1046, .2]] : [[880, .12]], 'sine', .05);
+    cap.classList.add('open'); addBag(id);
+    const card = document.createElement('div'); card.className = 'gcard' + (it.q >= 15 ? ' r3' : it.q >= 5 ? ' r2' : '');
+    const ic = document.createElement('div'); ic.className = 'gic'; ic.textContent = it.ic; const nm = document.createElement('b'); nm.textContent = it.n;
+    const sub = document.createElement('div'); sub.className = 'muted'; sub.textContent = locked ? `원래 인기도 ${it.q}가 있어야 만들 수 있는 아이템이에요. 럭키!` : `${SLOTN[it.s]} 아이템 · 가방에 넣었어요.`;
+    card.append(ic, nm, sub); const wear = mkBtn('바로 착용하기', () => equip(id, true), true); card.appendChild(wear); res.appendChild(card);
+    if (btn) btn.textContent = '오늘은 이미 뽑았어요 · 내일 자정에 다시';
+    const tch = [...document.querySelectorAll('#decoTabs .chip')]; if (tch[1]) tch[1].textContent = `🎒 가방 (${bag.length})`; if (tch[2]) tch[2].textContent = '🎰 오늘의 뽑기';
+    if (it.q >= 15) { sfx([[523, .1], [659, .1], [784, .1], [1046, .3]], 'triangle', .06); NET.wGacha?.send({ n: me.n, it: id })?.catch?.(() => {}); onGachaNews(me.n, id); } else sfx([[880, .12]], 'sine', .05);
     spinning = false;
   }, 1100);
 }
-function onGachaNews(n, id) { const it = ITEMS[id]; if (!it || isBlocked(n)) return; const txt = `🎉 ${n}님이 문방구 뽑기에서 [${it.n}]을(를) 뽑았어요!`; logLine(txt, 'l-megaw', 'mega'); banner(txt); }
-function equip(id, on) { const it = ITEMS[id]; if (!it) return; me.acc = { ...me.acc }; if (on) me.acc[it.s] = id; else delete me.acc[it.s]; prof.acc = me.acc; pushProfile(); SFX.click(); if ($('#bagWin').style.display === 'block') renderBag(); }
-function renderBag() {
-  const g = $('#bagGrid'); g.innerHTML = '';
-  if (!bag.length) { const d = document.createElement('div'); d.className = 'muted'; d.style.gridColumn = '1/-1'; d.style.padding = '10px 2px'; d.textContent = '아직 아이템이 없어요. 문방구 뽑기를 돌려보세요!'; g.appendChild(d); return; }
-  Object.keys(ITEMS).filter(id => bag.includes(id)).forEach(id => {
-    const it = ITEMS[id], on = me.acc[it.s] === id; const d = document.createElement('div'); d.className = 'bagi r' + it.r + (on ? ' on' : '');
-    const ic = document.createElement('div'); ic.className = 'gic'; ic.textContent = it.ic; const nm = document.createElement('b'); nm.textContent = it.n;
-    const s = document.createElement('span'); s.textContent = `${RARE[it.r][0]} · ${SLOTN[it.s]}`; const st = document.createElement('em'); st.textContent = on ? '착용 중' : '착용';
-    d.append(ic, nm, s, st); d.onclick = () => equip(id, !on); g.appendChild(d);
-  });
-}
-$('#gSpin').onclick = spinGacha;
-$('#gBag').onclick = () => { renderBag(); $('#gachaWin').style.display = 'none'; openWin('bagWin'); };
-$('#bBag').onclick = () => { renderBag(); openWin('bagWin'); };
-$('#bGacha').onclick = () => openGacha();
+function onGachaNews(n, id) { const it = ITEMS[id]; if (!it || isBlocked(n)) return; const txt = `🎉 ${n}님이 오늘의 뽑기에서 [${it.n}]을(를) 뽑았어요!`; logLine(txt, 'l-megaw', 'mega'); banner(txt); }
+function setupRetroNet() { const W2 = NET.world; NET.wGacha = W2.makeAction('gacha'); NET.wGacha.onMessage((d, { userId }) => { if (!d || !rl('g' + userId, 2, 30000) || !ITEMS[d.it] || ITEMS[d.it].q < 15) return; onGachaNews(str(d.n, NMAX), d.it); }); }
+$('#bDeco').onclick = () => openDeco();
+let lastFameSeen = fame; setInterval(() => { if (fame !== lastFameSeen) { lastFameSeen = fame; if ($('#decoWin').style.display === 'block') renderDeco(); } }, 1000);
 
-// ---------- OX 퀴즈 ----------
-const QUIZ = [
-  ['삐삐에서 숫자 "8282"는 "빨리빨리"라는 뜻이었다.', 'O', '팔이팔이 → 빨리빨리!'],
-  ['삐삐에서 "486"은 "사랑해"를 뜻했다.', 'O', '사·랑·해 글자 획수가 4, 8, 6이라서예요.'],
-  ['삐삐에서 "1004"는 "천사"를 뜻했다.', 'O', '천사(1004) 그대로!'],
-  ['옛날 휴대폰 문자(SMS) 한 통에는 한글을 최대 80자까지 쓸 수 있었다.', 'X', '80바이트라서 한글은 40자까지였어요.'],
-  ['2002 한일 월드컵에서 대한민국은 4강에 올랐다.', 'O', '4강 신화! 3·4위전 상대는 튀르키예(터키)였어요.'],
-  ['2002 월드컵 개막전은 서울월드컵경기장에서 열렸다.', 'O', '프랑스 vs 세네갈 경기였어요.'],
-  ['1988년 서울 올림픽 마스코트는 "호돌이"다.', 'O', '호랑이 호돌이!'],
-  ['1993년 대전 엑스포 마스코트는 "꿈돌이"다.', 'O', '외계 요정 꿈돌이예요.'],
-  ['"국민학교"가 "초등학교"로 이름이 바뀐 건 2000년이다.', 'X', '1996년에 바뀌었어요.'],
-  ['IMF 외환위기는 1997년에 시작됐다.', 'O', '그해 12월 IMF 구제금융을 신청했어요.'],
-  ['외환위기 때 국민들이 금을 모아 나라에 내놓는 "금 모으기 운동"이 있었다.', 'O', '1998년 초 전국적으로 벌어졌어요.'],
-  ['다이얼업 모뎀으로 인터넷을 하면 집 전화를 동시에 쓸 수 없었다.', 'O', '전화선을 같이 써서 "인터넷 하니까 전화 끊어!"가 국룰.'],
-  ['3.5인치 플로피디스크 한 장의 용량은 약 1.44MB다.', 'O', '사진 한 장도 겨우 들어가는 크기!'],
-  ['카세트테이프에는 A면과 B면이 있다.', 'O', '연필로 감아본 사람 손!'],
-  ['MP3 파일은 같은 곡의 CD 원음(WAV)보다 용량이 크다.', 'X', 'MP3는 압축 파일이라 훨씬 작아요.'],
-  ['1990년대 PC 통신 서비스 중에는 천리안, 하이텔, 나우누리가 있었다.', 'O', '파란 화면에 하얀 글씨의 시대.'],
-  ['윈도우 98 다음으로 나온 윈도우는 윈도우 95다.', 'X', '95가 98보다 먼저예요.'],
-  ['휴대용 게임기 "게임보이"는 처음에 흑백(녹색 톤) 화면으로 나왔다.', 'O', '컬러는 나중에 나왔어요.'],
-  ['포켓몬스터 1세대 도감에는 151마리가 있다.', 'O', '뮤까지 151마리!'],
-  ['"다마고치"는 한국에서 처음 만든 장난감이다.', 'X', '일본에서 1996년에 나왔어요.'],
-  ['스타크래프트는 1998년에 처음 나왔다.', 'O', 'PC방 붐의 주역이었죠.'],
-  ['MSN 메신저는 지금도 서비스 중이다.', 'X', '2013년쯤 서비스가 끝났어요.'],
-  ['인터넷 익스플로러는 2022년에 공식 지원이 끝났다.', 'O', '2022년 6월에 은퇴했어요.'],
-  ['"응답하라 1997"의 배경 도시는 부산이다.', 'O', '부산 사투리가 매력 포인트!'],
-  ['1999년 말 "Y2K 밀레니엄 버그"로 전 세계 컴퓨터가 실제로 대규모 마비됐다.', 'X', '대비를 많이 해서 큰 사고는 없었어요.'],
-  ['한국 프로야구는 1982년에 출범했다.', 'O', '6개 구단으로 시작했어요.'],
-  ['코스닥 시장은 1996년에 문을 열었다.', 'O', '1996년 7월 개설됐어요.'],
-  ['코넥스 시장은 2013년에 문을 열었다.', 'O', '2013년 7월 개설됐어요.'],
-  ['코스피 지수의 기준(100)은 1980년 1월 4일 시가총액이다.', 'O', '그래서 지수가 2,500이면 그때의 25배!'],
-  ['지금 우리나라 주식 하루 가격제한폭은 ±15%다.', 'X', '2015년부터 ±30%예요.'],
-  ['주식을 사면 결제(돈과 주식이 오가는 것)는 이틀 뒤(T+2)에 된다.', 'O', '오늘 사면 영업일 기준 이틀 뒤 결제!'],
-  ['코스피·코스닥 정규장은 오후 3시 30분에 끝난다.', 'O', '오전 9시~오후 3시 30분이에요.'],
-  ['IPO 수요예측은 일반 개인투자자가 참여하는 절차다.', 'X', '수요예측은 기관투자자, 개인은 일반청약이에요.'],
-  ['공모주 일반청약의 "균등배정"은 2021년부터 생겼다.', 'O', '최소 청약만 해도 받을 기회가 생겼어요.'],
-  ['"따상"은 첫날 공모가의 2배로 시작해 상한가로 끝나는 걸 말한다.', 'O', '2배(따블) + 상한가 = 따상!'],
-  ['2023년 6월부터 신규 상장 첫날 가격 범위가 공모가의 60~400%로 넓어졌다.', 'O', '그래서 이제는 "따따블"이 최대예요.'],
-  ['보호예수(의무보유) 기간에는 해당 주식을 팔 수 없다.', 'O', '그래서 해제일이 다가오면 다들 긴장!'],
-  ['기관의 "확약"은 배정받은 주식을 일정 기간 팔지 않겠다는 약속이다.', 'O', '15일·1개월·3개월·6개월 등이 있어요.'],
-  ['스팩(SPAC)은 다른 회사와 합병하는 걸 목적으로 만든 회사다.', 'O', '기업인수목적회사라고 해요.'],
-  ['공모가가 "밴드 상단 초과"로 정해졌다는 건 희망 범위보다 높게 정해졌다는 뜻이다.', 'O', '수요가 그만큼 뜨거웠다는 신호.'],
-  ['증권신고서는 금융감독원 전자공시(DART)에서 누구나 볼 수 있다.', 'O', 'dart.fss.or.kr에서 볼 수 있어요.'],
-  ['모든 공모주는 상장 첫날 공모가보다 높게 끝난다.', 'X', '공모가 아래로 끝나는 날도 있어요.'],
-  ['공중전화 기본요금은 지금도 20원이다.', 'X', '지금은 70원이에요.'],
-  ['코스닥 상장 기업은 코넥스에서 옮겨 오는 "이전상장"도 할 수 있다.', 'O', '코넥스 → 코스닥 이전상장 사례가 많아요.']
-];
-const QSLOT = 30 * 60e3, QPRE = 25e3, QDUR = 20e3, QANS = 15e3, QN = 5, QEND = 20e3;
-let qShift = 0; if (/quiznow/.test(location.search)) { const n0 = Date.now(); qShift = (Math.ceil(n0 / QSLOT) * QSLOT - 9000) - n0; }
-const qNow = () => Date.now() + qShift;
-function qState() {
-  const t = qNow(), slot = Math.floor(t / QSLOT), el = t - slot * QSLOT;
-  if (el < QPRE) return { slot, ph: 'pre', left: QPRE - el };
-  const k = Math.floor((el - QPRE) / QDUR);
-  if (k < QN) { const e2 = el - QPRE - k * QDUR; return e2 < QANS ? { slot, ph: 'ask', k, left: QANS - e2 } : { slot, ph: 'show', k, left: QDUR - e2 }; }
-  if (el < QPRE + QN * QDUR + QEND) return { slot, ph: 'end', left: QPRE + QN * QDUR + QEND - el };
-  return { slot, ph: 'idle', next: (slot + 1) * QSLOT - t };
-}
-function qPick(slot) { const r = rnd((slot * 7919 + 13) >>> 0); const sh = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }; const os = sh(QUIZ.map((q, i) => q[1] === 'O' ? i : -1).filter(i => i >= 0)), xs = sh(QUIZ.map((q, i) => q[1] === 'X' ? i : -1).filter(i => i >= 0)); const nx = r() < .5 ? 2 : 3; return sh([...xs.slice(0, nx), ...os.slice(0, QN - nx)]); }
-function myZone() { if (MAP.id !== 'gate' || !entered || me.climb || me.y !== G) return ''; if (me.x >= 720 && me.x <= 1240) return 'O'; if (me.x >= 1360 && me.x <= 1880) return 'X'; return ''; }
-const kstHM = ms => { const d = new Date(ms + 9 * 3600e3); return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`; };
-let qr = null, qWarned = -1;
-function quizTick() {
-  const s = qState(), box = $('#quiz'), nx = $('#quizNext');
-  if (s.ph === 'idle') {
-    box.classList.add('hide'); if (quizDecal) quizDecal.visible = false;
-    if (nx) nx.textContent = `🅾️❎ 다음 OX 퀴즈 ${kstHM(qNow() + s.next)} · ${Math.ceil(s.next / 60e3)}분 후`;
-    if (entered && s.next < 120e3 && qWarned !== s.slot + 1) { qWarned = s.slot + 1; toast('2분 뒤 OX 퀴즈! 입구 광장으로 모여요'); sys('📢 2분 뒤 OX 퀴즈가 시작돼요. 입구 1층 O 구역(왼쪽)·X 구역(오른쪽)에 서서 답하면 돼요.'); }
-    return;
-  }
-  if (nx) nx.textContent = '🅾️❎ OX 퀴즈 진행 중!';
-  if (!entered) return;
-  if (!qr || qr.slot !== s.slot) { qr = { slot: s.slot, picks: qPick(s.slot), judged: {}, asked: {}, score: 0, done: false }; sys('🅾️❎ OX 퀴즈가 곧 시작돼요!'); sfx([[659, .1], [784, .1], [988, .2]], 'triangle', .05); }
-  if (quizDecal) quizDecal.visible = true; box.classList.remove('hide');
-  const host = NPCS.find(n => n.n === '안내원 미나');
-  const goBtn = MAP.id !== 'gate' ? '<button class="btn pri" id="qGo">입구로 가기</button>' : '';
-  const zone = myZone(), zt = zone ? `<b class="qz ${zone}">${zone} 구역</b>` : '<b class="qz">구역 밖</b>';
-  const bar = (left, tot) => `<div class="qbar"><i style="width:${Math.max(0, left / tot * 100)}%"></i></div>`;
-  let html = '';
-  if (s.ph === 'pre') html = `<div class="qh">🅾️❎ OX 퀴즈 · ${Math.ceil(s.left / 1000)}초 후 시작</div><div class="qq">입구 1층 <span class="qz O">왼쪽 O 구역</span> 또는 <span class="qz X">오른쪽 X 구역</span>에 서 있으면 그게 내 답이에요. 5문제, 맞힐 때마다 🪙</div><div class="qf">${goBtn}<span>지금 내 자리: ${zt}</span></div>`;
-  else if (s.ph === 'ask' || s.ph === 'show') {
-    const qi = qr.picks[s.k], q = QUIZ[qi];
-    if (s.ph === 'ask' && !qr.asked[s.k]) { qr.asked[s.k] = 1; if (host) host.talkT = 40; if (host && MAP.id === 'gate') say(host, `Q${s.k + 1}. ${q[0]}`); sfx([[880, .06]], 'sine', .04); }
-    if (s.ph === 'show' && !qr.judged[s.k]) {
-      const mine = zone, ok = mine === q[1]; qr.judged[s.k] = { mine, ok };
-      if (ok) { qr.score++; addCoin(1, `OX 퀴즈 정답`); emote(1); sfx([[784, .08], [1046, .16]], 'triangle', .06); } else sfx([[330, .12], [262, .2]], 'square', .03);
-    }
-    if (s.ph === 'ask') html = `<div class="qh">Q${s.k + 1} / ${QN} · ${Math.ceil(s.left / 1000)}초</div><div class="qq">${escH(q[0])}</div>${bar(s.left, QANS)}<div class="qf">${goBtn}<span>지금 내 자리: ${zt}</span><span class="sp"></span><span>맞힌 개수 ${qr.score}</span></div>`;
-    else { const j = qr.judged[s.k]; html = `<div class="qh">Q${s.k + 1} 정답은 <b class="qz ${q[1]}">${q[1]}</b></div><div class="qq">${escH(q[0])}</div><div class="qex">${escH(q[2])}</div><div class="qf"><span>${j.ok ? '🎉 맞았어요! 🪙+1' : j.mine ? '😢 아쉬워요' : '구역 밖이라 답을 못 냈어요'}</span><span class="sp"></span><span>맞힌 개수 ${qr.score}</span></div>`; }
-  } else if (s.ph === 'end') {
-    if (!qr.done) { qr.done = true; if (qr.score === QN) addCoin(2, 'OX 퀴즈 만점 보너스'); me.qres = { s: qr.slot, p: qr.score }; pushWorld(); sys(`🅾️❎ OX 퀴즈 끝! ${QN}문제 중 ${qr.score}개 맞혔어요.`); }
-    const rows = Object.values(worldAll()).filter(v => v && v.q && v.q.s === qr.slot).sort((a, b) => b.q.p - a.q.p).slice(0, 5);
-    const lb = rows.map((v, i) => `<div class="qlb"><b>${['🥇', '🥈', '🥉', '4', '5'][i]}</b><span>${escH(str(v.n, NMAX))}</span><em>${v.q.p}개</em></div>`).join('');
-    html = `<div class="qh">🅾️❎ OX 퀴즈 결과 · 나는 ${qr.score} / ${QN}</div>${lb || '<div class="qq">이번 회차 기록을 모으는 중이에요.</div>'}<div class="qf"><span class="muted">다음 퀴즈는 ${kstHM((qr.slot + 1) * QSLOT)}에 열려요</span></div>`;
-  }
-  if (box._h !== html) { box._h = html; box.innerHTML = html; const g = $('#qGo'); if (g) g.onclick = () => { mapCh = curCh; travel('gate'); }; }
-}
-function escH(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-setInterval(quizTick, 250);
-
-// ---------- 대~한민국 응원 ----------
-const cheerLog = []; let lastFW = -99;
-function clap(t0) { try { const a = audioBus(); [0, .3, .78, 1.04, 1.3].forEach(o => { const s = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(); s.buffer = noiseBuf; bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = .8; s.connect(bp).connect(g).connect(master); const t = a.currentTime + (t0 || 0) + o; g.gain.setValueAtTime(sfxOn ? .5 : 0, t); g.gain.exponentialRampToValueAtTime(.001, t + .09); s.start(t, Math.random() * .3); s.stop(t + .1); }); } catch {} }
-function onCheer(c) { say(c, '대~한민국! 👏👏 👏👏👏'); cheerLog.push({ id: c.id, t: T }); while (cheerLog.length && T - cheerLog[0].t > 8) cheerLog.shift(); const ids = new Set(cheerLog.map(x => x.id)); if (ids.size >= 3 && T - lastFW > 10) { lastFW = T; fireworks(); banner('🎆 대~한민국! 응원이 모였어요!'); } }
-function cheer() { if (!entered) return; onCheer(me); NET.fx?.send('cheer')?.catch?.(() => {}); clap(); if (me.onGround && !me.shop && !me.chair && !me.climb) { me.vy = -420; me.onGround = false; } }
+// ---------- 불꽃놀이 ----------
 const FW = [];
 function burst(x, y, z) {
   const n = 110, pos = new Float32Array(n * 3), vel = []; const col = new THREE.Color().setHSL(Math.random(), .95, .6);
@@ -1890,71 +1814,14 @@ function burst(x, y, z) {
   const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: col.multiplyScalar(2.2), size: .22, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
   scene.add(pts); FW.push({ pts, vel, t: 0 }); sfx([[90, .04], [70, .25]], 'triangle', .08);
 }
-function fireworks() { const cx = X3(me.x); for (let b = 0; b < 6; b++) setTimeout(() => burst(cx + (Math.random() - .5) * 12, 4.6 + Math.random() * 2.6, 1 + Math.random() * 2.5), b * 330); }
+function fireworksAt(px) { const cx = X3(px); for (let b = 0; b < 6; b++) setTimeout(() => burst(cx + (Math.random() - .5) * 12, 4.6 + Math.random() * 2.6, 1 + Math.random() * 2.5), b * 330); }
+function fireworks() { fireworksAt(me.x); }
+let lastFwSend = 0;
+function launchFireworks() { if (!entered) return; if (Date.now() - lastFwSend < 20000) { toast('불꽃놀이는 20초에 한 번만 쏠 수 있어요.'); return; } lastFwSend = Date.now(); fireworks(); NET.fx?.send('fw')?.catch?.(() => {}); }
 let fwLast = performance.now();
 (function fwLoop(now) { const dt = Math.min(.05, ((now || performance.now()) - fwLast) / 1000); fwLast = now || performance.now(); for (let i = FW.length - 1; i >= 0; i--) { const f = FW[i]; f.t += dt; const a = f.pts.geometry.attributes.position; for (let j = 0; j < f.vel.length; j++) { f.vel[j][1] -= 2.4 * dt; f.vel[j][0] *= .985; f.vel[j][2] *= .985; a.array[j * 3] += f.vel[j][0] * dt; a.array[j * 3 + 1] += f.vel[j][1] * dt; a.array[j * 3 + 2] += f.vel[j][2] * dt; } a.needsUpdate = true; f.pts.material.opacity = Math.max(0, 1 - f.t / 2); if (f.t > 2) { scene.remove(f.pts); f.pts.geometry.dispose(); f.pts.material.dispose(); FW.splice(i, 1); } } requestAnimationFrame(fwLoop); })();
+{ const b = document.createElement('button'); b.textContent = '🎆'; b.title = '불꽃놀이 (/불꽃)'; b.onclick = () => { launchFireworks(); $('#emopop').style.display = 'none'; }; $('#emopop').appendChild(b); }
 
-// ---------- 추억의 홈피 ----------
-const MOODS = [['행복', '^^'], ['설렘', '*^^*'], ['신남', '>_<'], ['피곤', '-_-zZ'], ['우울', 'ㅠ_ㅠ'], ['배고픔', '@_@'], ['바쁨', '=3=3'], ['멍', 'ㅡ.ㅡ']];
-let hp = store.get('fm_hp', { m: 0, t: '', today: 0, total: 0, day: '', seen: {} });
-let ilchon = (store.get('fm_ilchon', []) || []).filter(x => x && x.n);
-function hpRoll() { if (hp.day !== today()) { hp.day = today(); hp.today = 0; hp.seen = {}; store.set('fm_hp', hp); } }
-function hpPub() { hpRoll(); return { m: hp.m | 0, t: str(hp.t, 40), d: hp.today | 0, a: hp.total | 0, il: ilchon.slice(-6).map(x => [str(x.n, NMAX), str(x.nick, 10)]) }; }
-function ilOf(n) { return ilchon.find(x => x.n === n); }
-function onVisit(n) { hpRoll(); if (!n || hp.seen[n]) return; hp.seen[n] = 1; hp.today++; hp.total++; store.set('fm_hp', hp); pushWorld(); logLine(`🏠 ${n}님이 내 홈피에 놀러왔어요 (TODAY ${hp.today})`, 'l-sys'); if ($('#hpWin').style.display === 'block' && hpView === me.n) renderHp(me.n); }
-let hpView = '';
-function openHp(name) { if (!entered) return; hpView = name; if (name !== me.n) { const uid = uidOf(name); if (uid) NET.wVisit?.send({ n: me.n }, { target: uid })?.catch?.(() => {}); } renderHp(name); openWin('hpWin'); }
-function renderHp(name) {
-  const mine = name === me.n, w = mine ? { h: hpPub(), fame, a: me.aff } : (worldOf(name) || {}), h = w.h || { m: 0, t: '', d: 0, a: 0, il: [] };
-  const bd = $('#hpBd'); bd.innerHTML = '';
-  const top = document.createElement('div'); top.className = 'hpTop';
-  const tt = document.createElement('div'); tt.className = 'hpTitle'; tt.textContent = `🏠 ${name}님의 홈피`; const x = document.createElement('span'); x.className = 'x'; x.textContent = '✕'; x.onclick = closeWins; top.append(tt, x); bd.appendChild(top);
-  const cnt = document.createElement('div'); cnt.className = 'hpCnt'; cnt.innerHTML = `<span>TODAY <b>${h.d | 0}</b></span><span>TOTAL <b>${h.a | 0}</b></span>`; const ac = affChip(w.a); ac.style.marginLeft = 'auto'; cnt.appendChild(ac); const fm = document.createElement('span'); fm.className = 'fame'; fm.textContent = '❤ ' + ((mine ? fame : w.fame) || 0); cnt.appendChild(fm); bd.appendChild(cnt);
-  const diary = document.createElement('div'); diary.className = 'hpDiary';
-  const md = MOODS[h.m | 0] || MOODS[0]; const mood = document.createElement('div'); mood.className = 'hpMood'; mood.innerHTML = `<small>오늘의 기분</small><b></b><span></span>`; mood.querySelector('b').textContent = md[1]; mood.querySelector('span').textContent = md[0];
-  const intro = document.createElement('div'); intro.className = 'hpIntro'; intro.textContent = h.t ? `"${h.t}"` : (mine ? '대문글을 적어보세요' : '아직 대문글이 없어요'); diary.append(mood, intro); bd.appendChild(diary);
-  const il = document.createElement('div'); il.className = 'hpIl'; const ilh = document.createElement('div'); ilh.className = 'lab'; ilh.textContent = `일촌 ${(mine ? ilchon.length : (h.il || []).length)}명 · 이름을 누르면 파도타기`; il.appendChild(ilh);
-  const list = mine ? ilchon.map(x => [x.n, x.nick]) : (h.il || []);
-  const chips = document.createElement('div'); chips.className = 'hpChips';
-  if (!list.length) { const e = document.createElement('span'); e.className = 'muted'; e.textContent = '아직 일촌이 없어요.'; chips.appendChild(e); }
-  list.forEach(([n, nick]) => { const c = document.createElement('button'); c.className = 'ilchip'; c.textContent = `${n} · ${nick}`; const on = n === me.n || uidOf(n); if (!on) c.classList.add('off'); c.title = on ? '파도타기' : '지금 접속해 있지 않아요'; c.onclick = () => { if (n === me.n) { renderHp(me.n); hpView = me.n; } else if (uidOf(n)) openHp(n); else toast(`${n}님은 지금 접속해 있지 않아요.`); }; chips.appendChild(c); });
-  il.appendChild(chips); bd.appendChild(il);
-  if (mine) {
-    const ed = document.createElement('div'); ed.className = 'hpEdit'; const l1 = document.createElement('div'); l1.className = 'lab'; l1.textContent = '오늘의 기분 바꾸기'; const mc = document.createElement('div'); mc.className = 'chips'; mc.style.gridTemplateColumns = 'repeat(4,1fr)';
-    MOODS.forEach(([nm, em], i) => { const c = document.createElement('div'); c.className = 'chip' + ((hp.m | 0) === i ? ' on' : ''); c.innerHTML = `<b></b><small></small>`; c.querySelector('b').textContent = em; c.querySelector('small').textContent = nm; c.onclick = () => { hp.m = i; store.set('fm_hp', hp); pushWorld(); renderHp(me.n); SFX.click(); }; mc.appendChild(c); });
-    const l2 = document.createElement('div'); l2.className = 'lab'; l2.textContent = '대문글 (40자)'; const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px'; const inp = document.createElement('input'); inp.className = 'inp'; inp.maxLength = 40; inp.value = hp.t || ''; inp.placeholder = '예) 오늘도 따상 기원 *^^*'; const sv = mkBtn('저장', () => { hp.t = inp.value.trim().slice(0, 40); store.set('fm_hp', hp); pushWorld(); renderHp(me.n); toast('대문글을 바꿨어요'); }, true); sv.style.flex = 'none';
-    inp.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') sv.click(); }); row.append(inp, sv); ed.append(l1, mc, l2, row);
-    if (ilchon.length) { const l3 = document.createElement('div'); l3.className = 'lab'; l3.textContent = '일촌 정리'; const rl3 = document.createElement('div'); rl3.className = 'hpChips'; ilchon.forEach(x => { const b = document.createElement('button'); b.className = 'ilchip'; b.textContent = `${x.n} 끊기 ✕`; b.onclick = () => { ilchon = ilchon.filter(y => y.n !== x.n); store.set('fm_ilchon', ilchon); pushWorld(); renderHp(me.n); }; rl3.appendChild(b); }); ed.append(l3, rl3); }
-    bd.appendChild(ed);
-  } else {
-    const act = document.createElement('div'); act.className = 'hpAct'; const rel = ilOf(name);
-    if (rel) { const t = document.createElement('span'); t.className = 'ilmark'; t.textContent = `💛 일촌 · ${rel.nick}`; act.appendChild(t); }
-    else { const nk = document.createElement('input'); nk.className = 'inp'; nk.maxLength = 10; nk.placeholder = '일촌명 (예: IPO짝꿍)'; nk.addEventListener('keydown', e => e.stopPropagation()); const b = mkBtn('일촌 신청', () => reqIlchon(name, nk.value.trim() || '일촌'), true); b.style.flex = 'none'; act.append(nk, b); }
-    const row2 = document.createElement('div'); row2.className = 'hpAct'; row2.append(mkBtn('💬 1:1 대화', () => { closeWins(); requestDm({ n: name }); }), mkBtn('귓속말', () => { closeWins(); startWsp(name); }), mkBtn('❤ 인기도', () => giveFame({ n: name }, 1)));
-    bd.append(act, row2);
-  }
-}
-const ilPending = new Map();
-function reqIlchon(name, nick) {
-  if (ilOf(name)) { toast('이미 일촌이에요.'); return; } const uid = uidOf(name); if (!uid || !NET.wIl) { toast(`${name}님은 지금 접속해 있지 않아요.`); return; }
-  if (ilPending.has(name)) { toast('이미 신청하고 기다리는 중이에요.'); return; }
-  nick = str(nick, 10); ilPending.set(name, nick); setTimeout(() => ilPending.delete(name), 32000);
-  NET.wIl.send({ n: me.n, nick }, { target: uid })?.catch?.(() => {}); toast(`💛 ${name}님에게 일촌을 신청했어요`); sys(`💛 ${name}님에게 일촌 신청 (일촌명: ${nick})`);
-}
-function addIlchon(n, nick) { if (ilOf(n)) return; ilchon.push({ n, nick, since: Date.now() }); store.set('fm_ilchon', ilchon); pushWorld(); sys(`💛 ${n}님과 일촌이 됐어요! (일촌명: ${nick})`); SFX.join(); }
-function setupRetroNet() {
-  const W2 = NET.world;
-  NET.wVisit = W2.makeAction('visit'); NET.wVisit.onMessage((d, { userId }) => { if (!d || !rl('v' + userId, 3, 30000)) return; onVisit(str(d.n, NMAX)); });
-  NET.wIl = W2.makeAction('ilreq'); NET.wIlRes = W2.makeAction('ilres');
-  NET.wIl.onMessage((d, { userId }) => { if (!d || !rl('il' + userId, 2, 30000) || !entered) return; const n = str(d.n, NMAX), nick = str(d.nick, 10) || '일촌'; if (!n || isBlocked(n)) return; if (ilOf(n)) { NET.wIlRes.send({ ok: true, n: me.n, nick }, { target: userId })?.catch?.(() => {}); return; } askCard(`💛 ${n}님이 일촌을 신청했어요`, `일촌명: "${nick}" · 수락하면 서로 홈피에 일촌으로 보여요.`, () => { addIlchon(n, nick); NET.wIlRes.send({ ok: true, n: me.n, nick }, { target: userId })?.catch?.(() => {}); }, () => { NET.wIlRes.send({ ok: false, n: me.n }, { target: userId })?.catch?.(() => {}); }); flashTitle('💛 일촌 신청이 왔어요'); });
-  NET.wIlRes.onMessage((d, { userId }) => { if (!d) return; const n = str(d.n, NMAX); if (!ilPending.has(n)) return; const nick = ilPending.get(n); ilPending.delete(n); if (d.ok) addIlchon(n, nick); else sys(`${n}님이 일촌 신청을 정중히 거절했어요.`); });
-  NET.wGacha = W2.makeAction('gacha'); NET.wGacha.onMessage((d, { userId }) => { if (!d || !rl('g' + userId, 2, 30000) || !ITEMS[d.it] || ITEMS[d.it].r !== 3) return; onGachaNews(str(d.n, NMAX), d.it); });
-}
-$('#bHp').onclick = () => openHp(me.n);
-setInterval(() => { if (entered) coinDaily(); }, 60000);
-
-{ const b = document.createElement('button'); b.textContent = '📣'; b.title = '대~한민국 응원 (/응원)'; b.onclick = () => { cheer(); $('#emopop').style.display = 'none'; }; $('#emopop').appendChild(b); }
-updCoin();
 // 시작
 showMap(MAP); snapCam();
 document.fonts?.ready?.then(() => { mapCache.gate && scene.remove(mapCache.gate); delete mapCache.gate; MAPS.gate.bg = null; showMap(MAP); drawGuestBoard(); });
