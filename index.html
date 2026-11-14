@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.4.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.5.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -143,6 +143,8 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 #dock button{padding:9px 11px}
 #dancepop{display:none;flex-direction:column;padding:6px;min-width:210px;border-radius:16px;z-index:8}
 #dancepop button{display:flex;justify-content:space-between;align-items:center;border:0;background:none;color:var(--ink);padding:10px 12px;border-radius:10px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+#tHud{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:30;background:rgba(34,20,12,.84);color:#ffe9c8;border:1px solid rgba(255,206,130,.35);border-radius:14px;padding:8px 16px;font-size:13px;line-height:1.55;text-align:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35);backdrop-filter:blur(6px);max-width:min(560px,92vw)}
+#tHud b{color:#ffd36b}#tHud b.on{color:#ff9a6a}#tHud .q{font-size:12px;opacity:.92}#tHud .q span{display:inline-block;margin-left:8px;padding:0 7px;border-radius:8px;background:rgba(255,255,255,.08)}#tHud .q span.ok{background:rgba(120,200,120,.25);color:#c8f5c0;text-decoration:line-through}#tHud .t{font-size:12px}#tHud i{opacity:.7;font-style:normal}
 #dancepop .dsep{font-size:11px;font-weight:700;opacity:.65;padding:8px 12px 2px;border-top:1px solid rgba(255,255,255,.12);margin-top:4px}
 #dancepop button:hover{background:rgba(255,255,255,.12)}#dancepop kbd{font:inherit;font-size:11px;opacity:.6;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:0 6px}
 #dock .dk{font-size:10px;font-weight:700;opacity:.55;margin-left:5px;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:0 4px;vertical-align:1px}
@@ -646,8 +648,11 @@ MAPS.plaza = { id: 'plaza', name: '포털 광장', W: 1900, theme: 'plaza', indo
   portals: [{ x: 90, y: G, to: 'gate', label: '자유시장으로' }, { x: 520, y: G, to: 'club', label: '🪩 클럽 따블', sg: ['CLUB 따블', '오늘 밤은 두 배로'], col: '#ff4fd8' }, { x: 950, y: G, to: 'temple', label: '🏯 따상사', sg: ['따상사', '수요예측 무사기원'], col: '#ffb347', warm: 1 }, { x: 1380, y: G, to: 'krx', label: '📈 거래소', sg: ['거래소', '오늘도 상장 축하'], col: '#4aa8ff' }] };
 MAPS.club = { id: 'club', name: '클럽 따블', W: 1400, theme: 'club', indoor: true, track: 'club', plats: [{ x1: 560, x2: 840, y: 584, k: 'stage' }, { x1: 1000, x2: 1064, y: 392, k: 'podium' }], ropes: [{ x: 1050, y1: 392, y2: 640, k: 'ladder' }], portals: [{ x: 70, y: G, to: 'plaza', label: '포털 광장으로' }],
   acts: [{ x: 1250, label: '🍹 바', hint: '음료 주문하기', fn: () => actBar() }] };
+const TCUSH = [680, 740, 800, 860, 940, 1000, 1060, 1120];
 MAPS.temple = { id: 'temple', name: '따상사', W: 1600, theme: 'temple', indoor: true, track: 'forest', plats: [], ropes: [], portals: [{ x: 70, y: G, to: 'plaza', label: '포털 광장으로' }],
-  acts: [{ x: 420, label: '🪵 목탁', hint: '목탁 두드리기', fn: () => actMoktak() }, { x: 800, label: '🙏 따상 기원', hint: '소원 빌기', fn: () => actWish() }, { x: 1380, label: '🔔 범종', hint: '종 치기', ly: 4.6, fn: () => actBell() }, { x: 600, label: '🧎 법당 방석', hint: '절하기 (108배 도전)', fn: () => actJeol() }, { x: 1130, label: '🏮 소원 연등', hint: '연등 달기', ly: 3.6, fn: () => actLantern() }] };
+  acts: [{ id: 'bell', x: 260, label: '🔔 범종', hint: '종 치기', ly: 4.6, fn: () => actBell() }, { id: 'mok', x: 480, label: '🪵 목탁', hint: '목탁 두드리기', fn: () => actMoktak() },
+    ...TCUSH.map((x, i) => ({ id: 'cush', x, r: 28, nolabel: i !== 0 && i !== 4, label: '🧎 방석', ly: 1.3, lz: .4, hint: '절 올리기', fn: () => actJeol() })),
+    { id: 'wish', x: 1300, label: '🙏 따상 기원', hint: '소원 빌기', fn: () => actWish() }, { id: 'quest', x: 1470, label: '📜 오늘의 수행', hint: '수행 목록 보기', ly: 3.6, fn: () => actQuest() }] };
 MAPS.krx = { id: 'krx', name: '거래소', W: 1600, theme: 'krx', indoor: true, track: 'town', plats: [], ropes: [], portals: [{ x: 70, y: G, to: 'plaza', label: '포털 광장으로' }],
   acts: [{ x: 560, label: '🐂 황소상', hint: '황소 쓰다듬기', ly: 3.6, fn: () => actBull() }, { x: 1260, label: '📸 상장 기념 포토존', hint: '기념 촬영', ly: 4.2, fn: () => actPhoto() }, { x: 810, label: '📊 모의 단타', hint: '랜덤 종목 매수', ly: 2.4, fn: () => actDanta() }, { x: 1040, label: '🔴 상장 축하 버튼', hint: '버튼 누르기', ly: 2.3, fn: () => actListing() }] };
 const FAKE = ['뭉게구름테크', '도토리푸드', '솜사탕바이오', '꼬마별에너지', '무지개로보틱스', '호두건설', '말랑젤리랩', '깃털모빌리티'];
@@ -888,7 +893,7 @@ function buildClub(m) {
   const pts = []; for (let x = .5; x < W; x += 1) for (let z = -2.5; z <= 6.5; z += 1) pts.push([x, .02, z]);
   const tiles = instGrid(new THREE.BoxGeometry(.94, .05, .94), new THREE.MeshBasicMaterial({ color: '#ffffff' }), pts); g.add(tiles);
   const st = MAPS.club.plats[0], sx1 = X3(st.x1), sx2 = X3(st.x2), sy = Y3(st.y);
-  g.add(box(sx2 - sx1, sy, 3.6, M('#1c1528', { roughness: .4, metalness: .3 }), (sx1 + sx2) / 2, sy / 2, -1.2)); g.add(box(sx2 - sx1, .06, .08, new THREE.MeshBasicMaterial({ color: '#ff4fd8' }), (sx1 + sx2) / 2, sy, .62));
+  g.add(box(sx2 - sx1, sy, 3.6, M('#1c1528', { roughness: .4, metalness: .3, transparent: true, opacity: .5, depthWrite: false }), (sx1 + sx2) / 2, sy / 2, -1.2)); g.add(box(sx2 - sx1, .06, .08, new THREE.MeshBasicMaterial({ color: '#ff4fd8' }), (sx1 + sx2) / 2, sy, .62));
   const cx = W / 2; g.add(box(4.4, 1.3, 1.2, M('#16121e', { metalness: .5, roughness: .3 }), cx, sy + .65, wallZ + 1.1)); g.add(box(4.4, .12, 1.22, new THREE.MeshBasicMaterial({ color: '#36e0ff' }), cx, sy + .9, wallZ + 1.11));
   [-1.2, 1.2].forEach(dx => { g.add(cyl(.45, .45, .06, M('#222', { metalness: .6 }), cx + dx, sy + 1.33, wallZ + 1.1, 24)); g.add(cyl(.12, .12, .07, new THREE.MeshBasicMaterial({ color: '#ff4fd8' }), cx + dx, sy + 1.36, wallZ + 1.1, 12)); });
   [3.5, W - 3.5, cx - 4.4, cx + 4.4].forEach((x, i) => { const hh = i < 2 ? 3.4 : 2.2; g.add(box(1.5, hh, 1.1, M('#141218', { roughness: .5 }), x, (i < 2 ? 0 : sy) + hh / 2, wallZ + 1)); [.7, 1.9].forEach(yy => { if (yy < hh) { const cone = cyl(.42, .42, .05, M('#2a2a30', { metalness: .6 }), x, (i < 2 ? 0 : sy) + yy, wallZ + 1.56, 20); cone.rotation.x = Math.PI / 2; g.add(cone); } }); });
@@ -929,32 +934,91 @@ function buildClub(m) {
   return g;
 }
 let bellSwing = 0;
+function tangTex() {
+  return textTex(1024, 720, g => {
+    g.fillStyle = '#6e1712'; g.fillRect(0, 0, 1024, 720);
+    const bd = [['#2f7a5a', 0, 34], ['#2a5aa0', 34, 14], ['#e8c14f', 48, 6]]; bd.forEach(([c, o, w]) => { g.strokeStyle = c; g.lineWidth = w; g.strokeRect(o + w / 2, o + w / 2, 1024 - o * 2 - w, 720 - o * 2 - w); });
+    const rg = g.createRadialGradient(512, 330, 30, 512, 330, 330); rg.addColorStop(0, 'rgba(255,214,120,.95)'); rg.addColorStop(.45, 'rgba(255,170,60,.45)'); rg.addColorStop(1, 'rgba(255,140,40,0)'); g.fillStyle = rg; g.fillRect(0, 0, 1024, 720);
+    g.strokeStyle = 'rgba(255,220,140,.55)'; g.lineWidth = 3; for (let i = 0; i < 48; i++) { const a = i / 48 * Math.PI * 2; g.beginPath(); g.moveTo(512 + Math.cos(a) * 190, 330 + Math.sin(a) * 190); g.lineTo(512 + Math.cos(a) * 300, 330 + Math.sin(a) * 300); g.stroke(); }
+    const cloud = (x, y, s, c) => { g.fillStyle = c; [[0, 0, 1], [-.9, .25, .7], [.9, .25, .7], [-.45, -.35, .65], [.45, -.35, .65]].forEach(([dx, dy, r]) => { g.beginPath(); g.arc(x + dx * s, y + dy * s, r * s, 0, Math.PI * 2); g.fill(); }); g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 2; g.beginPath(); g.arc(x, y, s * .5, Math.PI, Math.PI * 2.6); g.stroke(); };
+    [[150, 150, 34], [880, 140, 36], [120, 560, 30], [900, 570, 32], [300, 640, 26], [720, 650, 26], [512, 82, 30]].forEach(([x, y, s], i) => cloud(x, y, s, i % 2 ? '#5fa9a0' : '#e9e3d0'));
+    const sage = (x, y, robe) => { g.fillStyle = 'rgba(255,214,110,.85)'; g.beginPath(); g.arc(x, y - 30, 30, 0, Math.PI * 2); g.fill(); g.fillStyle = robe; g.beginPath(); g.moveTo(x - 30, y + 40); g.quadraticCurveTo(x, y - 20, x + 30, y + 40); g.fill(); g.fillStyle = '#e9c6a0'; g.beginPath(); g.arc(x, y - 28, 15, 0, Math.PI * 2); g.fill(); };
+    [[160, 300, '#2f7a5a'], [240, 420, '#2a5aa0'], [160, 470, '#c8a040'], [864, 300, '#2a5aa0'], [784, 420, '#2f7a5a'], [864, 470, '#c8a040'], [300, 250, '#a8322a'], [724, 250, '#a8322a']].forEach(p => sage(...p));
+    g.fillStyle = '#ffd36b'; for (let i = 0; i < 60; i++) { const x = 70 + Math.random() * 884, y = 70 + Math.random() * 580; if (Math.hypot(x - 512, y - 330) < 320) continue; g.beginPath(); g.arc(x, y, 2 + Math.random() * 2, 0, Math.PI * 2); g.fill(); }
+  });
+}
+function makeMonk(robe) {
+  const o = new THREE.Group(), rm = M(robe, { roughness: .85 }), sk = M('#e6c29c', { roughness: .7 }), up = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.SphereGeometry(.32, 14, 10), rm); base.scale.set(1.1, .45, 1.2); base.position.y = .16; o.add(base);
+  up.position.y = .22; o.add(up);
+  const tor = new THREE.Mesh(new THREE.SphereGeometry(.26, 14, 12), rm); tor.scale.set(1, 1.2, .85); tor.position.y = .26; up.add(tor);
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(.25, 18, 14), sk); hd.position.y = .7; up.add(hd);
+  [-.24, .24].forEach(x => { const e = new THREE.Mesh(new THREE.SphereGeometry(.06, 8, 8), sk); e.position.set(x, .68, 0); up.add(e); });
+  o.scale.setScalar(1.3); o.rotation.y = Math.PI; o.userData.up = up; return o;
+}
 function buildTemple(m) {
   const g = new THREE.Group(), { W, wallZ } = placeShell(g, m, new THREE.MeshStandardMaterial({ map: texClone(TEX.floorIn, X3(m.W) / 7, 12 / 7), roughness: .7 }), M('#efe4cc', { roughness: .95 }), M('#7a3a24'));
-  for (let x = 1.5; x < W; x += 5) { g.add(cyl(.3, .32, 8.6, M('#a8322a', { roughness: .7 }), x, 4.3, wallZ + .7, 16)); g.add(box(.9, .5, .9, M('#3c3a36'), x, .25, wallZ + .7)); }
+  const BX = X3(900);
+  for (let x = 1.5; x < W; x += 5) { if (x > BX - 6 && x < BX + 6) continue; g.add(cyl(.3, .32, 8.6, M('#a8322a', { roughness: .7 }), x, 4.3, wallZ + .7, 16)); g.add(box(.9, .5, .9, M('#3c3a36'), x, .25, wallZ + .7)); }
+  [BX - 6.2, BX + 6.2].forEach(x => { g.add(cyl(.34, .36, 8.6, M('#a8322a', { roughness: .7 }), x, 4.3, wallZ + .7, 16)); g.add(box(1, .5, 1, M('#3c3a36'), x, .25, wallZ + .7)); });
   g.add(box(W, .55, .6, M('#2f7a5a'), W / 2, 8.4, wallZ + .7)); g.add(box(W, .28, .62, M('#2a5aa0'), W / 2, 7.95, wallZ + .72)); g.add(box(W, .12, .64, M('#d8483a'), W / 2, 7.75, wallZ + .73));
   for (let x = .8; x < W; x += 1.6) g.add(box(.5, .3, .64, M(['#e8c14f', '#d8483a', '#ffffff'][Math.floor(x) % 3]), x, 8.4, wallZ + 1.02));
   const roof = box(W + 4, .4, 5, M('#4a4a52', { roughness: .8 }), W / 2, 9.4, wallZ + 1.4); roof.rotation.x = .32; g.add(roof);
-  g.add(boardMesh(plaqueTex('따상사', '· 수요예측 무사기원 도량 ·', '#2c4a3e', '#ffe08a', '#d9b25a'), 5.6, 1.25, W / 2, 6.6, wallZ + .9, '#5a2a1c', .25));
-  const lp = [], lc = ['#ff8fb1', '#ffd36b', '#8fe0a0', '#8fc8ff', '#ff6a5a', '#c9a0ff']; const rr = rnd(5);
-  [[5.6, -1.2], [6.1, .6], [5.4, 2.2]].forEach(([y, z], row) => { for (let x = .8; x < W; x += .9) lp.push([x, y + Math.sin(x * .7) * .12, z, 1, lc[Math.floor(rr() * lc.length)]]); });
-  const lan = instGrid(new THREE.SphereGeometry(.24, 12, 10), new THREE.MeshBasicMaterial({ color: '#ffffff' }), lp); g.add(lan);
-  [[5.6, -1.2], [6.1, .6], [5.4, 2.2]].forEach(([y, z]) => g.add(box(W, .015, .015, M('#3a2a20'), W / 2, y + .26, z)));
-  const mk2 = MAPS.temple.acts[0], mx = X3(mk2.x); g.add(box(1.4, .7, .9, M('#5a2a1c'), mx, .35, -1.6)); const mok = new THREE.Mesh(new THREE.SphereGeometry(.32, 16, 12), M('#b8743a', { roughness: .5 })); mok.scale.set(1.2, .85, 1); mok.position.set(mx, .95, -1.6); g.add(mok);
-  const wx = X3(MAPS.temple.acts[1].x); g.add(box(2.6, 1, 1.1, M('#6a2e1e'), wx, .5, -1.8)); g.add(cyl(.35, .3, .45, M('#8a7a5a', { metalness: .5, roughness: .4 }), wx, 1.25, -1.8, 16));
+  g.add(boardMesh(plaqueTex('따상사', '· 수요예측 무사기원 도량 ·', '#2c4a3e', '#ffe08a', '#d9b25a'), 4.6, 1.05, X3(470), 6.4, wallZ + .9, '#5a2a1c', .25));
+  // 후불탱화 + 불상
+  g.add(boardMesh(tangTex(), 10.2, 7.1, BX, 4.0, wallZ + .3, '#3a1a10', .35));
+  const gold = new THREE.MeshStandardMaterial({ color: '#e2b24a', metalness: .8, roughness: .3, emissive: '#6a4208', emissiveIntensity: .45 }), bud = new THREE.Group(); bud.position.set(BX, 0, wallZ + 1.0); g.add(bud);
+  bud.add(cyl(1.25, 1.4, .8, M('#5a1e14', { roughness: .6 }), 0, .4, 0, 8)); bud.add(cyl(1.3, 1.3, .08, gold, 0, .82, 0, 8));
+  const petal = new THREE.SphereGeometry(.34, 12, 10), pm = new THREE.MeshStandardMaterial({ color: '#f2a6bf', roughness: .5, emissive: '#7a2a40', emissiveIntensity: .25 });
+  [[1.05, .98, 14, 0, .55], [.8, 1.12, 12, .22, .35]].forEach(([r, y, n, off, tilt]) => { for (let i = 0; i < n; i++) { const a = (i + off) / n * Math.PI * 2, p = new THREE.Mesh(petal, pm); p.scale.set(.55, .9, .3); p.position.set(Math.sin(a) * r, y, Math.cos(a) * r); p.rotation.set(0, a, 0); p.rotateX(tilt); bud.add(p); } });
+  const sp = (r, sx, sy, sz, x, y, z, mat = gold) => { const s = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 18), mat); s.scale.set(sx, sy, sz); s.position.set(x, y, z); bud.add(s); return s; };
+  sp(1, 1.12, .36, .72, 0, 1.45, .05); sp(.72, .9, 1.15, .68, 0, 2.3, 0); sp(.2, 1.4, .8, 1, 0, 1.78, .5); sp(.46, 1, 1.06, 1, 0, 3.32, 0); sp(.2, 1, .9, 1, 0, 3.82, -.02);
+  [-.46, .46].forEach(x => sp(.1, 1, 2.6, .8, x, 3.22, 0));
+  const dk = M('#6a3a10'); [-.17, .17].forEach(x => { const e = box(.15, .025, .02, dk, x, 3.36, .45); bud.add(e); }); sp(.035, 1, 1, 1, 0, 3.55, .46, M('#fff4c8'));
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(1.15, .05, 8, 48), gold); halo.position.set(0, 3.3, -.45); bud.add(halo);
+  const hd2 = new THREE.Mesh(new THREE.CircleGeometry(1.12, 40), new THREE.MeshBasicMaterial({ color: '#ffcf6a', transparent: true, opacity: .32, blending: THREE.AdditiveBlending, depthWrite: false })); hd2.position.set(0, 3.3, -.46); bud.add(hd2);
+  const md = new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshBasicMaterial({ color: '#ff9a3a', transparent: true, opacity: .22, blending: THREE.AdditiveBlending, depthWrite: false })); md.scale.set(1.7, 2.1, 1); md.position.set(0, 2.3, -.6); bud.add(md);
+  const bl0 = new THREE.PointLight(0xffd8a0, 10, 6, 1.6); bl0.position.set(BX, 5.2, wallZ + 2.4); g.add(bl0);
+  // 불단 · 촛대 · 향로 · 꽃
+  const AZ = wallZ + 2.35; g.add(box(5.2, 1.0, .9, M('#5a1e14', { roughness: .6 }), BX, .5, AZ)); g.add(box(5.3, .08, 1.0, gold, BX, 1.02, AZ)); g.add(box(5.2, .2, .04, M('#e8c14f'), BX, .75, AZ + .46));
+  const flames = [];
+  [-2.1, -1.6, -1.1, 1.1, 1.6, 2.1].forEach(dx => { g.add(cyl(.065, .065, .5, M('#fff6e8', { roughness: .4 }), BX + dx, 1.31, AZ, 10)); const f = new THREE.Mesh(new THREE.SphereGeometry(.06, 8, 8), new THREE.MeshBasicMaterial({ color: '#ffd36b' })); f.scale.y = 1.9; f.position.set(BX + dx, 1.66, AZ); g.add(f); flames.push(f); });
+  [-1.6, 1.6].forEach(dx => { const pl = new THREE.PointLight(0xffb060, 5, 5, 1.6); pl.position.set(BX + dx, 1.9, AZ + .5); g.add(pl); flames.push(pl); });
+  g.add(cyl(.28, .22, .3, gold, BX, 1.2, AZ, 16)); for (let i = -1; i <= 1; i++) g.add(cyl(.012, .012, .5, M('#5a3a20'), BX + i * .08, 1.6, AZ, 4));
+  const smN = 26, smP = new Float32Array(smN * 3), smA = []; for (let i = 0; i < smN; i++) smA.push(Math.random());
+  const smG = new THREE.BufferGeometry(); smG.setAttribute('position', new THREE.BufferAttribute(smP, 3)); const smk = new THREE.Points(smG, new THREE.PointsMaterial({ color: '#e8e0d8', size: .07, transparent: true, opacity: .28, depthWrite: false })); g.add(smk);
+  [-.6, .6].forEach(dx => { g.add(cyl(.12, .16, .4, M('#2a5aa0'), BX + dx, 1.25, AZ - .15, 10)); [[0, .25], [-.12, .18], [.12, .18], [0, .38]].forEach(([ox, oy]) => { const fl = new THREE.Mesh(new THREE.SphereGeometry(.11, 10, 8), M(['#ff8fb1', '#ffffff'][Math.abs(ox) > .05 ? 1 : 0])); fl.position.set(BX + dx + ox, 1.45 + oy, AZ - .15); g.add(fl); }); });
+  // 빨간 카펫
+  g.add(box(1.3, .02, 6.6, M('#9a1a1a', { roughness: .9 }), BX, .012, AZ + 3.8)); [-.68, .68].forEach(dx => g.add(box(.08, .025, 6.6, M('#d8a838', { metalness: .4 }), BX + dx, .014, AZ + 3.8)));
+  // 방석 + 동자승
+  const cushM = M('#c4762a', { roughness: .9 }), cushT = M('#e6b04a', { roughness: .7 });
+  const cush = (x, z) => { g.add(cyl(.46, .48, .1, cushM, x, .05, z, 24)); g.add(cyl(.3, .3, .104, cushT, x, .053, z, 20)); };
+  TCUSH.forEach(px => cush(X3(px), .15));
+  const monks = [], robes = ['#7a5a6a', '#5f7a5c', '#646a7c', '#8a6a4a', '#5a6a8a', '#7a6a5a'], rr = rnd(7);
+  [[-.75, 1], [-1.55, 0]].forEach(([z, full]) => TCUSH.forEach((px, i) => { const x = X3(px) + (z < -1 ? .7 : 0); if (!full && Math.abs(x - BX) < 3.3) return; cush(x, z); if (rr() < .82) { const mk = makeMonk(robes[Math.floor(rr() * robes.length)]); mk.position.set(x, .08, z); g.add(mk); monks.push({ o: mk, ph: rr() * 20, per: 9 + rr() * 7 }); } }));
+  // 목탁
+  const mx = X3(480); g.add(box(1.4, .7, .9, M('#5a2a1c'), mx, .35, -1.6)); const mok = new THREE.Mesh(new THREE.SphereGeometry(.32, 16, 12), M('#b8743a', { roughness: .5 })); mok.scale.set(1.2, .85, 1); mok.position.set(mx, .95, -1.6); g.add(mok);
+  // 따상 기원 (향로)
+  const wx = X3(1300); g.add(box(2.6, 1, 1.1, M('#6a2e1e'), wx, .5, -1.8)); g.add(cyl(.35, .3, .45, M('#8a7a5a', { metalness: .5, roughness: .4 }), wx, 1.25, -1.8, 16));
   for (let i = -1; i <= 1; i++) { g.add(cyl(.015, .015, .8, M('#5a3a20'), wx + i * .12, 1.8, -1.8, 4)); const ember = new THREE.Mesh(new THREE.SphereGeometry(.03, 6, 6), new THREE.MeshBasicMaterial({ color: '#ff6a2a' })); ember.position.set(wx + i * .12, 2.2, -1.8); g.add(ember); }
   [-1.1, 1.1].forEach(dx => { g.add(cyl(.05, .05, 1.2, M('#8a6a3a'), wx + dx, 1.6, -1.8, 6)); const fl2 = new THREE.Mesh(new THREE.SphereGeometry(.08, 8, 8), new THREE.MeshBasicMaterial({ color: '#ffd36b' })); fl2.scale.y = 1.6; fl2.position.set(wx + dx, 2.3, -1.8); g.add(fl2); const pl = new THREE.PointLight(0xffb060, 4, 5, 1.6); pl.position.set(wx + dx, 2.4, -1.2); g.add(pl); });
-  const bxp = X3(MAPS.temple.acts[2].x), pav = new THREE.Group(); pav.position.set(bxp, 0, -1.6); g.add(pav);
+  // 수행 게시판
+  const qx = X3(1470); g.add(boardMesh(plaqueTex('오늘의 수행', '매일 자정에 바뀌어요 · ↑ 로 확인', '#f3e6c8', '#5a2a1c', '#a8322a', 768, 220), 2.6, .75, qx, 2.6, wallZ + .95, '#5a2a1c', .1));
+  // 범종각
+  const bxp = X3(260), pav = new THREE.Group(); pav.position.set(bxp, 0, -1.6); g.add(pav);
   [-1.5, 1.5].forEach(dx => pav.add(cyl(.16, .18, 4.2, M('#a8322a'), dx, 2.1, 0, 12))); pav.add(box(3.6, .3, .5, M('#2f7a5a'), 0, 4.2, 0)); const pr = box(4.4, .3, 2.4, M('#4a4a52'), 0, 4.6, 0); pr.rotation.x = .1; pav.add(pr);
   const bell = new THREE.Group(); bell.position.set(0, 4.05, 0); pav.add(bell);
   const bs = new THREE.Mesh(new THREE.LatheGeometry([[0, 0], [.55, 0], [.62, -.15], [.6, -.5], [.66, -1.3], [.82, -1.85], [.86, -2], [0, -2]].map(([x, y]) => new THREE.Vector2(x, y)), 28), new THREE.MeshStandardMaterial({ color: '#b89a5a', metalness: .75, roughness: .32, emissive: '#3a2a10', emissiveIntensity: .5 })); bell.add(bs); const bl = new THREE.PointLight(0xffd8a0, 6, 6, 1.6); bl.position.set(0, -1, 1.6); bell.add(bl);
   [-1.2, -1.6].forEach(y => bell.add(cyl(.68 + (y < -1.4 ? .1 : 0), .68 + (y < -1.4 ? .1 : 0), .06, M('#5a4a2a', { metalness: .8, roughness: .4 }), 0, y, 0, 28)));
-  const jx = X3(MAPS.temple.acts[3].x);
-  [-1, 0, 1].forEach(i => g.add(cyl(.42, .45, .12, M(['#b03a3a', '#7a3ab0', '#b08a2a'][i + 1], { roughness: .9 }), jx + i * 1.1, .06, -1.0, 20)));
-  g.add(box(4.2, .9, .9, M('#5a2a1c'), jx, .45, -2.6)); [-1.5, -.5, .5, 1.5].forEach((dx, i) => { const f = new THREE.Mesh(new THREE.ConeGeometry(.16, .32, 8), M(['#ff8fb1', '#ffd36b'][i % 2])); f.position.set(jx + dx, 1.06, -2.6); g.add(f); });
-  g.add(boardMesh(plaqueTex('108배 도전', '방석 앞에서 ↑ 한 번에 한 배', '#5a2a1c', '#ffe08a', '#d9b25a', 768, 220), 2.6, .75, jx, 2.6, wallZ + .95, '#3a1a10', .3));
-  const lnx = X3(MAPS.temple.acts[4].x); g.add(boardMesh(plaqueTex('소원 연등', '하루 한 개 · ↑ 로 달기', '#2c4a3e', '#ffe08a', '#d9b25a', 768, 220), 2.4, .7, lnx, 2.5, wallZ + .95, '#5a2a1c', .3));
-  g.userData.tick = (t, dt) => { TL.forEach((l, i) => { l.m.rotation.z = Math.sin(t * 1.3 + i) * .06; }); bellSwing *= Math.pow(.25, dt); bell.rotation.x = Math.sin(t * 6) * bellSwing * .25; };
+  const ez = x => x * x * (3 - 2 * x);
+  g.userData.tick = (t, dt) => {
+    bellSwing *= Math.pow(.25, dt); bell.rotation.x = Math.sin(t * 6) * bellSwing * .25;
+    flames.forEach((f, i) => { if (f.isLight) f.intensity = 4.5 + Math.sin(t * 13 + i) * .8; else f.scale.set(1 + Math.sin(t * 17 + i) * .12, 1.9 + Math.sin(t * 11 + i * 2) * .3, 1); });
+    for (let i = 0; i < smN; i++) { smA[i] = (smA[i] + dt * .16) % 1; const u = smA[i]; smP.set([BX + Math.sin(u * 9 + i) * .12 * (1 + u * 2), 1.85 + u * 1.5, AZ + Math.cos(u * 7 + i) * .08], i * 3); } smG.attributes.position.needsUpdate = true;
+    const yb = yebulNow().on;
+    monks.forEach(mk => { const u = yb ? (t % 4.5) : ((t + mk.ph) % mk.per), b = u < 2.6 ? Math.sin(Math.PI * Math.min(1, u / 2.6)) : 0; mk.o.userData.up.rotation.x = ez(Math.min(1, b * 1.3)) * 1.05; });
+    templeTick(t);
+  };
   exitPortal(g, m, wallZ, '#7a3a24', true);
   g.userData.env = { sky: false, fog: null, hemi: [0xffe9c8, 0x5a4030, 1.0], sun: .8, exposure: .95, bg: '#1a120c' };
   return g;
@@ -1113,7 +1177,7 @@ function poseAvatar(c, dt) {
     } else if (dkind === 'jeol') {
       const ez = x => x * x * (3 - 2 * x); let k = 0, b = 0;
       if (dk < .8) k = ez(dk / .8); else if (dk < 2.3) { k = 1; b = dk < 1.3 ? ez((dk - .8) / .5) : dk < 1.9 ? 1 : 1 - ez((dk - 1.9) / .4); } else k = 1 - ez(Math.min(1, (dk - 2.3) / .8));
-      dip = .42 * k; lL = lR = 1.45 * k; aL = aR = -.2 * k - 1.2 * b; azL = -.15; azR = .15; P.upper.rotation.x = 1.25 * b + .15 * k;
+      dip = .42 * k; lL = lR = 1.45 * k; aL = aR = -.2 * k - 1.2 * b; azL = -.15; azR = .15; P.upper.rotation.x = 1.25 * b + .15 * k; if (MAP.id === 'temple') yawSet = Math.PI * (dk < .45 ? ez(dk / .45) : dk < 2.55 ? 1 : 1 - ez(Math.min(1, (dk - 2.55) / .6)));
     }
   }
   if (dk >= 0 && dk < (c.danceLen || DANCE_LEN) && a === 'stand' && dkind === 'arrest') {
@@ -1170,11 +1234,11 @@ const NPCS = [
   { map: 'r1', n: '장외 김부장', look: { s: 1, hc: 0, hs: 0, t: 6, b: 0, f: 1 }, x: 700, sit: true, shop: { title: '뭉게구름테크 구주 팝니다', items: [['뭉게구름테크 보통주 500주', '주당 12,000'], ['뭉게구름테크 보통주 1,000주', '주당 11,800'], ['도토리푸드 200주', '주당 8,500']] }, talk: ['구주 싸게 드려요~', '보호예수 없는 물량입니다'] },
   { map: 'r2', n: '프리IPO 박과장', look: { s: 2, hc: 2, hs: 2, t: 4, b: 1, f: 0 }, x: 760, sit: true, shop: { title: '솜사탕바이오 RCPS 삽니다', items: [['솜사탕바이오 RCPS', '주당 65,000에 매입'], ['꼬마별에너지 CB', '협의']] }, talk: ['RCPS 물량 있으신 분?', '전환가 리픽싱 조건 봅니다'] },
   { map: 'plaza', n: '포털지기 루나', pin: '문 앞에서 ↑ 누르면 이동!', look: { s: 1, hc: 5, hs: 1, t: 4, b: 2, f: 2 }, x: 1660, talk: ['클럽, 절, 거래소! 어디로 갈래요?', '왼쪽 끝 문은 자유시장으로 가요~', '클럽엔 스포트라이트 무대가 있대요!'] },
-  { map: 'club', n: 'DJ 따상', pin: '🎧 클럽 전용 춤 1·2·3! 높은 무대는 사다리로 ↑', look: { s: 2, hc: 0, hs: 2, t: 6, b: 0, f: 0 }, x: 700, talk: ['따블 비트 들어갑니다~ 🎶', '오늘 상장한 분들 손 들어!', '1 디스코, 2 로봇, 3 셔플! 클럽에서만 돼요~', '오른쪽 높은 무대 올라가면 조명 쏴 드림!'] },
+  { map: 'club', n: 'DJ 따상', pin: '🎧 클럽 전용 춤 1·2·3! 높은 무대는 사다리로 ↑', y: 584, look: { s: 2, hc: 0, hs: 2, t: 6, b: 0, f: 0 }, x: 700, talk: ['따블 비트 들어갑니다~ 🎶', '오늘 상장한 분들 손 들어!', '1 디스코, 2 로봇, 3 셔플! 클럽에서만 돼요~', '오른쪽 높은 무대 올라가면 조명 쏴 드림!'] },
   { map: 'club', n: '바텐더 제이', look: { s: 0, hc: 1, hs: 0, t: 5, b: 0, f: 1 }, x: 1180, talk: ['무알콜만 팔아요~', '따상 선라이즈 추천!', '↑ 누르면 주문돼요'] },
-  { map: 'temple', n: '따상사 스님', look: { s: 1, hc: 6, hs: 0, t: 7, b: 3, f: 1 }, x: 960, talk: ['방석 앞에서 108배 해 보시게', '욕심을 내려놓으면 확약도 가벼워집니다', '종 한번 치고 가세요~ 데엥~', '오늘도 수요예측 무사하길...', '시초가는 바람과 같아서 잡을 수 없지요'] },
+  { map: 'temple', n: '따상사 스님', look: { s: 1, hc: 6, hs: 0, t: 7, b: 3, f: 1 }, x: 1220, talk: ['방석 위에서 ↑ 누르면 절을 올릴 수 있다네', '매시 정각과 30분에 예불이 열린다네. 종이 세 번 울리면 함께 절하세', '예불 시간엔 절 한 번이 공덕 두 배라네', '절을 쌓으면 칭호가 올라간다네. 만배 법사까지 정진하시게', '욕심을 내려놓으면 확약도 가벼워집니다', '종 한번 치고 가세요~ 데엥~', '오늘도 수요예측 무사하길...', '시초가는 바람과 같아서 잡을 수 없지요'] },
   { map: 'krx', n: '상장팀 최과장', look: { s: 0, hc: 3, hs: 0, t: 1, b: 0, f: 1 }, x: 900, talk: ['오늘 상장한 회사 축하드려요!', '시초가는 아무도 몰라요~', '황소 쓰다듬으면 오른대요. (근거 없음)', '포토존에서 기념사진 찍고 가세요!'] },
-].map((d, i) => ({ ...d, npc: true, id: 'npc' + i, y: G, dir: 1, anim: d.sit ? 'sit' : 'stand', phase: 0, seed: i * 1.7, tx: d.x, wait: 2 + i, talkT: 6 + i * 4, pp: { x: d.x - 30, y: G } }));
+].map((d, i) => ({ npc: true, id: 'npc' + i, y: G, ...d, dir: 1, anim: d.sit ? 'sit' : 'stand', phase: 0, seed: i * 1.7, tx: d.x, wait: 2 + i, talkT: 6 + i * 4, pp: { x: d.x - 30, y: G } }));
 const NPC_MEGA = ['장외 김부장 : 뭉게구름테크 구주 급매! 시장 1방으로 오세요~', '프리IPO 박과장 : 솜사탕바이오 RCPS 매입합니다. 2방에서 귓 주세요', '단타왕 이대리 : 입구 방명록에 한마디씩 남기고 가세요~', '수요예측 최차장 : 다음 주 수요예측 일정 정리해드림 ㅎㅎ'];
 let npcMegaT = 45;
 function updateNPC(dt) {
@@ -1213,7 +1277,7 @@ function overlayChar(c) {
   if (!nt._in._bound) { nt._in._bound = true; nt._in.onclick = ev => { ev.stopPropagation(); charMenu(c, ev.clientX, ev.clientY); }; }
   nt._in._c = c;
   const hh = c.anim === 'prone' ? .9 : c.anim === 'chair' ? 2.4 : 2.15;
-  const hd = anchor('h' + c.id, 'head'); place(hd, proj(fx, fy + hh, 0)); const box2 = hd._in;
+  const hd = anchor('h' + c.id, 'head'); place(hd, proj(fx, fy + hh + (c.pinUp && c.pin ? c.pinUp : 0), 0)); const box2 = hd._in;
   let key = ''; const blk = !c.self && !c.npc && isBlocked(c.n);
   const showB = !blk && c.bubble && c.bubbleT > T, showE = c.emoT > T && c.emo, showS = c.shop && c.shop.title, showL = c.lvT && T - c.lvT < 2.2, showP = !blk && !!c.pin;
   key = [showS ? c.shop.title : '', showP ? c.pin : '', showE ? c.emo : '', showB ? c.bubble + c.bubbleT : '', showL ? c.lvT : ''].join('|');
@@ -1241,8 +1305,7 @@ function overlayStatic() {
     if (entered && nearGacha() && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ 뽑기 돌리기'); }
   }
   if (MAP.id === 'club') { const pd = MAPS.club.plats[1], w = spotWho; const e = anchor('podlbl', 'door'); place(e, proj(X3(w ? w.x : (pd.x1 + pd.x2) / 2), Y3(pd.y) + (w ? 3.5 : 1.0), w ? 0 : -.3)); setTxt(e._in, w ? `🌟 ${w.n} 님이 주인공!` : '⭐ 스포트라이트 무대 · 사다리로 ↑'); }
-  if (MAP.id === 'temple') TL.forEach((l, i) => { const e = anchor('tl' + i, 'door'); place(e, proj(l.x, l.y - .6, l.z)); setTxt(e._in, '🏮 ' + l.n); });
-  (MAP.acts || []).forEach((a2, i) => { const e = anchor('a' + i + MAP.id, 'door'); place(e, proj(X3(a2.x), a2.ly || 3.1, -1.4)); setTxt(e._in, a2.label);
+  (MAP.acts || []).forEach((a2, i) => { if (!a2.nolabel) { const e = anchor('a' + i + MAP.id, 'door'); place(e, proj(X3(a2.x), a2.ly || 3.1, a2.lz ?? -1.4)); setTxt(e._in, a2.label); }
     if (entered && nearAct() === a2 && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ ' + a2.hint); } });
 }
 function overlaySweep() { for (const [k, e] of OVL) if (e._f !== frameNo) { e.remove(); OVL.delete(k); } }
@@ -1320,7 +1383,7 @@ async function joinMapRoom() {
     NET.emo = R.makeAction('emo');
     NET.emo.onMessage((d, { userId }) => { if (R !== NET.room || !rl('e' + userId)) return; const r = getRemote(userId); r.emo = clamp(+d || 0, 0, 7); r.emoT = T + 3; });
     NET.fx = R.makeAction('fx');
-    NET.fx.onMessage((d, { userId }) => { if (R !== NET.room || !rl('f' + userId, 2, 5000)) return; if (d === 'lv') { getRemote(userId).lvT = T; SFX.lvup(); } if (d === 'bow') getRemote(userId).bowT = T; if (d === 'bell') { bellSwing = 1; bellSound(); } if (d === 'lantern' || d === 'confetti') { const rq = getRemote(userId); if (!isBlocked(rq.n)) { if (d === 'lantern') hangLantern(rq.n, rq.x); else { confetti(rq.x); fanfare(); } } } if (d === 'dance' || (typeof d === 'string' && d.startsWith('dance:'))) { const rd = getRemote(userId); if (!isBlocked(rd.n)) startDance(rd, d === 'dance' ? 'arrest' : d.slice(6)); } if (d === 'fw') { const rc = getRemote(userId); if (!isBlocked(rc.n)) fireworksAt(rc.x); } });
+    NET.fx.onMessage((d, { userId }) => { if (R !== NET.room || !rl('f' + userId, 2, 5000)) return; if (d === 'lv') { getRemote(userId).lvT = T; SFX.lvup(); } if (d === 'bow') getRemote(userId).bowT = T; if (d === 'bell') { bellSwing = 1; bellSound(); } if (d === 'confetti') { const rq = getRemote(userId); if (!isBlocked(rq.n) && MAP.id === 'krx') { confetti(rq.x); fanfare(); } } if (d === 'dance' || (typeof d === 'string' && d.startsWith('dance:'))) { const rd = getRemote(userId); if (!isBlocked(rd.n)) startDance(rd, d === 'dance' ? 'arrest' : d.slice(6)); if (d === 'dance:jeol' && MAP.id === 'temple' && (!rd._jn || performance.now() - rd._jn > 30000)) { rd._jn = performance.now(); sys('🙇 ' + rd.n + '님이 절을 올렸어요.'); } } if (d === 'fw') { const rc = getRemote(userId); if (!isBlocked(rc.n)) fireworksAt(rc.x); } });
     R.onUserJoin(({ userId }) => sendMv(true, userId));
     R.onUserLeave(({ userId }) => { const r = remotes.get(userId); if (r && r.n !== '...') sys(`${r.n}님이 나갔어요.`); if (r) dropAv(r); remotes.delete(userId); updCounts(); });
     R.onError(e => { console.warn('room', e); if (e && e.code === 'room-full') toast('이 장소가 꽉 찼어요(최대 30명). 다른 방을 이용해 주세요.'); });
@@ -1745,7 +1808,7 @@ function renderMap() {
   const sub = mid => NPCS.some(n => n.map === mid && n.shop) ? 'NPC 좌판' : '';
   ['fl2', 'fl1'].forEach((id, k) => { const el = $('#' + id); el.innerHTML = ''; (k ? [1, 2, 3] : [4, 5, 6]).forEach(i => el.appendChild(card('r' + i, `시장 ${i}방`, sub('r' + i), tints[i - 1]))); });
   $('#flG').innerHTML = ''; $('#flG').appendChild(card('gate', '자유시장 입구', '방명록 · 안내원 · 뽑기 기계', 'linear-gradient(90deg,#ffad5c,#e8742a)'));
-  const fp = $('#flP'); fp.innerHTML = ''; [['plaza', '🌀 포털 광장', '모든 장소로 가는 문', '#8a7ad8'], ['club', '🪩 클럽 따블', '스포트라이트 무대 · 클럽 전용 춤', '#ff4fd8'], ['temple', '🏯 따상사', '108배 · 소원 연등 · 범종', '#ffb347'], ['krx', '📈 거래소', '모의 단타 · 상장 축하 버튼', '#4aa8ff']].forEach(([id, n, s, c]) => fp.appendChild(card(id, n, s, c)));
+  const fp = $('#flP'); fp.innerHTML = ''; [['plaza', '🌀 포털 광장', '모든 장소로 가는 문', '#8a7ad8'], ['club', '🪩 클럽 따블', '스포트라이트 무대 · 클럽 전용 춤', '#ff4fd8'], ['temple', '🏯 따상사', '30분마다 예불 · 절 칭호 · 오늘의 수행', '#ffb347'], ['krx', '📈 거래소', '모의 단타 · 상장 축하 버튼', '#4aa8ff']].forEach(([id, n, s, c]) => fp.appendChild(card(id, n, s, c)));
 }
 function openMapWin() { if (!entered) return; mapCh = curCh; renderMap(); openWin('mapWin'); }
 async function travel(mid) {
@@ -2085,14 +2148,14 @@ function startDance(c, k = 'arrest') {
 const pickR = a => a[Math.floor(Math.random() * a.length)];
 function actSay(t, log) { say(me, t); NET.chat?.send({ t })?.catch?.(() => {}); if (log) sys(log); }
 function bellSound() { try { const a = ac(), t = a.currentTime; [[98, .2, 6], [196, .09, 4.5], [247, .05, 3.5], [392, .035, 2.5], [523, .02, 1.6]].forEach(([f, v, d]) => { const o = a.createOscillator(), g2 = a.createGain(); o.type = 'sine'; o.frequency.value = f; g2.gain.setValueAtTime(0, t); g2.gain.linearRampToValueAtTime(sfxOn ? v : 0, t + .01); g2.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(g2).connect(master); o.start(t); o.stop(t + d + .1); }); } catch {} }
-function actBell() { bellSwing = 1; bellSound(); NET.fx?.send('bell')?.catch?.(() => {}); actSay('데엥~ 🔔', pickR(['종소리가 장외까지 울려 퍼져요.', '마음이 차분해졌어요. 오늘 수요예측도 무사히!', '종을 쳤어요. 따상 기운이 3% 올라간 느낌이에요.'])); }
-function actMoktak() { [0, 260, 520].forEach(d => setTimeout(() => sfx([[1150, .03]], 'triangle', .06), d)); actSay('똑 똑 똑 🪵', pickR(['번뇌가 하나 사라졌어요. (보호예수 번뇌)', '마음이 평온해졌어요. 확약 기간도 금방 지나갈 거예요.', '똑똑똑... 시초가 욕심을 내려놓았어요.'])); }
-function actWish() { const f = pickR(['대길: 다음 공모주 따상 기운이 가득해요 🍀', '중길: 균등 배정 2주 기운이 있어요', '길: 수요예측 경쟁률 1000:1 기운', '소길: 밴드 상단 확정 기운', '흉: 오늘은 청약 대신 쉬어가세요', '대길: 의무보유 확약 없이 따상!? (꿈)']); actSay('🙏 ' + f.split(':')[0] + '!', '오늘의 운세 · ' + f); SFX.click(); }
+function actBell() { qInc('bell'); bellSwing = 1; bellSound(); NET.fx?.send('bell')?.catch?.(() => {}); actSay('데엥~ 🔔', pickR(['종소리가 장외까지 울려 퍼져요.', '마음이 차분해졌어요. 오늘 수요예측도 무사히!', '종을 쳤어요. 따상 기운이 3% 올라간 느낌이에요.'])); }
+function actMoktak() { qInc('mok'); [0, 260, 520].forEach(d => setTimeout(() => sfx([[1150, .03]], 'triangle', .06), d)); actSay('똑 똑 똑 🪵', pickR(['번뇌가 하나 사라졌어요. (보호예수 번뇌)', '마음이 평온해졌어요. 확약 기간도 금방 지나갈 거예요.', '똑똑똑... 시초가 욕심을 내려놓았어요.'])); }
+function actWish() { qInc('wish'); const f = pickR(['대길: 다음 공모주 따상 기운이 가득해요 🍀', '중길: 균등 배정 2주 기운이 있어요', '길: 수요예측 경쟁률 1000:1 기운', '소길: 밴드 상단 확정 기운', '흉: 오늘은 청약 대신 쉬어가세요', '대길: 의무보유 확약 없이 따상!? (꿈)']); actSay('🙏 ' + f.split(':')[0] + '!', '오늘의 운세 · ' + f); SFX.click(); }
 function actBar() { const d = pickR(['🍹 따상 선라이즈', '🥤 상한가 에이드', '🧃 균등배정 주스', '🍋 공모가 레모네이드']); actSay(d + ' 한 잔! (무알콜)', `바텐더가 ${d}를 건네줬어요. 무알콜이에요.`); SFX.click(); }
 function actBull() { bullT = T; bullAt = performance.now(); sfx([[392, .06], [523, .1]], 'triangle', .04); actSay('📈 상승 기운 충전! (1분간 단타 운 ↑)', pickR(['황소 코를 쓰다듬었어요. 오늘 시장은 오를까요?', '황소 뿔이 반짝! 상승 기운을 받았어요.', '황소가 콧김을 뿜는 것 같아요. 🐂'])); SFX.click(); }
 function actPhoto() { const f = document.createElement('div'); f.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:50;pointer-events:none;transition:opacity .6s'; document.body.appendChild(f); requestAnimationFrame(() => requestAnimationFrame(() => f.style.opacity = 0)); setTimeout(() => f.remove(), 700); sfx([[1800, .03], [0, .05], [1200, .05]], 'square', .03); actSay('축 상장! 📸🎉', '찰칵! 상장 기념 사진을 찍었어요.'); }
 let fssTicket = 0, bullT = -99, btnPressT = -99, bullAt = 0, dantaHold = null, lastListing = 0;
-const TL = [], CONF = [];
+const CONF = [];
 function fanfare() { sfx([[523, .09], [659, .09], [784, .09], [1046, .22], [784, .09], [1046, .35]], 'triangle', .06); }
 function confetti(px) {
   const n = 170, pos = new Float32Array(n * 3), col = new Float32Array(n * 3), vel = [], C = new THREE.Color(), cx = X3(px);
@@ -2118,25 +2181,62 @@ function actDanta() {
     if (pct >= 5) { confetti(me.x); fanfare(); } else if (pct > 0) sfx([[784, .06], [1046, .12]], 'triangle', .04); else sfx([[392, .1], [294, .18]], 'sine', .04);
   }, 8000);
 }
+const TITLES = [[0, '초발심'], [10, '행자'], [33, '사미'], [108, '수좌'], [300, '법사'], [1000, '대덕'], [3000, '큰스님'], [10000, '만배 법사']];
+const titleOf = n => { let r = TITLES[0]; for (const t of TITLES) if (n >= t[0]) r = t; return r; };
+const nextTitle = n => TITLES.find(t => t[0] > n);
+function yebulNow() { const d = new Date(Date.now() + 9 * 3600e3), ph = (d.getUTCMinutes() % 30) * 60 + d.getUTCSeconds(); return { on: ph < 180, left: 180 - ph, next: 1800 - ph, key: d.toISOString().slice(0, 13) + (d.getUTCMinutes() < 30 ? 'a' : 'b'), nh: new Date(Date.now() + 9 * 3600e3 + (1800 - ph) * 1000) }; }
+const QDEF = { bow: n => '절 ' + n + '번 올리기', ybow: n => '예불 시간에 절 ' + n + '번', mok: n => '목탁 ' + n + '번 두드리기', bell: () => '범종 치기', wish: () => '따상 기원 빌기' };
+function todayQuests() {
+  let h = 0; for (const ch of today()) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const r = rnd(h % 100000 + 1);
+  const pool = ['ybow', 'mok', 'bell', 'wish']; const a = pool.splice(Math.floor(r() * pool.length), 1)[0], b = pool.splice(Math.floor(r() * pool.length), 1)[0];
+  const N = { bow: [21, 33, 49][Math.floor(r() * 3)], ybow: 3, mok: 10, bell: 1, wish: 1 };
+  return [['bow', N.bow], [a, N[a]], [b, N[b]]];
+}
+function qState() { const s = store.get('fm_q', { day: '', p: {}, all: 0 }); if (s.day !== today()) { s.day = today(); s.p = {}; s.all = 0; } return s; }
+function qInc(k, n = 1) {
+  const s = qState(), qs = todayQuests(), q = qs.find(x => x[0] === k); if (!q) return; const before = s.p[k] || 0; s.p[k] = before + n;
+  if (before < q[1] && s.p[k] >= q[1]) { sys('📜 수행 완료: ' + QDEF[k](q[1])); sfx([[784, .06], [988, .06], [1175, .14]], 'triangle', .04); }
+  if (!s.all && qs.every(x => (s.p[x[0]] || 0) >= x[1])) { s.all = 1; store.set('fm_q', s); addBows(10, true); sys('🎉 오늘의 수행 3/3 완료! 공덕 +10. 내일 새 수행이 열려요.'); fireworks(); return; }
+  store.set('fm_q', s);
+}
+function addBows(n, quiet) {
+  const before = store.get('fm_bows', 0), after = before + n; store.set('fm_bows', after); me.ttl = titleOf(after)[1];
+  const t0 = titleOf(before), t1 = titleOf(after);
+  if (t1[0] !== t0[0]) { sys('🏅 새 칭호: 「' + t1[1] + '」! 공덕 ' + after + ' 달성'); setTimeout(() => { bellSwing = 1; bellSound(); }, 900); fanfare && fanfare(); }
+  return after;
+}
+function actQuest() {
+  const s = qState(), qs = todayQuests(); sys('📜 오늘의 수행 (' + qs.filter(x => (s.p[x[0]] || 0) >= x[1]).length + '/3)');
+  qs.forEach(([k, n]) => sys('  ' + ((s.p[k] || 0) >= n ? '✅' : '⬜') + ' ' + QDEF[k](n) + ' · ' + Math.min(n, s.p[k] || 0) + '/' + n));
+  const tb = store.get('fm_bows', 0), nt = nextTitle(tb); sys('🙇 칭호 「' + titleOf(tb)[1] + '」 · 공덕 ' + tb + (nt ? ' · 다음 「' + nt[1] + '」까지 ' + (nt[0] - tb) : ''));
+  SFX.click();
+}
+let ybRung = '', ybSaid = '', tHudT = 0;
+function templeTick() {
+  const yb = yebulNow();
+  if (yb.on && ybRung !== yb.key) { ybRung = yb.key; if (yb.left > 170) { [0, 2400, 4800].forEach(d => setTimeout(() => { if (MAP.id === 'temple') { bellSwing = 1; bellSound(); } }, d)); } if (ybSaid !== yb.key) { ybSaid = yb.key; sys('🔔 예불 시간이에요! ' + Math.ceil(yb.left / 60) + '분 동안 절 한 번이 공덕 2배예요. 방석 위에서 ↑'); const sn = NPCS.find(n => n.n === '따상사 스님'); if (sn) say(sn, '예불 시간이라네. 다 함께 절을 올리세 🙏'); } }
+  const now = performance.now(); if (now - tHudT < 400) return; tHudT = now; updTHud();
+}
+function updTHud() {
+  let el = document.getElementById('tHud');
+  if (!entered || MAP.id !== 'temple') { if (el) el.style.display = 'none'; return; }
+  if (!el) { el = document.createElement('div'); el.id = 'tHud'; el.onclick = () => actQuest(); document.body.appendChild(el); }
+  el.style.display = 'block'; const yb = yebulNow(), s = qState(), qs = todayQuests(), tb = store.get('fm_bows', 0), nt = nextTitle(tb), mm = x => Math.floor(x / 60) + ':' + String(x % 60).padStart(2, '0');
+  const l1 = yb.on ? '<b class="on">🔔 예불 중</b> · ' + mm(yb.left) + ' 남았어요 · <b>공덕 2배</b>' : '🕯️ 다음 예불 ' + yb.nh.getUTCHours() + ':' + String(yb.nh.getUTCMinutes()).padStart(2, '0') + ' · ' + Math.ceil(yb.next / 60) + '분 후';
+  const dn = qs.filter(x => (s.p[x[0]] || 0) >= x[1]).length;
+  const l2 = '<div class="q">📜 오늘의 수행 ' + dn + '/3' + qs.map(([k, n]) => '<span class="' + ((s.p[k] || 0) >= n ? 'ok' : '') + '">' + QDEF[k](n) + ' ' + Math.min(n, s.p[k] || 0) + '/' + n + '</span>').join('') + '</div>';
+  const l3 = '<div class="t">🙇 칭호 <b>' + titleOf(tb)[1] + '</b> · 공덕 ' + tb + (nt ? ' <i>(다음 ' + nt[1] + '까지 ' + (nt[0] - tb) + ')</i>' : '') + '</div>';
+  const h = '<div>' + l1 + '</div>' + l2 + l3; if (el._h !== h) { el._h = h; el.innerHTML = h; }
+}
+setInterval(updTHud, 1000);
 function actJeol() {
   if (me.danceT != null && T - me.danceT < (me.danceLen || DANCE_LEN)) return;
   dance('jeol'); if (me.danceK !== 'jeol' || T - me.danceT > .1) return;
+  const yb = yebulNow().on, tb = addBows(yb ? 2 : 1);
   const v = store.get('fm_108', { day: '', c: 0 }); if (v.day !== today()) { v.day = today(); v.c = 0; } v.c++; store.set('fm_108', v);
-  say(me, `🙇 ${v.c}배 (오늘 ${Math.min(v.c, 108)}/108)`); me.bubbleT = T + 3.5; setTimeout(() => sfx([[1150, .03]], 'triangle', .05), 1300);
-  if ([1, 10, 33, 54, 100].includes(v.c)) sys(`🙇 오늘 ${v.c}배째예요. 108배까지 ${108 - v.c}배 남았어요.`);
-  if (v.c === 108) { sys('🎉 108배 완주! 오늘의 번뇌가 모두 사라졌어요. 성불하세요~'); setTimeout(() => { bellSwing = 1; bellSound(); fireworks(); }, 2800); }
-}
-function hangLantern(n, px) {
-  const g = mapCache.temple; if (!g) return; const col = pickR(['#ff8fb1', '#ffd36b', '#8fe0a0', '#8fc8ff', '#ff6a5a', '#c9a0ff']);
-  const x = X3(px) + (Math.random() - .5) * 1.6, y = 4.2 + Math.random() * .5, z = .8 + Math.random() * .7;
-  const m = new THREE.Mesh(new THREE.SphereGeometry(.42, 14, 12), new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.3 })); m.scale.y = 1.25; m.position.set(x, y, z);
-  const s = cyl(.008, .008, 7.2 - y, M('#3a2a20'), x, (7.2 + y) / 2, z, 4); g.add(m, s); TL.push({ m, s, n, x, y, z });
-  if (TL.length > 24) { const o = TL.shift(); g.remove(o.m, o.s); }
-}
-function actLantern() {
-  if (store.get('fm_lantern', '') === today()) { sys('🏮 연등은 하루에 하나만 달 수 있어요. 내일 또 와요!'); return; }
-  store.set('fm_lantern', today()); hangLantern(me.n, me.x); NET.fx?.send('lantern')?.catch?.(() => {}); sfx([[880, .06], [1175, .12]], 'sine', .04);
-  actSay('🏮 소원 연등을 달았어요', `${me.n}님의 연등이 따상사에 걸렸어요. 지금 이 장소에 있는 사람들에게 보여요.`);
+  say(me, '🙇 ' + v.c + '배' + (yb ? ' · 공덕 2배' : '') + ' · ' + titleOf(tb)[1]); me.bubbleT = T + 3.5; setTimeout(() => sfx([[1150, .03]], 'triangle', .05), 1300);
+  qInc('bow'); if (yb) qInc('ybow');
+  if (v.c === 108) { sys('🎉 오늘 108배 완주! 번뇌가 모두 사라졌어요. 성불하세요~'); setTimeout(() => { bellSwing = 1; bellSound(); fireworks(); }, 2800); }
 }
 function dance(k = 'arrest') { if (!entered || me.shop || me.climb || !me.onGround) { toast('땅에 서서 출 수 있어요.'); return; } if (DANCES[k]?.club && MAP.id !== 'club') { toast('🪩 클럽 따블에서만 출 수 있는 춤이에요.'); return; } if (me.danceT != null && T - me.danceT < (me.danceLen || DANCE_LEN)) return; me.chair = false; startDance(me, k); NET.fx?.send(k === 'arrest' ? 'dance' : 'dance:' + k)?.catch?.(() => {}); }
 { const dp = document.createElement('div'); dp.id = 'dancepop'; dp.className = 'hud glass'; document.body.appendChild(dp);
