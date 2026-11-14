@@ -138,6 +138,9 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 .door.click{pointer-events:auto;cursor:pointer}
 @media (max-width:1700px){#dock{left:auto;right:16px;transform:none}}
 #dock button{padding:9px 11px}
+#dancepop{display:none;flex-direction:column;padding:6px;min-width:210px;border-radius:16px;z-index:8}
+#dancepop button{display:flex;justify-content:space-between;align-items:center;border:0;background:none;color:var(--ink);padding:10px 12px;border-radius:10px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+#dancepop button:hover{background:rgba(255,255,255,.12)}#dancepop kbd{font:inherit;font-size:11px;opacity:.6;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:0 6px}
 #dock .dk{font-size:10px;font-weight:700;opacity:.55;margin-left:5px;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:0 4px;vertical-align:1px}
 #decoWin{width:min(660px,94vw)}.dtabs{grid-template-columns:repeat(3,1fr);margin-bottom:12px}
 .dinfo{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.22);font-size:12.5px;color:var(--sub);margin-bottom:10px;line-height:1.5}.dinfo>b{color:#ff9aa8;font-size:17px;white-space:nowrap}
@@ -326,7 +329,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 </div>
 
 <div class="hud glass hide" id="dock">
-  <button id="bBow" title="공수 90도 인사 (X)">🙇 인사<span class="dk">X</span></button><button id="bDance" title="체포 댄스 (V)">🚨 체포 댄스<span class="dk">V</span></button><button id="bEmo">표정</button><button id="bChair" title="앉기 (Z)">앉기<span class="dk">Z</span></button><button id="bPin" title="말풍선 고정">말풍선</button><button id="bShop" title="개인상점">상점</button><button id="bDeco">🎀 꾸미기</button>
+  <button id="bBow" title="공수 90도 인사 (X)">🙇 인사<span class="dk">X</span></button><button id="bDance" title="춤 (V 체포하겠어 · L NEON · M ANIMAL)">💃 춤<span class="dk">V L M</span></button><button id="bEmo">표정</button><button id="bChair" title="앉기 (Z)">앉기<span class="dk">Z</span></button><button id="bPin" title="말풍선 고정">말풍선</button><button id="bShop" title="개인상점">상점</button><button id="bDeco">🎀 꾸미기</button>
   <span class="sep"></span>
   <button id="bMega">확성기<span class="cnt" id="cM">10</span></button><button id="bMegaW">큰 확성기<span class="cnt" id="cH">3</span></button>
   <span class="sep"></span>
@@ -400,8 +403,8 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
   <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="btn" id="pinOff">고정 해제</button><button class="btn pri" id="pinOn">고정하기</button></div></div>
 <div class="modal glass" id="infoWin"><h3>캐릭터 정보<span class="x" data-close>✕</span></h3><div id="infoBd"></div></div>
 <div class="modal glass" id="helpWin"><h3>도움말<span class="x" data-close>✕</span></h3>
-  <b>조작</b><br>← → 이동 · Space/Alt 점프 · ↓ 엎드리기 · ↓+점프 발판 아래로<br>↑ 사다리·밧줄 오르기 / 문 들어가기 · Enter 채팅 · F1~F7 감정표현<br>이름표 클릭: 귓속말 · 상점 · 정보 · 단축키: Z 앉기 · X(또는 B) 공수 90도 인사 · V 체포 댄스
-  <br><br><b>채팅 명령어</b><br>/w 닉네임 내용 · /r 내용 (답장) · /확 내용 (확성기) · /전확 내용 (큰 확성기) · /찾기 닉네임 · /춤 (체포 댄스) · /불꽃<br>/고정 내용 (말풍선 고정) · /고정해제 · /대화 닉네임 (1:1 대화 신청)
+  <b>조작</b><br>← → 이동 · Space/Alt 점프 · ↓ 엎드리기 · ↓+점프 발판 아래로<br>↑ 사다리·밧줄 오르기 / 문 들어가기 · Enter 채팅 · F1~F7 감정표현<br>이름표 클릭: 귓속말 · 상점 · 정보 · 단축키: Z 앉기 · X(또는 B) 공수 90도 인사 · 춤: V 체포하겠어 · L NEON · M ANIMAL
+  <br><br><b>채팅 명령어</b><br>/w 닉네임 내용 · /r 내용 (답장) · /확 내용 (확성기) · /전확 내용 (큰 확성기) · /찾기 닉네임 · /춤 · /네온 · /애니멀 · /불꽃<br>/고정 내용 (말풍선 고정) · /고정해제 · /대화 닉네임 (1:1 대화 신청)
   
   <br><br><b>꾸미기</b><br>🛠️ 만들기: 인기도에 따라 열려요 (❤0 털모자·야구모자 … ❤30 황금 왕관, 총 32종). 인기도는 다른 사람이 이름표 메뉴에서 ❤를 눌러줘야 올라요.<br>🎰 오늘의 뽑기: 하루 1번, 입구 오른쪽 끝 기계 앞에서 ↑ 또는 /뽑기. 잠긴 아이템이 나올 수도 있어요.<br>🎆 불꽃놀이: 표정 메뉴 또는 /불꽃 (20초에 한 번)<br><br><b>사람과 어울리기</b><br>이름표를 누르면 1:1 대화 신청 · 귓속말 · 인기도 올리기/내리기 · 차단을 할 수 있어요.<br>인기도는 하루에 한 번, 같은 사람에게는 한 달에 한 번 줄 수 있어요.
   <br><br><span class="muted">서버 없이 브라우저끼리 직접(P2P) 연결해요. 그래픽·사운드·이름은 모두 이 게임용으로 새로 만든 것이고, NPC 좌판의 종목명은 가상이며 투자 권유가 아니에요. 채팅·귓속말·1:1 대화는 어디에도 저장되지 않고, 방명록만 접속한 사람들 브라우저에 저장돼요.</span></div>
@@ -904,15 +907,31 @@ function poseAvatar(c, dt) {
   P.upper.rotation.x += (bowA * Math.PI / 2 - P.upper.rotation.x) * Math.min(1, dt * 18);
   if (bowA > 0) av.yaw.rotation.y += (c.dir * 1.25 - av.yaw.rotation.y) * Math.min(1, dt * 10);
   // 체포 댄스: 모자 던지기 → 개다리춤 → 호루라기 → 손가락 총
-  let lzL = 0, lzR = 0, sway = 0, dip = 0; const dk = c.danceT != null ? T - c.danceT : 99;
-  if (dk >= 0 && dk < DANCE_LEN && a === 'stand') {
+  let lzL = 0, lzR = 0, sway = 0, dip = 0, bx = 0, lean = 0, htz = 0, yawSet = null; const dk = c.danceT != null ? T - c.danceT : 99, dkind = c.danceK || 'arrest';
+  if (dk >= 0 && dk < (c.danceLen || DANCE_LEN) && a === 'stand' && dkind !== 'arrest') {
+    av.yaw.rotation.y += (0 - av.yaw.rotation.y) * Math.min(1, dt * 10);
+    if (dkind === 'neon') {
+      if (dk < .9) { sway = Math.sin(dk * 5) * .16; aL = -1.25 + Math.sin(dk * 7) * .5; aR = -1.25 + Math.sin(dk * 7 + 1.6) * .5; azL = -.65; azR = .65; }
+      else if (dk < 1.4) { const u = (dk - .9) / .5; htz = -Math.sin(u * Math.PI) * .55; aR = -2.7; azR = -.3; aL = -.2; sway = -.1; }
+      else if (dk < 2.0) { const r1 = Math.max(0, 1 - Math.abs(dk - 1.6) * 10); aL = aR = -1.5 - r1 * .35; azL = .18; azR = -.18; if (!c._dS1) { c._dS1 = 1; say(c, '✨ NEON ✨'); sfx([[1318, .06], [1760, .06], [2093, .16]], 'triangle', .035); } }
+      else if (dk < 3.2) { const w = (dk - 2.0) * 8; bx = Math.sin(w) * .16; dip = Math.abs(Math.sin(w)) * .06; sway = Math.sin(w) * .12; lL = Math.max(0, Math.sin(w)) * .4; lR = Math.max(0, -Math.sin(w)) * .4; aL = aR = -.35; azL = -.5; azR = .5; }
+      else if (dk < 3.9) { const u = (dk - 3.2) / .7; yawSet = u * Math.PI * 2; lzR = Math.sin(u * Math.PI) * 1.25; aL = aR = -.4; azL = -1.1; azR = 1.1; }
+      else { const u = Math.min(1, (dk - 3.9) / .25); dip = .32 * u; lL = lR = -.75 * u; aL = aR = -.6; azL = -.3; azR = .3; sway = Math.sin(dk * 14) * .05; }
+    } else if (dkind === 'animal') {
+      if (dk < 1.0) { dip = -Math.abs(Math.sin(dk * 9)) * .14; aL = aR = -1.95; azL = .55; azR = -.55; htz = Math.sin(dk * 9) * .1; }
+      else if (dk < 2.0) { const w = (dk - 1.0) * 11; aL = -1.6 + Math.sin(w) * .9; aR = -1.6 - Math.sin(w) * .9; azL = .4; azR = -.4; htz = Math.sin(w) * .12; sway = Math.sin(w) * .08; }
+      else if (dk < 3.0) { const w = (dk - 2.0) * 6; dip = .18; lean = .35; bx = Math.sin(w) * .14; aL = aR = -1.05; azL = .2; azR = -.2; lL = lR = -.35; }
+      else { const u = Math.min(1, (dk - 3.0) / .5); dip = -Math.sin(u * Math.PI) * .32; aL = aR = -2.6 + u * .7; azL = .35; azR = -.35; lL = -.4 * Math.sin(u * Math.PI); lR = lL; if (!c._dS1 && u > .6) { c._dS1 = 1; say(c, '어흥! 🐾'); try { const a2 = ac(), o = a2.createOscillator(), g2 = a2.createGain(), t2 = a2.currentTime; o.type = 'sawtooth'; o.frequency.setValueAtTime(140, t2); o.frequency.exponentialRampToValueAtTime(70, t2 + .45); g2.gain.setValueAtTime(sfxOn ? .05 : 0, t2); g2.gain.exponentialRampToValueAtTime(.001, t2 + .5); o.connect(g2).connect(master); o.start(t2); o.stop(t2 + .55); } catch {} } }
+    }
+  }
+  if (dk >= 0 && dk < (c.danceLen || DANCE_LEN) && a === 'stand' && dkind === 'arrest') {
     av.yaw.rotation.y += (0 - av.yaw.rotation.y) * Math.min(1, dt * 10);
     if (dk < .7) { const u = dk / .7; aR = -2.9 * Math.sin(Math.min(1, u * 1.6) * Math.PI / 2); aL = -.25; azR = .2; }
     else if (dk < 2.1) { const s = Math.sin((dk - .7) * 19); lzL = -.12 - .38 * Math.max(0, s); lzR = .12 + .38 * Math.max(0, -s); lL = lR = .08; aL = aR = -.25; azL = -.85; azR = .85; dip = .05 + Math.abs(s) * .03; }
     else if (dk < 2.9) { aR = -2.25; azR = -.45; aL = -.2; azL = -.8; sway = Math.sin((dk - 2.1) * 12) * .13; if (!c._dWh) { c._dWh = 1; sfx([[2400, .06], [2600, .06], [2400, .06], [2700, .16]], 'sine', .035); } }
     else { const r1 = Math.max(0, 1 - Math.abs(dk - 3.2) * 9), r2 = Math.max(0, 1 - Math.abs(dk - 3.6) * 9); aL = aR = -1.5 - (r1 + r2) * .35; azL = .18; azR = -.18; if (!c._dSaid) { c._dSaid = 1; say(c, '체포하겠어! 🫵🚨'); sfx([[880, .05], [660, .08], [0, .2], [880, .05], [660, .08]], 'square', .025); } }
   }
-  P.legL.rotation.z = lzL; P.legR.rotation.z = lzR; av.body.rotation.z = sway; if (dip) av.body.position.y -= dip;
+  P.legL.rotation.z = lzL; P.legR.rotation.z = lzR; av.body.rotation.z = sway; if (dip) av.body.position.y -= dip; av.body.position.x = bx; if (lean) av.body.rotation.x += lean; P.head.rotation.z = htz; if (yawSet != null) av.yaw.rotation.y = yawSet;
   P.legL.rotation.x = lL; P.legR.rotation.x = lR; P.armL.rotation.x = aL; P.armR.rotation.x = aR; P.armL.rotation.z = azL; P.armR.rotation.z = azR;
   const emo = c.emoT > T ? c.emo : 0, blink = (t + (c.seed || 0)) % 4.2 < .12;
   const sy = blink || emo === 1 || emo === 6 ? .012 : emo === 5 ? P.eyeBase[1] * 1.35 : P.eyeBase[1];
@@ -1102,7 +1121,7 @@ async function joinMapRoom() {
     NET.emo = R.makeAction('emo');
     NET.emo.onMessage((d, { userId }) => { if (R !== NET.room || !rl('e' + userId)) return; const r = getRemote(userId); r.emo = clamp(+d || 0, 0, 7); r.emoT = T + 3; });
     NET.fx = R.makeAction('fx');
-    NET.fx.onMessage((d, { userId }) => { if (R !== NET.room || !rl('f' + userId, 2, 5000)) return; if (d === 'lv') { getRemote(userId).lvT = T; SFX.lvup(); } if (d === 'bow') getRemote(userId).bowT = T; if (d === 'dance') { const rd = getRemote(userId); if (!isBlocked(rd.n)) startDance(rd); } if (d === 'fw') { const rc = getRemote(userId); if (!isBlocked(rc.n)) fireworksAt(rc.x); } });
+    NET.fx.onMessage((d, { userId }) => { if (R !== NET.room || !rl('f' + userId, 2, 5000)) return; if (d === 'lv') { getRemote(userId).lvT = T; SFX.lvup(); } if (d === 'bow') getRemote(userId).bowT = T; if (d === 'dance' || (typeof d === 'string' && d.startsWith('dance:'))) { const rd = getRemote(userId); if (!isBlocked(rd.n)) startDance(rd, d === 'dance' ? 'arrest' : d.slice(6)); } if (d === 'fw') { const rc = getRemote(userId); if (!isBlocked(rc.n)) fireworksAt(rc.x); } });
     R.onUserJoin(({ userId }) => sendMv(true, userId));
     R.onUserLeave(({ userId }) => { const r = remotes.get(userId); if (r && r.n !== '...') sys(`${r.n}님이 나갔어요.`); if (r) dropAv(r); remotes.delete(userId); updCounts(); });
     R.onError(e => { console.warn('room', e); if (e && e.code === 'room-full') toast('이 장소가 꽉 찼어요(최대 30명). 다른 방을 이용해 주세요.'); });
@@ -1178,7 +1197,9 @@ function sendChat() {
   if ((m = raw.match(/^\/(확|mega)\s+(.+)$/))) return doMega(m[2], false);
   if ((m = raw.match(/^\/(찾기|find)\s*(.*)$/))) return doFind(m[2].trim());
   if (/^\/(인사|bow)$/.test(raw)) return bow();
-  if (/^\/(춤|체포|dance)$/.test(raw)) return dance();
+  if (/^\/(춤|체포|dance)$/.test(raw)) return dance('arrest');
+  if (/^\/(네온|neon)$/i.test(raw)) return dance('neon');
+  if (/^\/(애니멀|animal)$/i.test(raw)) return dance('animal');
   if (/^\/(불꽃|fw)$/.test(raw)) return launchFireworks();
   if (/^\/(뽑기|꾸미기)$/.test(raw)) return openDeco(raw === '/뽑기' ? 'gacha' : 'make');
   if (/^\/고정해제$/.test(raw)) return setPin('');
@@ -1292,7 +1313,9 @@ addEventListener('keydown', e => {
   if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { if (!e.repeat) upPressed(); keys.u = 1; }
   if ((e.key === 'b' || e.key === 'B' || e.key === 'x' || e.key === 'X') && !e.repeat) bow();
   if ((e.key === 'z' || e.key === 'Z') && !e.repeat) $('#bChair').click();
-  if ((e.key === 'v' || e.key === 'V') && !e.repeat) dance();
+  if ((e.key === 'v' || e.key === 'V') && !e.repeat) dance('arrest');
+  if ((e.key === 'l' || e.key === 'L') && !e.repeat) dance('neon');
+  if ((e.key === 'm' || e.key === 'M') && !e.repeat) dance('animal');
   if ((e.key === ' ' || e.key === 'Alt' || e.key === 'c' || e.key === 'C') && !e.repeat) jumpQ = true;
 });
 addEventListener('keyup', e => { if (e.key === 'Alt') e.preventDefault(); const k = e.key.toLowerCase(); if (k === 'arrowleft' || k === 'a') keys.l = 0; if (k === 'arrowright' || k === 'd') keys.r = 0; if (k === 'arrowdown' || k === 's') keys.d = 0; if (k === 'arrowup' || k === 'w') keys.u = 0; });
@@ -1307,7 +1330,7 @@ function updateMe(dt) {
   if (moving) return; if (me.climbCD > 0) me.climbCD -= dt;
   const mv = (keys.r ? 1 : 0) - (keys.l ? 1 : 0);
   if (me.shop) { me.anim = 'sit'; jumpQ = false; if (mv && !me.warned) { toast('좌판을 펼친 동안은 움직일 수 없어요 (개인상점 → 상점 접기)'); me.warned = true; } if (!mv) me.warned = false; return; }
-  if ((me.bowT != null && T - me.bowT < 1.8) || (me.danceT != null && T - me.danceT < DANCE_LEN)) { me.anim = 'stand'; me.vx = 0; jumpQ = false; return; }
+  if ((me.bowT != null && T - me.bowT < 1.8) || (me.danceT != null && T - me.danceT < (me.danceLen || DANCE_LEN))) { me.anim = 'stand'; me.vx = 0; jumpQ = false; return; }
   if (me.chair) { if (mv || jumpQ || keys.u) { me.chair = false; jumpQ = false; } else { me.anim = 'chair'; return; } }
   if (me.climb) {
     const r = me.climb; me.x = r.x; const v = ((keys.d ? 1 : 0) - (keys.u ? 1 : 0)) * CLIMB; me.y += v * dt; me.anim = 'climb'; if (v) me.phase += dt * 9;
@@ -1840,16 +1863,20 @@ let fwLast = performance.now();
 
 // ===================== v1.0: 체포 댄스 =====================
 const DANCE_LEN = 4.3, CAPS = [];
-function startDance(c) {
-  c.danceT = T; c._dWh = 0; c._dSaid = 0; c.chair = false;
-  if (!c.av) return; const p = c.av.root.position, g = new THREE.Group(), navy = new THREE.MeshStandardMaterial({ color: '#1f2d4a', roughness: .5, transparent: true });
+const DANCES = { arrest: { n: '체포하겠어', ic: '🚨', key: 'V', len: 4.3 }, neon: { n: 'NEON', ic: '💡', key: 'L', len: 4.7 }, animal: { n: 'ANIMAL', ic: '🐾', key: 'M', len: 4.2 } };
+function startDance(c, k = 'arrest') {
+  if (!DANCES[k]) return; c.danceT = T; c.danceK = k; c.danceLen = DANCES[k].len; c._dWh = 0; c._dSaid = 0; c._dS1 = 0; c.chair = false;
+  if (k !== 'arrest' || !c.av) return; const p = c.av.root.position, g = new THREE.Group(), navy = new THREE.MeshStandardMaterial({ color: '#1f2d4a', roughness: .5, transparent: true });
   const top = new THREE.Mesh(new THREE.CylinderGeometry(.3, .26, .16, 20), navy); top.position.y = .08; g.add(top);
   const br = new THREE.Mesh(new THREE.BoxGeometry(.3, .025, .2), new THREE.MeshStandardMaterial({ color: '#111', transparent: true })); br.position.set(0, .01, .2); g.add(br);
   const badge = new THREE.Mesh(new THREE.CircleGeometry(.05, 12), new THREE.MeshStandardMaterial({ color: '#ffd36b', emissive: '#a07000', emissiveIntensity: .5, transparent: true })); badge.position.set(0, .1, .27); g.add(badge);
   g.position.set(p.x + .15, p.y + 1.95, p.z + .1); scene.add(g); CAPS.push({ g, v: [1.1 * (Math.random() > .5 ? 1 : -1), 5.2, 1.4], t: 0 });
 }
-function dance() { if (!entered || me.shop || me.climb || !me.onGround) { toast('땅에 서서 출 수 있어요.'); return; } if (me.danceT != null && T - me.danceT < DANCE_LEN) return; me.chair = false; startDance(me); NET.fx?.send('dance')?.catch?.(() => {}); }
-$('#bDance').onclick = dance;
+function dance(k = 'arrest') { if (!entered || me.shop || me.climb || !me.onGround) { toast('땅에 서서 출 수 있어요.'); return; } if (me.danceT != null && T - me.danceT < (me.danceLen || DANCE_LEN)) return; me.chair = false; startDance(me, k); NET.fx?.send(k === 'arrest' ? 'dance' : 'dance:' + k)?.catch?.(() => {}); }
+{ const dp = document.createElement('div'); dp.id = 'dancepop'; dp.className = 'hud glass'; document.body.appendChild(dp);
+  Object.entries(DANCES).forEach(([k, d]) => { const b = document.createElement('button'); b.innerHTML = `<span>${d.ic} ${d.n}</span><kbd>${d.key}</kbd>`; b.onclick = () => { dp.style.display = 'none'; dance(k); }; dp.appendChild(b); });
+  $('#bDance').onclick = () => { if (dp.style.display === 'flex') { dp.style.display = 'none'; return; } dp.style.display = 'flex'; const r = $('#bDance').getBoundingClientRect(); dp.style.left = Math.max(8, r.left) + 'px'; dp.style.bottom = (innerHeight - r.top + 12) + 'px'; };
+  addEventListener('pointerdown', e => { if (!e.target.closest('#dancepop') && !e.target.closest('#bDance')) dp.style.display = 'none'; }); }
 let capLast = performance.now();
 (function capLoop(now) { const d = Math.min(.05, ((now || performance.now()) - capLast) / 1000); capLast = now || performance.now(); for (let i = CAPS.length - 1; i >= 0; i--) { const k = CAPS[i]; k.t += d; k.v[1] -= 9 * d; k.g.position.x += k.v[0] * d; k.g.position.y += k.v[1] * d; k.g.position.z += k.v[2] * d; k.g.rotation.x += 7 * d; k.g.rotation.z += 4 * d; const o = Math.max(0, 1 - Math.max(0, k.t - .8) / .5); k.g.traverse(m => { if (m.material) m.material.opacity = o; }); if (k.t > 1.3) { scene.remove(k.g); CAPS.splice(i, 1); } } requestAnimationFrame(capLoop); })();
 // 시작
