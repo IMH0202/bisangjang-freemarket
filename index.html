@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.7.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.8.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -58,12 +58,16 @@ button{font:inherit;color:inherit}
 .ib{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px);color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;display:grid;place-items:center}
 .ib.off{opacity:.45}
 /* 확성기 배너 */
-#megabar{left:50%;top:18px;transform:translateX(-50%);max-width:min(620px,70vw);padding:10px 18px 10px 44px;border-radius:999px;font-size:14px;font-weight:700;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(180deg,#ffb769,#ec7a2e);color:#fff;box-shadow:0 10px 26px rgba(236,122,46,.45)}
-#megabar:before{content:'📣';position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:17px}
-#megabar .mbaff{display:inline-flex;vertical-align:middle;height:22px;margin:-3px 6px 0 0;box-shadow:0 1px 4px rgba(0,0,0,.18)}
-#megabar .mbaff img{max-height:14px}
-#megabar .mban{font-size:12px;font-weight:800;opacity:.92;margin-right:8px;padding-right:8px;border-right:1px solid rgba(255,255,255,.45)}
-#megabar.pop{animation:mpop .3s ease}
+#megabar{left:50%;top:86px;transform:translateX(-50%);width:min(1000px,90vw);box-sizing:border-box;padding:20px 30px 20px 100px;border-radius:26px;font-size:clamp(20px,2.7vw,34px);font-weight:900;line-height:1.3;letter-spacing:-.01em;display:none;white-space:normal;word-break:keep-all;overflow:hidden;background:linear-gradient(135deg,#ff4f6d,#ff8a3c 45%,#ffcf3a);color:#fff;text-shadow:0 2px 0 rgba(120,30,0,.45),0 0 16px rgba(255,255,255,.3);border:3px solid #fff1bf;box-shadow:0 0 0 5px rgba(255,110,40,.3),0 20px 54px rgba(255,80,40,.55);z-index:60}
+#megabar:after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.42) 50%,transparent 65%);transform:translateX(-100%);animation:mshine 2.4s ease-in-out infinite;pointer-events:none}
+@keyframes mshine{60%,100%{transform:translateX(100%)}}
+@keyframes mshake{from{transform:translateY(-50%) rotate(-16deg) scale(1)}to{transform:translateY(-50%) rotate(-4deg) scale(1.12)}}
+@keyframes mpop2{0%{transform:translateX(-50%) scale(.35);opacity:0}60%{transform:translateX(-50%) scale(1.07);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+#megabar:before{content:'📣';position:absolute;left:24px;top:50%;transform:translateY(-50%) rotate(-12deg);font-size:52px;text-shadow:none;animation:mshake .45s ease-in-out infinite alternate}
+#megabar .mbaff{display:inline-flex;vertical-align:middle;height:36px;padding:0 10px;margin:-6px 10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.25);text-shadow:none}
+#megabar .mbaff img{max-height:24px}
+#megabar .mban{font-size:.62em;font-weight:900;opacity:.95;margin-right:12px;padding-right:12px;border-right:2px solid rgba(255,255,255,.55);vertical-align:middle}
+#megabar.pop{animation:mpop2 .55s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes mpop{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 /* 채팅 */
 #chat{left:16px;bottom:16px;width:min(400px,44vw);padding:10px}
@@ -434,7 +438,7 @@ const $ = s => document.querySelector(s);
 const G = 640, U = 40;                    // 게임 좌표(px) → 3D 단위 변환
 const X3 = px => px / U, Y3 = py => (G - py) / U;
 const APP = 'bisangjang-freemarket/v4';
-const BUILD = 'v1.7';
+const BUILD = 'v1.8';
 (async () => { try { if (location.protocol !== 'https:' || !location.hostname.endsWith('github.io')) return; const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }); const m = (await r.text()).match(/const BUILD = '([^']+)'/); if (m && m[1] !== BUILD && !location.search.includes('v=' + m[1])) location.replace(location.pathname + '?v=' + m[1] + location.hash); } catch {} })();
 const CHN = 1, NMAX = 14;
 const IS_POP = location.hash.includes('win');
@@ -885,7 +889,7 @@ function buildPlaza(m) {
   g.userData.env = { sky: false, fog: ['#161228', 40, 160], hemi: [0x9a8cff, 0x2a2040, .85], sun: .35, exposure: 1.0, bg: '#120e22' };
   return g;
 }
-let spotWho = null, podWho = null, spotMeT = 0, spotDjT = 0;
+let spotWho = null, podWho = null, spotMeT = 0, spotDjT = 0, spotLock = null, spotRetT = -99; const spotCur = { x: 700, y: 0, on: false };
 const hsh = i => { let x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 function spotPos() { const tt = Date.now() / 1000, seg = 5, i = Math.floor(tt / seg), u = (tt - i * seg) / 1.6, p = j => 220 + hsh(j) * 1080; const a = p(i), b = p(i + 1); if (u >= 1) return { x: b, mv: false }; const e = u * u * (3 - 2 * u); return { x: a + (b - a) * e, mv: true }; }
 function onSpot(w, pod) {
@@ -936,10 +940,15 @@ function buildClub(m) {
   const lamp = new THREE.Group(); lamp.add(box(.7, .5, .7, M('#2a2a30', { metalness: .7, roughness: .3 }), 0, 0, 0)); const lens = cyl(.28, .28, .06, new THREE.MeshBasicMaterial({ color: '#fff2c0' }), 0, -.27, 0, 20); lamp.add(lens); g.add(lamp);
   g.add(box(W - 2, .12, .12, M('#3a3a44', { metalness: .7 }), W / 2, 13.3, .3));
   const spotTick = (t, dt) => {
-    const sp = spotPos(), sx = X3(sp.x), onSt = sp.x >= stg.x1 && sp.x <= stg.x2, sy = onSt ? stTop : 0;
+    const path = spotPos(), isD = c => c && c.danceT != null && T - c.danceT < (c.danceLen || DANCE_LEN);
+    if (spotLock && (!isD(spotLock) || (spotLock !== me && !remotes.has(spotLock.id) && ![...remotes.values()].includes(spotLock)) || (spotLock === me && MAP.id !== 'club'))) { spotLock = null; spotRetT = T; }
+    if (!spotLock && spotWho && isD(spotWho)) { spotLock = spotWho; if (spotLock === me) sys('🔦 춤이 끝날 때까지 조명이 따라가요!'); const dj = NPCS.find(n => n.n === 'DJ 따상'); if (dj && performance.now() - spotDjT > 6000 && (spotDjT = performance.now())) say(dj, pickR(['조명 고정! 계속 춰요~ 🔦', `${spotLock.n} 춤 실화?! 🔥`, '이 무대는 당신 거예요! 🎉'])); }
+    const tx = spotLock ? spotLock.x : path.x; const kx = spotLock || T - spotRetT < 1.2 ? Math.min(1, dt * 7) : 1; spotCur.x += (tx - spotCur.x) * kx; if (!isFinite(spotCur.x)) spotCur.x = path.x;
+    const sp = { x: spotCur.x, mv: !spotLock && path.mv }, sx = X3(sp.x), onSt = spotLock ? spotLock.y < G - 20 : sp.x >= stg.x1 && sp.x <= stg.x2, sy = spotLock ? Y3(spotLock.y) : onSt ? stTop : 0; spotCur.y = sy; spotCur.on = onSt;
     let who = null;
     const inSpot = c => Math.abs(c.x - sp.x) < 48 && Math.abs(c.y - (onSt ? stg.y : G)) < 8;
-    if (entered && MAP.id === 'club' && inSpot(me)) who = me;
+    if (spotLock) who = spotLock;
+    else if (entered && MAP.id === 'club' && inSpot(me)) who = me;
     else for (const r of remotes.values()) if (inSpot(r)) { who = r; break; }
     if (who !== spotWho) { spotWho = who; if (who) onSpot(who); }
     spot.position.set(sx, 13, .3); spot.target.position.set(sx, sy, 0); lamp.position.set(sx, 13, .3);
@@ -958,7 +967,8 @@ function buildClub(m) {
     ball.rotation.y = t * .8; lasers.forEach((l, i) => { l.rotation.z = Math.sin(t * (1.1 + i * .3) + i) * .75 * (i < 2 ? 1 : -1); l.rotation.x = Math.cos(t * .9 + i) * .3; });
     lights.forEach((pl, i) => { pl.position.x = W / 2 + Math.sin(t * (.7 + i * .25) + i * 2) * (W / 2 - 3); pl.intensity = 14 + Math.sin(t * 8 + i) * 8; });
   };
-  g.userData.env = { sky: false, fog: null, hemi: [0x6a4cff, 0x200a30, .5], sun: .12, exposure: 1.05, bg: '#06050a' };
+  g.userData.env = { sky: false, fog: null, hemi: [0xb8a8ff, 0x5a2a70, 1.25], sun: .55, exposure: 1.4, bg: '#140c22' };
+  [[.2, '#ff4fd8'], [.5, '#36e0ff'], [.8, '#ffd23f']].forEach(([f, c]) => { const pl = new THREE.PointLight(c, 40, 22, 1.4); pl.position.set(W * f, 8, 3); g.add(pl); });
   return g;
 }
 let bellSwing = 0;
@@ -1355,7 +1365,7 @@ function overlayStatic() {
     const gp = anchor('gachapill', 'door click'); place(gp, proj(X3(GACHA_X), 3.1, -1.5)); if (!gp._in._b) { gp._in._b = 1; gp._in.innerHTML = '오늘의 뽑기 <i>🎰</i>'; gp._in.onclick = ev => { ev.stopPropagation(); openDeco('gacha'); }; }
     if (entered && nearGacha() && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ 뽑기 돌리기'); }
   }
-  if (MAP.id === 'club') { { const pd = MAPS.club.plats[1], w2 = podWho, e2 = anchor('podlbl2', 'door'); place(e2, proj(X3(w2 ? w2.x : (pd.x1 + pd.x2) / 2), Y3(pd.y) + (w2 ? 3.5 : 1.0), w2 ? 0 : -.3)); setTxt(e2._in, w2 ? `👑 ${w2.n} 님이 무대 주인공!` : '⭐ 주인공 무대 · 사다리로 ↑'); } const w = spotWho, sp = spotPos(), onSt = sp.x >= 560 && sp.x <= 840; const e = anchor('podlbl', 'door'); place(e, w ? proj(X3(w.x), Y3(w.y) + 3.4, 0) : proj(X3(sp.x), (onSt ? Y3(584) : 0) + .5, 1.4)); setTxt(e._in, w ? `🌟 ${w.n} 님이 주인공!` : '🔦 조명 안으로!'); }
+  if (MAP.id === 'club') { { const pd = MAPS.club.plats[1], w2 = podWho, e2 = anchor('podlbl2', 'door'); place(e2, proj(X3(w2 ? w2.x : (pd.x1 + pd.x2) / 2), Y3(pd.y) + (w2 ? 3.5 : 1.0), w2 ? 0 : -.3)); setTxt(e2._in, w2 ? `👑 ${w2.n} 님이 무대 주인공!` : '⭐ 주인공 무대 · 사다리로 ↑'); } const w = spotWho; const e = anchor('podlbl', 'door'); place(e, w ? proj(X3(w.x), Y3(w.y) + 3.4, 0) : proj(X3(spotCur.x), spotCur.y + .5, 1.4)); setTxt(e._in, w ? (spotLock === w ? `🔦 ${w.n} 님 무대 중! 💃` : `🌟 ${w.n} 님이 주인공! 춤추면 조명 고정`) : '🔦 조명 안으로!'); }
   (MAP.acts || []).forEach((a2, i) => { if (!a2.nolabel) { const e = anchor('a' + i + MAP.id, 'door'); place(e, proj(X3(a2.x), a2.ly || 3.1, a2.lz ?? -1.4)); setTxt(e._in, a2.label); if (e._in._act !== a2) { e._in._act = a2; e.style.pointerEvents = 'auto'; e._in.style.pointerEvents = 'auto'; e._in.style.cursor = 'pointer'; e._in.onclick = ev => { ev.stopPropagation(); clickAct(a2); }; } }
     if (entered && nearAct() === a2 && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ ' + a2.hint); } });
 }
@@ -1370,7 +1380,7 @@ document.querySelectorAll('.tab').forEach(tb => tb.onclick = () => { document.qu
 $('#fold').onclick = () => { folded = !folded; logEl.classList.toggle('fold', folded); $('#fold').textContent = folded ? '펴기' : '접기'; logEl.scrollTop = logEl.scrollHeight; };
 const bq = []; let bBusy = false;
 function banner(text) { bq.push(text); if (!bBusy) nextBanner(); }
-function nextBanner() { const b = $('#megabar'); const it = bq.shift(); if (!it) { b.style.display = 'none'; bBusy = false; return; } bBusy = true; b.textContent = ''; if (typeof it === 'object') { if (it.aff) { const ch2 = affChip(it.aff); ch2.classList.add('mbaff'); b.appendChild(ch2); const an = document.createElement('span'); an.className = 'mban'; an.textContent = affName(it.aff); b.appendChild(an); } b.appendChild(document.createTextNode(it.text)); } else b.textContent = it; b.className = 'hud pop'; b.style.display = 'block'; setTimeout(nextBanner, bq.length > 2 ? 2500 : 5000); }
+function nextBanner() { const b = $('#megabar'); const it = bq.shift(); if (!it) { b.style.display = 'none'; bBusy = false; return; } bBusy = true; b.textContent = ''; if (typeof it === 'object') { if (it.aff) { const ch2 = affChip(it.aff); ch2.classList.add('mbaff'); b.appendChild(ch2); const an = document.createElement('span'); an.className = 'mban'; an.textContent = affName(it.aff); b.appendChild(an); } b.appendChild(document.createTextNode(it.text)); } else b.textContent = it; b.className = 'hud'; void b.offsetWidth; b.className = 'hud pop'; b.style.display = 'block'; setTimeout(nextBanner, bq.length > 2 ? 3000 : 7000); }
 const NOTICES = ['🌀 입구 왼쪽 끝 포털 광장에서 클럽 따블 · 따상사 · 거래소로 갈 수 있어요!', '🎀 꾸미기: 인기도가 오를수록 더 화려한 모자·안경·날개를 만들 수 있어요.', '🎰 입구 오른쪽 끝 뽑기 기계에서 하루 1번 무료 뽑기! 잠긴 아이템이 나올 수도 있어요.', '/불꽃 — 다 같이 보는 불꽃놀이를 쏴요. 표정은 F1~F7!', '비상장 자유시장에 오신 걸 환영해요. 입구 방명록에 한마디 남겨주세요!', '입구 건물 1층 문은 시장 1~3방, 2층은 4~6방이에요. 2층은 양쪽 사다리로!', '거래 사기 주의! 운영자는 절대 비밀번호를 묻지 않아요.', '확성기는 매일 자정(한국 시간)에 다시 채워져요.'];
 let noticeI = 0; function nextNotice() { $('#noticeTxt').textContent = '📌 ' + NOTICES[noticeI++ % NOTICES.length]; } nextNotice(); setInterval(nextNotice, 9000);
 let toastTO; function toast(t) { const el = $('#toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toastTO); toastTO = setTimeout(() => el.style.display = 'none', 2600); }
