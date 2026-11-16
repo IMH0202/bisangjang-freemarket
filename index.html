@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.9.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.0.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -245,6 +245,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 .affpick:hover{border-color:rgba(255,173,92,.7)}.affpick .sp{flex:1}.affpick small{color:var(--acc2);font-size:12px}.door.click:hover{background:#fff}
 .l-exp{color:#ffe08a;font-size:12px}
 #gbWin{width:min(540px,94vw)}#gbList{max-height:50vh;overflow:auto}
+#msWin{width:min(560px,94vw)}#msList{max-height:50vh;overflow:auto}.msi{background:rgba(160,130,240,.1)}.msi .h b{color:#b9a4ff}.msf{display:flex;gap:6px;margin-top:6px}.msf button{border:0;border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;background:rgba(255,255,255,.1);color:inherit}.msf .mslk.on{background:rgba(255,90,140,.3);color:#ffd0e0}.msf .mshd{opacity:.6}
 .gbi{padding:11px 4px;border-bottom:1px solid var(--line)}.gbi .h{display:flex;gap:8px;align-items:baseline}.gbi b{font-size:13.5px;color:#ffc48a}.gbi small{color:var(--sub);font-size:11.5px}.gbi p{margin:4px 0 0;font-size:13.5px;line-height:1.55;word-break:break-all}
 /* v0.4 */
 #reqs{position:fixed;right:16px;top:70px;z-index:35;display:flex;flex-direction:column;gap:10px}
@@ -358,7 +359,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
   <h1>비상장 자유시장</h1>
   <div class="cap" style="margin-top:4px">UNLISTED FREE MARKET</div>
   <div class="tag">모여서 떠들고, 확성기 쓰고, 좌판 까는 곳.</div>
-  <p class="desc">입구 건물 문으로 시장 1~6방을 오갈 수 있어요. 2층은 사다리로 올라가요. 설치 없이 이 페이지만 열면 돼요.</p>
+  <p class="desc">입구 건물 문으로 신주·구주 매물방, 주관사방, 번개방, 소개팅·미팅방, 찌라시방에 갈 수 있어요. 2층은 사다리로 올라가요. 설치 없이 이 페이지만 열면 돼요.</p>
   <div id="welcome" class="hide" style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(242,139,60,.16);border:1px solid rgba(255,173,92,.35);font-size:13.5px;line-height:1.55"><b id="wbName"></b>님, 다시 오셨네요! 캐릭터는 이 브라우저에 저장돼 있어서 바로 들어가면 돼요.<button class="btn" id="bCustom" style="margin-top:10px;width:100%">캐릭터 꾸미기 바꾸기 ▾</button></div>
   <div id="custom"><div class="lab">헤어</div><div class="chips" id="cHS" style="grid-template-columns:repeat(4,1fr)"></div>
   <div class="lab">얼굴 · 펫</div><div style="display:flex;gap:8px"><div class="chips" id="cF" style="grid-template-columns:repeat(3,1fr);flex:3"></div></div>
@@ -393,6 +394,11 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
   <div class="muted">다녀간 흔적을 남겨주세요. 서버 대신, 접속한 사람들 브라우저에 나눠서 저장돼요.</div>
   <div style="display:flex;gap:8px;margin:12px 0 6px"><input class="inp" id="gbTxt" maxlength="100" placeholder="한마디 남기기 (100자까지)"><button class="btn pri" id="gbPost" style="flex:none">남기기</button></div>
   <div id="gbList"></div>
+</div>
+<div class="modal glass" id="msWin"><h3><span>💭 마음의 소리 <span class="muted" id="msCnt"></span></span><span class="x" data-close>✕</span></h3>
+  <div class="muted">이름 없이 익명으로 올라가요. 실명·회사 내부 정보·욕설·비방은 쓰지 말아주세요. 보기 싫은 글은 🙈로 내 화면에서 숨길 수 있어요.</div>
+  <div style="display:flex;gap:8px;margin:12px 0 6px"><input class="inp" id="msTxt" maxlength="120" placeholder="아무도 모르게 한마디 (120자까지)"><button class="btn pri" id="msPost" style="flex:none">남기기</button></div>
+  <div id="msList"></div>
 </div>
 <div class="modal glass" id="mapWin"><h3>장소 이동<span class="x" data-close>✕</span></h3>
   <div class="muted">가고 싶은 곳을 누르면 바로 이동해요.</div>
@@ -438,7 +444,7 @@ const $ = s => document.querySelector(s);
 const G = 640, U = 40;                    // 게임 좌표(px) → 3D 단위 변환
 const X3 = px => px / U, Y3 = py => (G - py) / U;
 const APP = 'bisangjang-freemarket/v4';
-const BUILD = 'v1.9';
+const BUILD = 'v2.0';
 (async () => { try { if (location.protocol !== 'https:' || !location.hostname.endsWith('github.io')) return; const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }); const m = (await r.text()).match(/const BUILD = '([^']+)'/); if (m && m[1] !== BUILD && !location.search.includes('v=' + m[1])) location.replace(location.pathname + '?v=' + m[1] + location.hash); } catch {} })();
 const CHN = 1, NMAX = 14;
 const IS_POP = location.hash.includes('win');
@@ -647,10 +653,12 @@ const MAPS = {
     id: 'gate', name: '자유시장 입구', W: 2400, theme: 'out',
     plats: [{ x1: 180, x2: 380, y: 552, k: 'deck' }, { x1: 300, x2: 500, y: 464, k: 'deck' }, { x1: 470, x2: 670, y: 376, k: 'deck' }, { x1: 720, x2: 1880, y: 470, k: 'balcony' }, { x1: 2010, x2: 2210, y: 552, k: 'deck' }, { x1: 2140, x2: 2340, y: 464, k: 'deck' }],
     ropes: [{ x: 630, y1: 376, y2: 630, k: 'rope' }, { x: 762, y1: 470, y2: 640, k: 'ladder' }, { x: 1838, y1: 470, y2: 640, k: 'ladder' }],
+    acts: [{ x: 1525, r: 80, nolabel: true, hint: '마음의 소리 보기 · 쓰기', fn: () => openMS() }],
     portals: [{ x: 90, y: G, to: 'plaza', label: '🌀 포털 광장' }, { x: 880, y: G, to: 'r1', door: 1 }, { x: 1300, y: G, to: 'r2', door: 2 }, { x: 1720, y: G, to: 'r3', door: 3 }, { x: 920, y: 470, to: 'r4', door: 4 }, { x: 1300, y: 470, to: 'r5', door: 5 }, { x: 1680, y: 470, to: 'r6', door: 6 }]
   }
 };
-for (let i = 1; i <= 6; i++) MAPS['r' + i] = { id: 'r' + i, name: `자유시장 ${i}방`, W: 1400, theme: 'in', idx: i, plats: [{ x1: 260, x2: 520, y: 552, k: 'shelf' }, { x1: 880, x2: 1140, y: 552, k: 'shelf' }, { x1: 500, x2: 900, y: 464, k: 'shelf' }, { x1: 1180, x2: 1380, y: 470, k: 'shelf' }], ropes: [{ x: 1212, y1: 470, y2: 640, k: 'ladder' }], portals: [{ x: 70, y: G, to: 'gate', label: '입구로' }], lamps: [250, 700, 1150] };
+const ROOMS = { 1: { n: '신주 매물방', ic: '📜', sub: '공모주·신주 거래', col: '#d8583c', sg: '신주 매물방 · 공모주·신주 거래' }, 2: { n: '구주 매물방', ic: '🤝', sub: '장외 구주 직거래', col: '#4a86d0', sg: '구주 매물방 · 장외 구주 직거래' }, 3: { n: '주관사방', ic: '🏦', sub: 'IB 실무자 라운지', col: '#2f8a5a', sg: '주관사방 · IB 실무자 라운지' }, 4: { n: '번개방', ic: '⚡', sub: '오늘 번개 모여라', col: '#f0a020', sg: '번개방 · 오늘 번개 모여라' }, 5: { n: '소개팅·미팅방', ic: '💘', sub: '1:1 소개팅도 단체 미팅도', col: '#ec6c9e', sg: '소개팅·미팅방 · 설렘 주의' }, 6: { n: '찌라시방', ic: '📰', sub: '카더라 통신 · 믿거나 말거나', col: '#6a6f7c', sg: '찌라시방 · 믿거나 말거나' } };
+for (let i = 1; i <= 6; i++) MAPS['r' + i] = { id: 'r' + i, name: ROOMS[i].n, W: 1400, theme: 'in', idx: i, plats: [{ x1: 260, x2: 520, y: 552, k: 'shelf' }, { x1: 880, x2: 1140, y: 552, k: 'shelf' }, { x1: 500, x2: 900, y: 464, k: 'shelf' }, { x1: 1180, x2: 1380, y: 470, k: 'shelf' }], ropes: [{ x: 1212, y1: 470, y2: 640, k: 'ladder' }], portals: [{ x: 70, y: G, to: 'gate', label: '입구로' }], lamps: [250, 700, 1150] };
 MAPS.plaza = { id: 'plaza', name: '포털 광장', W: 1900, theme: 'plaza', indoor: true, track: 'town', plats: [], ropes: [],
   portals: [{ x: 90, y: G, to: 'gate', label: '자유시장으로' }, { x: 520, y: G, to: 'club', label: '🪩 클럽 따블', sg: ['CLUB 따블', '오늘 밤은 두 배로'], col: '#ff4fd8' }, { x: 950, y: G, to: 'temple', label: '🏯 따상사', sg: ['따상사', '수요예측 무사기원'], col: '#ffb347', warm: 1 }, { x: 1380, y: G, to: 'krx', label: '📈 거래소', sg: ['거래소', '오늘도 상장 축하'], col: '#4aa8ff' }] };
 MAPS.club = { id: 'club', name: '클럽 따블', W: 1400, theme: 'club', indoor: true, track: 'club', plats: [{ x1: 560, x2: 840, y: 584, k: 'stage' }, { x1: 1000, x2: 1064, y: 392, k: 'podium' }], ropes: [{ x: 1050, y1: 392, y2: 640, k: 'ladder' }], portals: [{ x: 70, y: G, to: 'plaza', label: '포털 광장으로' }],
@@ -722,6 +730,41 @@ function rope(g, r) {
 
 // ---------- 입구 맵 ----------
 let gbTex = null;
+let msTex = null, MS = (store.get('fm_ms', []) || []).filter(e => e && e.id), msHide = new Set(store.get('fm_msHide', []));
+const MS_ANON = ['🐜 익명의 개미', '🐂 익명의 황소', '🐻 익명의 곰', '🦊 익명의 여우', '🐢 익명의 장기투자자', '🐇 익명의 단타러', '🦉 익명의 야근러', '🐧 익명의 신입', '🐱 익명의 대리', '🐶 익명의 과장', '🦁 익명의 부장', '🐹 익명의 청약러'];
+function cleanMS(e) { if (!e || typeof e !== 'object') return null; const id = str(e.id, 16), t = str(e.t, 120).trim(), a = MS_ANON.includes(e.a) ? e.a : MS_ANON[0], ts = +e.ts || 0, l = Number.isInteger(e.l) ? clamp(e.l, 0, 9999) : 0; if (!id || !t || !ts || ts > Date.now() + 6e5) return null; return { id, t, a, ts, l }; }
+function drawMsBoard() {
+  if (!msTex) return; const c = msTex.userData.canvas, g = c.getContext('2d'), w = c.width, h = c.height;
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#f3ecff'); gr.addColorStop(1, '#e6dcfa'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#4a3a78'; g.font = '800 38px ' + FONTK; g.textAlign = 'left'; g.fillText('💭 마음의 소리', 28, 58);
+  g.fillStyle = '#7a68b0'; g.font = '600 20px ' + FONTK; g.textAlign = 'right'; g.fillText('익명 · 앞에서 ↑ 눌러 쓰기', w - 26, 56);
+  g.fillStyle = 'rgba(74,58,120,.25)'; g.fillRect(28, 76, w - 56, 2);
+  const list = MS.filter(e => !msHide.has(e.id)).slice(-4).reverse();
+  if (!list.length) { g.fillStyle = '#7a68b0'; g.font = '500 25px ' + FONTK; g.textAlign = 'left'; g.fillText('아무도 모르게 속마음을 남겨봐요', 28, 134); }
+  list.forEach((e, i) => { const y = 122 + i * 52; g.textAlign = 'left'; g.fillStyle = '#3a2c60'; g.font = '500 24px ' + FONTK; let t = '“' + e.t; const maxW = w - 56 - 70; if (g.measureText(t + '”').width > maxW) { while (g.measureText(t + '…”').width > maxW && t.length > 2) t = t.slice(0, -1); t += '…'; } g.fillText(t + '”', 28, y); g.textAlign = 'right'; g.fillStyle = '#d0507a'; g.font = '700 20px ' + FONTK; g.fillText('♥ ' + (e.l || 0), w - 28, y); });
+  msTex.needsUpdate = true;
+}
+function mergeMS(list) {
+  let changed = false; const byId = new Map(MS.map(e => [e.id, e]));
+  for (const raw of list) { const e = cleanMS(raw); if (!e) continue; const o = byId.get(e.id); if (!o) { MS.push(e); byId.set(e.id, e); changed = true; } else if (e.l > o.l) { o.l = e.l; changed = true; } }
+  if (changed) { MS.sort((a, b) => a.ts - b.ts); if (MS.length > 300) MS = MS.slice(-300); store.set('fm_ms', MS); drawMsBoard(); if ($('#msWin')?.style.display === 'block') renderMS(); }
+}
+function renderMS() {
+  const box = $('#msList'); box.innerHTML = ''; const list = MS.filter(e => !msHide.has(e.id)).slice(-150).reverse(); $('#msCnt').textContent = list.length + '개';
+  if (!list.length) { const d = document.createElement('div'); d.className = 'muted'; d.style.padding = '12px 4px'; d.textContent = '아직 아무 소리도 없어요. 첫 속마음을 남겨보세요!'; box.appendChild(d); }
+  const liked = new Set(store.get('fm_msLiked', []));
+  list.forEach(e => { const d = document.createElement('div'); d.className = 'gbi msi'; const hd = document.createElement('div'); hd.className = 'h'; const b = document.createElement('b'); b.textContent = e.a; const s = document.createElement('small'); s.textContent = ago(e.ts); hd.append(b, s); const p = document.createElement('p'); p.textContent = e.t;
+    const ft = document.createElement('div'); ft.className = 'msf'; const lk = document.createElement('button'); lk.className = 'mslk' + (liked.has(e.id) ? ' on' : ''); lk.textContent = '♥ 공감 ' + (e.l || 0); lk.onclick = () => likeMS(e.id); const hi = document.createElement('button'); hi.className = 'mshd'; hi.textContent = '🙈 안 보기'; hi.onclick = () => { msHide.add(e.id); store.set('fm_msHide', [...msHide].slice(-500)); renderMS(); drawMsBoard(); };
+    ft.append(lk, hi); d.append(hd, p, ft); box.appendChild(d); });
+}
+function likeMS(id) { const liked = new Set(store.get('fm_msLiked', [])); if (liked.has(id)) { toast('이미 공감했어요.'); return; } const e = MS.find(x => x.id === id); if (!e) return; e.l = (e.l || 0) + 1; liked.add(id); store.set('fm_msLiked', [...liked].slice(-1000)); store.set('fm_ms', MS); NET.wMsLike?.send({ id, l: e.l })?.catch?.(() => {}); SFX.click(); renderMS(); drawMsBoard(); }
+function openMS() { if (!entered) return; renderMS(); openWin('msWin'); setTimeout(() => $('#msTxt').focus(), 50); }
+function postMS() {
+  const t = $('#msTxt').value.trim().slice(0, 120); if (!t) { toast('마음의 소리를 적어주세요.'); return; }
+  const last = store.get('fm_msLast', 0); if (Date.now() - last < 60000) { toast('마음의 소리는 1분에 한 번만 쓸 수 있어요.'); return; }
+  const e = { id: Math.random().toString(36).slice(2, 12), t, a: pickR(MS_ANON), ts: Date.now(), l: 0 };
+  mergeMS([e]); NET.wMsPost?.send(e)?.catch?.(() => {}); store.set('fm_msLast', Date.now()); $('#msTxt').value = ''; toast('💭 마음의 소리를 익명으로 남겼어요.'); SFX.join();
+}
 function drawGuestBoard() {
   if (!gbTex) return; const c = gbTex.userData.canvas, g = c.getContext('2d'), w = c.width, h = c.height;
   g.fillStyle = '#f6ecd8'; g.fillRect(0, 0, w, h);
@@ -738,15 +781,14 @@ function drawGuestBoard() {
   });
   gbTex.needsUpdate = true;
 }
+const EMB = {};
+function emblemTex(R) { if (EMB[R.n]) return EMB[R.n]; return EMB[R.n] = textTex(256, 256, g => { const gr = g.createRadialGradient(128, 110, 20, 128, 128, 128); gr.addColorStop(0, '#fff8ea'); gr.addColorStop(1, R.col); g.fillStyle = gr; g.beginPath(); g.arc(128, 128, 126, 0, Math.PI * 2); g.fill(); g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 6; g.beginPath(); g.arc(128, 128, 112, 0, Math.PI * 2); g.stroke(); g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = "118px 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif"; g.fillText(R.ic, 128, 112); g.font = `900 34px ${FONTK}`; g.fillStyle = '#ffffff'; g.strokeStyle = 'rgba(60,30,10,.65)'; g.lineWidth = 6; g.strokeText(R.n, 128, 206); g.fillText(R.n, 128, 206); }); }
 function mainSignTex() {
   const w = 1024, h = 260;
   return textTex(w, h, g => {
     const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#5a3a22'); gr.addColorStop(1, '#3e2716'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
     g.strokeStyle = '#d9a85a'; g.lineWidth = 10; g.strokeRect(10, 10, w - 20, h - 20);
-    g.textAlign = 'center'; g.fillStyle = '#ffd98a'; g.font = `800 96px ${FONTK}`; g.fillText('비상장 자유시장', w / 2, 128);
-    g.fillStyle = 'rgba(232,200,154,.35)'; g.fillRect(w / 2 - 260, 158, 520, 2);
-    const a = 'SPONSORED BY ', b = '갓은호'; g.font = `700 30px ${FONTK}`; const wa = g.measureText(a).width; g.font = `800 40px ${FONTK}`; const wb = g.measureText(b).width; const x0 = w / 2 - (wa + wb) / 2;
-    g.textAlign = 'left'; g.fillStyle = '#e8c89a'; g.font = `700 30px ${FONTK}`; g.fillText(a, x0, 212); g.fillStyle = '#ffe9a8'; g.font = `800 40px ${FONTK}`; g.fillText(b, x0 + wa, 214);
+    g.textAlign = 'center'; g.fillStyle = '#ffd98a'; g.font = `800 104px ${FONTK}`; g.fillText('비상장 자유시장', w / 2, 166);
   });
 }
 function signTex(text, sub, w = 1024, h = 220) {
@@ -785,12 +827,16 @@ function buildGate() {
     const fr = archFrame(1.5, 2.7, .22, M('#6b4430')); fr.position.set(x, y, z + .06); g.add(fr);
     const pm2 = portalMesh(1.5, 2.7, false); pm2.position.set(x, y + 1.35, z + .2); g.add(pm2);
     g.add(box(1.9, .16, .5, M('#7a5a40'), x, y + .08, z + .4));
+    const R = ROOMS[p.door], em = new THREE.Mesh(new THREE.CircleGeometry(.46, 40), new THREE.MeshStandardMaterial({ map: emblemTex(R), emissive: '#ffffff', emissiveMap: emblemTex(R), emissiveIntensity: .35, transparent: true, roughness: .6 }));
+    em.position.set(x, y + 2.3, z + .42); g.add(em); const ring = new THREE.Mesh(new THREE.TorusGeometry(.47, .045, 8, 40), M('#d9a85a', { metalness: .5, roughness: .4 })); ring.position.copy(em.position); g.add(ring);
+    const tint = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 2.7), new THREE.MeshBasicMaterial({ color: R.col, transparent: true, opacity: .28, depthWrite: false })); tint.position.set(x, y + 1.35, z + .23); g.add(tint);
   });
   // 방명록 보드 & 게시판
   gbTex = canvasTex(512, 320, () => {}); drawGuestBoard();
   const tb = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.6, .2), [M('#4a3020'), M('#4a3020'), M('#4a3020'), M('#4a3020'), new THREE.MeshStandardMaterial({ map: gbTex, emissive: '#ffffff', emissiveMap: gbTex, emissiveIntensity: .18, roughness: .8 }), M('#4a3020')]);
   tb.position.set(X3(1080), 2.3, wallZ + 1.06); g.add(tb);
-  const nb = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.6, .2), [M('#6b4430'), M('#6b4430'), M('#6b4430'), M('#6b4430'), new THREE.MeshStandardMaterial({ map: textTex(512, 320, (c, w, h) => { c.fillStyle = '#f6ecd8'; c.fillRect(0, 0, w, h); c.fillStyle = '#5a3412'; c.font = `800 34px ${FONTK}`; c.fillText('자유시장 이용 수칙', 30, 60); c.font = `500 27px ${FONTK}`; ['1. 욕설·도배 금지', '2. 종목·시세는 전부 가상', '3. 확성기는 적당히!', '4. 흥정은 귓속말로'].forEach((s, i) => c.fillText(s, 30, 118 + i * 50)); }), roughness: .8 }), M('#6b4430')]);
+  msTex = canvasTex(512, 320, () => {}); drawMsBoard();
+  const nb = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.6, .2), [M('#5a4a7a'), M('#5a4a7a'), M('#5a4a7a'), M('#5a4a7a'), new THREE.MeshStandardMaterial({ map: msTex, emissive: '#ffffff', emissiveMap: msTex, emissiveIntensity: .2, roughness: .8 }), M('#5a4a7a')]);
   nb.position.set(X3(1525), 2.3, wallZ + 1.06); g.add(nb);
   // 2층 발코니
   const bp = MAPS.gate.plats[3], bx1 = X3(bp.x1), bx2 = X3(bp.x2), by = Y3(bp.y);
@@ -831,7 +877,7 @@ function buildRoom(m) {
   [-.2, W + .2].forEach(x => g.add(box(.4, 15, 12, M('#8a6040'), x, 7.5, 1.6)));
   for (let x = 5; x < W; x += 6) g.add(box(.3, 15, .3, M('#6b4430'), x, 7.5, wallZ + .3));
   [10.5, 24.5].forEach(x => { g.add(box(3.8, 3, .2, M('#6b4430'), x, 6.3, wallZ + .25)); g.add(box(3.4, 2.6, .1, new THREE.MeshStandardMaterial({ map: TEX.skyWin, emissive: '#ffffff', emissiveMap: TEX.skyWin, emissiveIntensity: .45 }), x, 6.3, wallZ + .36)); g.add(box(.1, 2.6, .16, M('#6b4430'), x, 6.3, wallZ + .4)); g.add(box(3.4, .1, .16, M('#6b4430'), x, 6.3, wallZ + .4)); });
-  const sign = new THREE.Mesh(new THREE.BoxGeometry(5, 1.1, .15), [M('#3e2716'), M('#3e2716'), M('#3e2716'), M('#3e2716'), new THREE.MeshStandardMaterial({ map: signTex(`${m.idx}방 · 장외 직거래`, '', 1024, 220) }), M('#3e2716')]);
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(5, 1.1, .15), [M('#3e2716'), M('#3e2716'), M('#3e2716'), M('#3e2716'), new THREE.MeshStandardMaterial({ map: signTex(ROOMS[m.idx].sg, '', 1024, 220) }), M('#3e2716')]);
   sign.position.set(17.5, 6.9, wallZ + .3); g.add(sign);
   m.plats.forEach(p => {
     const x1 = X3(p.x1), x2 = X3(p.x2), y = Y3(p.y), w = x2 - x1, cx = (x1 + x2) / 2;
@@ -848,7 +894,7 @@ function buildRoom(m) {
     const b = new THREE.Mesh(new THREE.SphereGeometry(.2, 12, 10), new THREE.MeshStandardMaterial({ color: '#fff4d8', emissive: '#ffcf80', emissiveIntensity: 3 })); b.position.set(x, 8.35, .2); g.add(b);
     const pl = new THREE.PointLight(0xffc684, 16, 0, 1.4); pl.position.set(x, 7.6, 1.2); g.add(pl);
   });
-  const rug = new THREE.Mesh(new THREE.CircleGeometry(1, 48), M(['#a84a3a', '#3f6fb5', '#5aa36a', '#b06a9e', '#8a5cc0', '#c89a3a'][m.idx - 1], { roughness: 1 })); rug.scale.set(5, 1.6, 1); rug.rotation.x = -Math.PI / 2; rug.position.set(17.5, .01, 2.2); rug.receiveShadow = true; g.add(rug);
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(1, 48), M(['#a84a3a', '#3f6fb5', '#2f7a50', '#d08a20', '#d0608e', '#8a5cc0'][m.idx - 1], { roughness: 1 })); rug.scale.set(5, 1.6, 1); rug.rotation.x = -Math.PI / 2; rug.position.set(17.5, .01, 2.2); rug.receiveShadow = true; g.add(rug);
   g.add(box(1.8, 3, .8, M('#7a4e30'), 4.2, 1.5, wallZ + .8, .05)); for (let y = .6; y < 3; y += .7) for (let i = 0; i < 4; i++) g.add(box(.25, .5, .5, M(['#d8583c', '#4a86d0', '#e6c14f', '#5aa36a'][i]), 3.6 + i * .4, y + .25, wallZ + .9));
   g.userData.env = { sky: false, fog: null, hemi: [0xffe6c8, 0x5a4028, .95], sun: .9, exposure: .9, bg: '#1e140e' };
   return g;
@@ -1312,7 +1358,7 @@ function dropAv(c) { if (c.av) { actors.remove(c.av.root); c.av = null; } if (c.
 
 // ===================== NPC =====================
 const NPCS = [
-  { map: 'gate', n: '안내원 미나', pin: '문 앞에서 ↑ 누르면 시장방 입장!', look: { s: 0, hc: 7, hs: 3, t: 7, b: 5, f: 2 }, x: 1640, talk: ['왼쪽 끝 🌀 포털로 가면 클럽·절·거래소!', '어서 오세요~ 비상장 자유시장이에요!', '건물 문 앞에서 ↑ 누르면 시장방이에요.', '2층은 양쪽 사다리로 올라가요!', '좌판 깔고 싶으면 아래 [개인상점]!'] },
+  { map: 'gate', n: '안내원 미나', pin: '문 앞에서 ↑ 누르면 시장방 입장!', look: { s: 0, hc: 7, hs: 3, t: 7, b: 5, f: 2 }, x: 1640, talk: ['왼쪽 끝 🌀 포털로 가면 클럽·절·거래소!', '어서 오세요~ 비상장 자유시장이에요!', '건물 문 앞에서 ↑ 누르면 시장방이에요.', '2층엔 번개방·소개팅·미팅방·찌라시방이 있어요! 사다리로 올라가요~', '오른쪽 마음의 소리 게시판엔 익명으로 쓸 수 있어요 💭', '좌판 깔고 싶으면 아래 [개인상점]!'] },
   { map: 'gate', n: '단타왕 이대리', look: { s: 0, hc: 4, hs: 2, t: 1, b: 1, f: 0 }, x: 1500, home: [1000, 1800], pet: 1, talk: ['요즘 공모주 경쟁률 미쳤네요', '상장일 시초가 가즈아~', '확약 걸까 말까...', '균등 배정 1주 받았어요 ㅠㅠ'] },
   { map: 'gate', n: '수요예측 최차장', look: { s: 3, hc: 3, hs: 0, t: 5, b: 0, f: 1 }, x: 2150, home: [1960, 2300], talk: ['구주매출 비중 높은 건 좀...', '유통가능물량 꼭 보세요', '밴드 상단 초과 확정 나왔대요'] },
   { map: 'gate', n: '문방구 사장님', look: { s: 2, hc: 3, hs: 0, t: 1, b: 3, f: 1 }, x: 2045, talk: ['오늘 뽑기는 했어? 하루에 딱 한 번이야~', '왕관은 인기도 30은 돼야 만들 수 있지!', '옛날엔 한 판에 100원이었는데 말이야~', '인기 많은 사람은 꾸미기도 화려하더라~'] },
@@ -1324,7 +1370,7 @@ const NPCS = [
   { map: 'temple', n: '따상사 스님', look: { s: 1, hc: 6, hs: 0, t: 7, b: 3, f: 1 }, x: 1220, talk: ['방석 위에서 ↑ 누르면 절을 올릴 수 있다네', '매시 정각과 30분에 예불이 열린다네. 종이 세 번 울리면 함께 절하세', '예불 시간엔 절 한 번이 공덕 두 배라네', '절을 쌓으면 칭호가 올라간다네. 만배 법사까지 정진하시게', '욕심을 내려놓으면 확약도 가벼워집니다', '종 한번 치고 가세요~ 데엥~', '오늘도 수요예측 무사하길...', '시초가는 바람과 같아서 잡을 수 없지요'] },
   { map: 'krx', n: '상장팀 최과장', look: { s: 0, hc: 3, hs: 0, t: 1, b: 0, f: 1 }, x: 900, talk: ['오늘 상장한 회사 축하드려요!', '시초가는 아무도 몰라요~', '황소 쓰다듬으면 오른대요. (근거 없음)', '포토존에서 기념사진 찍고 가세요!'] },
 ].map((d, i) => ({ npc: true, id: 'npc' + i, y: G, ...d, dir: 1, anim: d.sit ? 'sit' : 'stand', phase: 0, seed: i * 1.7, tx: d.x, wait: 2 + i, talkT: 6 + i * 4, pp: { x: d.x - 30, y: G } }));
-const NPC_MEGA = ['장외 김부장 : 뭉게구름테크 구주 급매! 시장 1방으로 오세요~', '프리IPO 박과장 : 솜사탕바이오 RCPS 매입합니다. 2방에서 귓 주세요', '단타왕 이대리 : 입구 방명록에 한마디씩 남기고 가세요~', '수요예측 최차장 : 다음 주 수요예측 일정 정리해드림 ㅎㅎ'];
+const NPC_MEGA = ['장외 김부장 : 뭉게구름테크 구주 급매! 구주 매물방으로 오세요~', '프리IPO 박과장 : 솜사탕바이오 RCPS 매입합니다. 구주 매물방에서 귓 주세요', '단타왕 이대리 : 입구 방명록에 한마디씩 남기고 가세요~', '수요예측 최차장 : 다음 주 수요예측 일정 정리해드림 ㅎㅎ'];
 let npcMegaT = 45;
 function updateNPC(dt) {
   for (const n of NPCS) {
@@ -1379,7 +1425,7 @@ function overlayChar(c) {
 function overlayStatic() {
   MAP.portals.forEach((p, i) => {
     const x = X3(p.x), y = Y3(p.y);
-    if (p.door) { const e = anchor('d' + i + MAP.id, 'door'); place(e, proj(x, y + 3.15, -2.6)); const n = mapCount('r' + p.door); const t = `시장 ${p.door}방` + (NET.wState ? ` · ${n}명` : ''); if (e._in._t !== t) { e._in._t = t; e._in.innerHTML = ''; e._in.append(document.createTextNode(`시장 ${p.door}방`)); if (NET.wState) { const s = document.createElement('i'); s.textContent = `${n}명`; e._in.appendChild(s); } } }
+    if (p.door) { const e = anchor('d' + i + MAP.id, 'door'); place(e, proj(x, y + 3.15, -2.6)); const n = mapCount('r' + p.door); const rn = ROOMS[p.door].ic + ' ' + ROOMS[p.door].n, t = rn + (NET.wState ? ` · ${n}명` : ''); if (e._in._t !== t) { e._in._t = t; e._in.innerHTML = ''; e._in.append(document.createTextNode(rn)); if (NET.wState) { const s = document.createElement('i'); s.textContent = `${n}명`; e._in.appendChild(s); } } }
     else { const e = anchor('p' + i + MAP.id, 'door'); place(e, proj(x, y + 3.4, -.5)); setTxt(e._in, p.label); }
     if (entered && Math.abs(me.x - p.x) < (p.sg ? 50 : 30) && Math.abs(me.y - p.y) < 6 && !moving) { const h = anchor('hint', 'hint'); place(h, proj(X3(me.x), Y3(me.y) + 2.75, 0)); setTxt(h._in, '↑ 들어가기'); }
   });
@@ -1405,7 +1451,7 @@ $('#fold').onclick = () => { folded = !folded; logEl.classList.toggle('fold', fo
 const bq = []; let bBusy = false;
 function banner(text) { bq.push(text); if (!bBusy) nextBanner(); }
 function nextBanner() { const b = $('#megabar'); const it = bq.shift(); if (!it) { b.style.display = 'none'; bBusy = false; return; } bBusy = true; b.textContent = ''; if (typeof it === 'object') { if (it.aff) { const ch2 = affChip(it.aff); ch2.classList.add('mbaff'); b.appendChild(ch2); const an = document.createElement('span'); an.className = 'mban'; an.textContent = affName(it.aff); b.appendChild(an); } b.appendChild(document.createTextNode(it.text)); } else b.textContent = it; b.className = 'hud'; void b.offsetWidth; b.className = 'hud pop'; b.style.display = 'block'; setTimeout(nextBanner, bq.length > 2 ? 3000 : 7000); }
-const NOTICES = ['🌀 입구 왼쪽 끝 포털 광장에서 클럽 따블 · 따상사 · 거래소로 갈 수 있어요!', '🎀 꾸미기: 인기도가 오를수록 더 화려한 모자·안경·날개를 만들 수 있어요.', '🎰 입구 오른쪽 끝 뽑기 기계에서 하루 1번 무료 뽑기! 잠긴 아이템이 나올 수도 있어요.', '/불꽃 — 다 같이 보는 불꽃놀이를 쏴요. 표정은 F1~F7!', '비상장 자유시장에 오신 걸 환영해요. 입구 방명록에 한마디 남겨주세요!', '입구 건물 1층 문은 시장 1~3방, 2층은 4~6방이에요. 2층은 양쪽 사다리로!', '거래 사기 주의! 운영자는 절대 비밀번호를 묻지 않아요.', '확성기는 매일 자정(한국 시간)에 다시 채워져요.'];
+const NOTICES = ['🌀 입구 왼쪽 끝 포털 광장에서 클럽 따블 · 따상사 · 거래소로 갈 수 있어요!', '🎀 꾸미기: 인기도가 오를수록 더 화려한 모자·안경·날개를 만들 수 있어요.', '🎰 입구 오른쪽 끝 뽑기 기계에서 하루 1번 무료 뽑기! 잠긴 아이템이 나올 수도 있어요.', '/불꽃 — 다 같이 보는 불꽃놀이를 쏴요. 표정은 F1~F7!', '비상장 자유시장에 오신 걸 환영해요. 입구 방명록에 한마디 남겨주세요!', '입구 건물 1층은 신주 매물방·구주 매물방·주관사방, 2층은 번개방·소개팅·미팅방·찌라시방! 2층은 양쪽 사다리로!', '💭 마음의 소리 게시판: 입구 건물 오른쪽 게시판에 익명으로 속마음을 남겨요.', '거래 사기 주의! 운영자는 절대 비밀번호를 묻지 않아요.', '확성기는 매일 자정(한국 시간)에 다시 채워져요.'];
 let noticeI = 0; function nextNotice() { $('#noticeTxt').textContent = '📌 ' + NOTICES[noticeI++ % NOTICES.length]; } nextNotice(); setInterval(nextNotice, 9000);
 let toastTO; function toast(t) { const el = $('#toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toastTO); toastTO = setTimeout(() => el.style.display = 'none', 2600); }
 
@@ -1606,7 +1652,7 @@ cv.addEventListener('click', e => {
 
 // ===================== 창 관리 =====================
 function openWin(id) { $('#' + id).style.display = 'block'; }
-function closeWins() { closeMore(); ['decoWin', 'affWin', 'chanWin', 'shopEdit', 'shopView', 'helpWin', 'infoWin', 'pinWin', 'mapWin', 'whoWin', 'setWin', 'gbWin'].forEach(id => $('#' + id).style.display = 'none'); $('#ctxmenu').style.display = 'none'; $('#emopop').style.display = 'none'; }
+function closeWins() { closeMore(); ['decoWin', 'affWin', 'chanWin', 'shopEdit', 'shopView', 'helpWin', 'infoWin', 'pinWin', 'mapWin', 'whoWin', 'setWin', 'gbWin', 'msWin'].forEach(id => $('#' + id).style.display = 'none'); $('#ctxmenu').style.display = 'none'; $('#emopop').style.display = 'none'; }
 document.querySelectorAll('[data-close]').forEach(x => x.onclick = closeWins);
 $('#bHelp').onclick = () => openWin('helpWin');
 $('#bChan').onclick = () => { if (entered) openChan(); };
@@ -1894,7 +1940,7 @@ function renderMap() {
     d.onclick = () => travel(mid); return d;
   };
   const sub = mid => NPCS.some(n => n.map === mid && n.shop) ? 'NPC 좌판' : '';
-  ['fl2', 'fl1'].forEach((id, k) => { const el = $('#' + id); el.innerHTML = ''; (k ? [1, 2, 3] : [4, 5, 6]).forEach(i => el.appendChild(card('r' + i, `시장 ${i}방`, sub('r' + i), tints[i - 1]))); });
+  ['fl2', 'fl1'].forEach((id, k) => { const el = $('#' + id); el.innerHTML = ''; (k ? [1, 2, 3] : [4, 5, 6]).forEach(i => el.appendChild(card('r' + i, ROOMS[i].ic + ' ' + ROOMS[i].n, [ROOMS[i].sub, sub('r' + i)].filter(Boolean).join(' · '), ROOMS[i].col))); });
   $('#flG').innerHTML = ''; $('#flG').appendChild(card('gate', '자유시장 입구', '방명록 · 안내원 · 뽑기 기계', 'linear-gradient(90deg,#ffad5c,#e8742a)'));
   const fp = $('#flP'); fp.innerHTML = ''; [['plaza', '🌀 포털 광장', '모든 장소로 가는 문', '#8a7ad8'], ['club', '🪩 클럽 따블', '주인공 무대 · 움직이는 조명 · 클럽 전용 춤', '#ff4fd8'], ['temple', '🏯 따상사', '30분마다 예불 · 절 칭호 · 오늘의 수행', '#ffb347'], ['krx', '📈 거래소', '모의 단타 · 상장 축하 버튼', '#4aa8ff']].forEach(([id, n, s, c]) => fp.appendChild(card(id, n, s, c)));
 }
@@ -1983,10 +2029,16 @@ function postGB() {
   toast('방명록을 남겼어요!'); SFX.join(); dailyExp('gb', 1, 20, '방명록');
 }
 $('#gbPost').onclick = postGB;
+$('#msPost').onclick = postMS; $('#msTxt').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') postMS(); if (e.key === 'Escape') closeWins(); });
 $('#gbTxt').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') postGB(); if (e.key === 'Escape') closeWins(); });
 $('#bGB').onclick = openGB;
 function setupGuestbook() {
   const W2 = NET.world; NET.wGbPost = W2.makeAction('gbpost'); NET.wGbSync = W2.makeAction('gbsync');
+  NET.wMsPost = W2.makeAction('mspost'); NET.wMsSync = W2.makeAction('mssync'); NET.wMsLike = W2.makeAction('mslike');
+  NET.wMsPost.onMessage((d, { userId }) => { if (!rl('ms' + userId, 2, 30000)) return; mergeMS([d]); });
+  NET.wMsSync.onMessage((d, { userId }) => { if (!Array.isArray(d) || !rl('mz' + userId, 3, 30000)) return; mergeMS(d.slice(-120)); });
+  NET.wMsLike.onMessage((d, { userId }) => { if (!d || !rl('ml' + userId, 10, 30000)) return; const e = MS.find(x => x.id === str(d.id, 16)); if (e && Number.isInteger(d.l) && d.l > (e.l || 0) && d.l <= (e.l || 0) + 3) { e.l = d.l; store.set('fm_ms', MS); drawMsBoard(); if ($('#msWin').style.display === 'block') renderMS(); } });
+  W2.onUserJoin(({ userId }) => { if (MS.length) NET.wMsSync.send(MS.slice(-100), { target: userId })?.catch?.(() => {}); });
   NET.wGbPost.onMessage((d, { userId }) => { if (!rl('gb' + userId, 2, 20000)) return; mergeGB([d]); });
   NET.wGbSync.onMessage((d, { userId }) => { if (!Array.isArray(d) || !rl('gs' + userId, 3, 30000)) return; mergeGB(d.slice(-120)); });
   W2.onUserJoin(({ userId }) => { if (GB.length) NET.wGbSync.send(GB.slice(-100), { target: userId })?.catch?.(() => {}); });
