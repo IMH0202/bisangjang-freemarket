@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.2.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -453,7 +453,7 @@ const $ = s => document.querySelector(s);
 const G = 640, U = 40;                    // 게임 좌표(px) → 3D 단위 변환
 const X3 = px => px / U, Y3 = py => (G - py) / U;
 const APP = 'bisangjang-freemarket/v4';
-const BUILD = 'v2.2';
+const BUILD = 'v2.3';
 (async () => { try { if (location.protocol !== 'https:' || !location.hostname.endsWith('github.io')) return; const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }); const m = (await r.text()).match(/const BUILD = '([^']+)'/); if (m && m[1] !== BUILD && !location.search.includes('v=' + m[1])) location.replace(location.pathname + '?v=' + m[1] + location.hash); } catch {} })();
 const CHN = 1, NMAX = 14;
 const IS_POP = location.hash.includes('win');
@@ -1512,11 +1512,58 @@ const int = (v, m) => Number.isInteger(v) && v >= 0 && v < m ? v : 0;
 function cleanLook(l) { l = l || {}; return { s: int(l.s, SKINS.length), hc: int(l.hc, HAIRC.length), hs: int(l.hs, HS.length), t: int(l.t, TOPS.length), b: int(l.b, BOTS.length), f: int(l.f, FACES.length) }; }
 function cleanShop(s) { if (!s || typeof s !== 'object' || !str(s.title, 24)) return null; return { title: str(s.title, 24), items: (Array.isArray(s.items) ? s.items : []).slice(0, 5).map(r => [str(r && r[0], 30), str(r && r[1], 20)]).filter(r => r[0]) }; }
 function setNet(t, ok) { $('#netTxt').textContent = t; $('#ndot').classList.toggle('off', !ok); }
+// ===================== 실시간 서버(Cloudflare) 연결: Trystero 와 같은 모양의 방 API =====================
+const WS_URL = 'wss://bsj-realtime.imhyeon0302.workers.dev/ws';
+function makeWSNet(url) {
+  let ws = null, myId = null, alive = false, backoff = 600, firstRes, firstRej; const rooms = new Map(), hiCbs = [];
+  const first = new Promise((res, rej) => { firstRes = res; firstRej = rej; });
+  const raw = o => { if (ws && ws.readyState === 1 && myId) { try { ws.send(JSON.stringify(o)); } catch {} } };
+  function connect() {
+    try { ws = new WebSocket(url); } catch (e) { firstRej(e); return; }
+    ws.onmessage = ev => { let m; try { m = JSON.parse(ev.data); } catch { return; }
+      if (m.t === 'hi') { myId = m.id; alive = true; backoff = 600; firstRes(); hiCbs.forEach(cb => cb(myId)); for (const R of rooms.values()) R._rejoin(); return; }
+      if (m.t === 'pong') return; const R = rooms.get(m.r); if (R) R._on(m); };
+    ws.onclose = () => { const was = alive; alive = false; myId = null; for (const R of rooms.values()) R._reset(); if (!was && backoff === 600) firstRej(new Error('ws closed')); setTimeout(connect, backoff); backoff = Math.min(backoff * 2, 10000); };
+    ws.onerror = () => {};
+  }
+  connect(); setInterval(() => { if (alive) raw({ t: 'ping' }); }, 25000);
+  function joinRoom(cfg, name) {
+    name = String(cfg.appId || 'app').slice(0, 40) + '/' + name;
+    const acts = new Map(), states = new Map(), pend = {}, joinCbs = [], leaveCbs = [], errCbs = [], peers = new Set(); let joined = false;
+    const R = {
+      _rejoin() { joined = false; raw({ t: 'join', r: name, max: cfg.maxUsers || 300 }); },
+      _reset() { joined = false; for (const p of [...peers]) { peers.delete(p); for (const st of states.values()) st._remove(p); leaveCbs.forEach(cb => cb({ userId: p })); } },
+      _on(m) {
+        if (m.t === 'joined') { joined = true; for (const [k, mp] of Object.entries(m.states || {})) { const st = states.get(k); if (st) for (const [id, v] of Object.entries(mp)) st._recv(id, v); else pend[k] = { ...(pend[k] || {}), ...mp }; } for (const p of m.peers || []) { peers.add(p); joinCbs.forEach(cb => cb({ userId: p })); } for (const st of states.values()) st._push(); }
+        else if (m.t === 'pj') { peers.add(m.id); joinCbs.forEach(cb => cb({ userId: m.id })); }
+        else if (m.t === 'pl') { peers.delete(m.id); for (const st of states.values()) st._remove(m.id); leaveCbs.forEach(cb => cb({ userId: m.id })); }
+        else if (m.t === 'act') { const a = acts.get(m.a); if (a) a.cbs.forEach(cb => { try { cb(m.d, { userId: m.from }); } catch (e) { console.error(e); } }); }
+        else if (m.t === 'st') { const st = states.get(m.k); if (st) st._recv(m.id, m.v); else (pend[m.k] = pend[m.k] || {})[m.id] = m.v; }
+        else if (m.t === 'full') errCbs.forEach(cb => cb({ code: 'room-full' }));
+      },
+      makeAction(a) { const o = { cbs: [], send(d, opt) { const to = typeof opt === 'string' ? opt : opt && opt.target; if (Array.isArray(to)) to.forEach(t => raw({ t: 'act', r: name, a, d, to: t })); else raw({ t: 'act', r: name, a, d, to: to || null }); return Promise.resolve(); }, onMessage(cb) { o.cbs.push(cb); } }; acts.set(a, o); return o; },
+      makeUserState(k, init) { const all = {}, cbs = []; let mine = init == null ? null : init;
+        const emit = (v, id, removed) => cbs.forEach(cb => { try { cb(v, { userId: id, self: false, removed }); } catch (e) { console.error(e); } });
+        const st = { set(v) { mine = v; if (myId) all[myId] = v; if (joined) raw({ t: 'st', r: name, k, v }); }, getAll() { return { ...all }; }, onChange(cb) { cbs.push(cb); },
+          _recv(id, v) { if (id === myId) return; if (v == null) { if (id in all) { delete all[id]; emit(null, id, true); } } else { all[id] = v; emit(v, id, false); } },
+          _remove(id) { if (id in all && id !== myId) { delete all[id]; emit(null, id, true); } },
+          _push() { for (const id of Object.keys(all)) if (id !== myId && !peers.has(id)) delete all[id]; if (mine != null && myId) { all[myId] = mine; raw({ t: 'st', r: name, k, v: mine }); } } };
+        states.set(k, st); if (pend[k]) { for (const [id, v] of Object.entries(pend[k])) st._recv(id, v); delete pend[k]; } return st; },
+      onUserJoin(cb) { joinCbs.push(cb); }, onUserLeave(cb) { leaveCbs.push(cb); }, onError(cb) { errCbs.push(cb); },
+      getSelf() { return first.then(() => ({ userId: myId })); },
+      leave() { raw({ t: 'leave', r: name }); rooms.delete(name); return Promise.resolve(); }
+    };
+    rooms.set(name, R); if (myId) R._rejoin(); return R;
+  }
+  return { joinRoom, first, onHi: cb => hiCbs.push(cb), get id() { return myId; } };
+}
 async function initNet() {
   setNet('P2P 연결 중...', false);
   if (!window.isSecureContext || !(window.crypto && crypto.subtle)) { setNet('오프라인 (보안 연결 아님)', false); sys('이 주소에서는 다른 사람과 연결할 수 없어요. 파일을 직접 열거나 https 주소로 열어주세요.'); return; }
-  try { NET.TR = await import('https://esm.run/trystero@0.27.0'); }
-  catch (e) { console.warn(e); setNet('오프라인 · 혼자 구경 중', false); sys('네트워크 라이브러리를 불러오지 못했어요. 혼자 구경 모드로 진행해요.'); return; }
+  try { const wn = makeWSNet(WS_URL); await Promise.race([wn.first, new Promise((_, rj) => setTimeout(() => rj(new Error('timeout')), 6000))]); NET.TR = wn; NET.mode = 'server'; wn.onHi(id => { NET.wSelf = id; }); }
+  catch (e) { console.warn('server 연결 실패, P2P 로 전환', e);
+    try { NET.TR = await import('https://esm.run/trystero@0.27.0'); NET.mode = 'p2p'; }
+    catch (e2) { console.warn(e2); setNet('오프라인 · 혼자 구경 중', false); sys('네트워크 라이브러리를 불러오지 못했어요. 혼자 구경 모드로 진행해요.'); return; } }
   try {
     NET.world = NET.TR.joinRoom({ appId: APP, identity: 'none', ...(NET.TR.scale ? { use: [NET.TR.scale({ maxDirectPeers: 8 })] } : {}) }, 'world');
     NET.wState = NET.world.makeUserState('w', null, { maxBytes: 3072 });
@@ -1574,7 +1621,7 @@ function pushWorld() { NET.wState && NET.wState.set({ ch: curCh, map: MAP.id, n:
 var myMg = null, megaSeen = new Set();
 function checkStateMega() { const all = worldAll(); for (const k in all) { const v = all[k], g = v && v.mg; if (!g || typeof g !== 'object' || k === NET.wSelf) continue; const id = str(g.id, 12); if (!id || megaSeen.has(id)) continue; megaSeen.add(id); if (Math.abs(Date.now() - (+g.at || 0)) > 90000) continue; onMega({ n: str(v.n, NMAX) || '???', t: str(g.t, 80), ch: 1, aff: AFF_KEYS.includes(v.a) ? v.a : '' }, true); } }
 let lastSent = 0, lastPay = '';
-function sendMv(force, target) { if (!NET.room || !NET.mv) return; const p = { x: Math.round(me.x), y: Math.round(me.y), d: me.dir, a: ANIMS.indexOf(me.anim) }; const s = JSON.stringify(p), now = performance.now(); if (force || (s !== lastPay && now - lastSent > 110) || now - lastSent > 1000) { NET.mv.send(p, target ? { target } : undefined)?.catch?.(() => {}); if (!target) { lastSent = now; lastPay = s; } } }
+function sendMv(force, target) { if (!NET.room || !NET.mv) return; const p = { x: Math.round(me.x), y: Math.round(me.y), d: me.dir, a: ANIMS.indexOf(me.anim) }; const s = JSON.stringify(p), now = performance.now(); if (force || (s !== lastPay && now - lastSent > 140) || now - lastSent > 1000) { NET.mv.send(p, target ? { target } : undefined)?.catch?.(() => {}); if (!target) { lastSent = now; lastPay = s; } } }
 function pushProfile() { Object.assign(prof, { n: me.n, look: me.look, pet: me.pet, st: me.st, ch: curCh , aff: me.aff || '' , acc: me.acc || {} }); store.set('fm_prof3', prof); if (NET.prof) NET.prof.set(myProfile()); }
 async function leaveAll() { try { await NET.room?.leave(); } catch {} try { await NET.world?.leave(); } catch {} NET.room = null; NET.world = null; }
 addEventListener('pagehide', () => { NET.room?.leave(); NET.world?.leave(); });
