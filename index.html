@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.8.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.9.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -438,7 +438,7 @@ const $ = s => document.querySelector(s);
 const G = 640, U = 40;                    // 게임 좌표(px) → 3D 단위 변환
 const X3 = px => px / U, Y3 = py => (G - py) / U;
 const APP = 'bisangjang-freemarket/v4';
-const BUILD = 'v1.8';
+const BUILD = 'v1.9';
 (async () => { try { if (location.protocol !== 'https:' || !location.hostname.endsWith('github.io')) return; const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }); const m = (await r.text()).match(/const BUILD = '([^']+)'/); if (m && m[1] !== BUILD && !location.search.includes('v=' + m[1])) location.replace(location.pathname + '?v=' + m[1] + location.hash); } catch {} })();
 const CHN = 1, NMAX = 14;
 const IS_POP = location.hash.includes('win');
@@ -661,7 +661,8 @@ MAPS.temple = { id: 'temple', name: '따상사', W: 1600, theme: 'temple', indoo
     ...TCUSH.map((x, i) => ({ id: 'cush', x, r: 28, nolabel: i !== 0 && i !== 4, label: '🧎 방석', ly: 1.3, lz: .4, hint: '절 올리기', fn: () => actJeol() })),
     { id: 'wish', x: 1300, label: '🙏 따상 기원', hint: '소원 빌기', fn: () => actWish() }, { id: 'quest', x: 1470, label: '📜 오늘의 수행', hint: '수행 목록 보기', ly: 3.6, fn: () => actQuest() }] };
 MAPS.krx = { id: 'krx', name: '거래소', W: 1600, theme: 'krx', indoor: true, track: 'town', plats: [], ropes: [], portals: [{ x: 70, y: G, to: 'plaza', label: '포털 광장으로' }],
-  acts: [{ x: 560, label: '🐂 황소상', hint: '황소 쓰다듬기', ly: 3.6, fn: () => actBull() }, { x: 1260, label: '📸 상장 기념 포토존', hint: '기념 촬영', ly: 4.2, fn: () => actPhoto() }, { x: 810, label: '📊 모의 단타', hint: '랜덤 종목 매수', ly: 2.4, fn: () => actDanta() }, { x: 1040, label: '🔴 상장 축하 버튼', hint: '버튼 누르기', ly: 2.3, fn: () => actListing() }] };
+  acts: [{ x: 560, label: '🐂 황소상', hint: '황소 쓰다듬기', ly: 3.6, fn: () => actBull() }, { x: 1260, label: '📸 상장 기념 포토존', hint: '기념 촬영', ly: 4.2, fn: () => actPhoto() }, { x: 810, label: '📊 모의 단타', hint: '랜덤 종목 매수', ly: 2.4, fn: () => actDanta() }, { x: 1040, label: '🔴 상장 축하 버튼', hint: '버튼 누르기', ly: 2.3, fn: () => actListing() }, { id: 'drum', x: 1460, r: 110, label: '🥁 상장기념식 북 (↑ 또는 클릭)', hint: '빨간 마이 입고 북 치기', ly: 3.0, lz: .6, fn: () => actDrum() }] };
+const DRUMX = [1390, 1460, 1530];
 const FAKE = ['뭉게구름테크', '도토리푸드', '솜사탕바이오', '꼬마별에너지', '무지개로보틱스', '호두건설', '말랑젤리랩', '깃털모빌리티'];
 const TICK = FAKE.map((n, i) => { const p = [12500, 8300, 23100, 5400, 41000, 67000, 15800, 9700][i]; return { n, p, b: p, c: 0 }; });
 
@@ -1104,8 +1105,25 @@ function buildKrx(m) {
   [[-.55, '#1f8a4a'], [.55, '#c8321e']].forEach(([o, c]) => g.add(box(.95, .6, .06, new THREE.MeshStandardMaterial({ color: '#0a1020', emissive: c, emissiveIntensity: .9 }), ddx + o, 1.25, -1.95)));
   const bbx = X3(MAPS.krx.acts[3].x); g.add(cyl(.45, .55, 1.0, M('#2a2e38', { metalness: .4, roughness: .4 }), bbx, .5, -1.4, 20));
   const dome = new THREE.Mesh(new THREE.SphereGeometry(.38, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#e8302a', emissive: '#a01010', emissiveIntensity: .7, roughness: .3 })); dome.position.set(bbx, 1.0, -1.4); g.add(dome);
+  { // 상장기념식 무대
+    const cx = X3(1460);
+    g.add(box(7.4, .22, 3.4, M('#8a1a22', { roughness: .8 }), cx, .11, .2)); g.add(box(7.5, .04, 3.5, M('#e8b84a', { metalness: .6, roughness: .3 }), cx, .23, .2));
+    g.add(boardMesh(plaqueTex('祝 코스닥 상장 기념식', '㈜따블 · 북을 울려 따상을 부르세요', '#b8202a', '#fff1bf', '#ffd36b', 1024, 300), 7.0, 2.05, cx, 4.3, wallZ + .9, '#7a1018', .35));
+    [-3.4, 3.4].forEach(dx => { g.add(cyl(.22, .18, .9, M('#f2f2f4'), cx + dx, .45, -1.2, 12)); for (let i = 0; i < 9; i++) { const f = new THREE.Mesh(new THREE.SphereGeometry(.2, 10, 8), M(['#ff6a8a', '#ffd36b', '#ffffff', '#ff9a4a'][i % 4])); f.position.set(cx + dx + Math.cos(i * 2.4) * .28, 1.05 + (i % 3) * .2, -1.2 + Math.sin(i * 2.4) * .28); g.add(f); } });
+    const skin = M('#f3e2c4', { roughness: .55 }), wood = M('#9a2a1e', { roughness: .5 }), rim = M('#e8b84a', { metalness: .6, roughness: .35 }), legM = M('#5a2a1a');
+    DRUMS.length = 0;
+    DRUMX.forEach(px => { const dx = X3(px), dg = new THREE.Group(); dg.position.set(dx, .9, 0); dg.rotation.y = Math.PI / 2; g.add(dg);
+      const shell = cyl(.42, .42, .5, wood, 0, 0, 0, 24); shell.rotation.x = Math.PI / 2; dg.add(shell);
+      [-.26, .26].forEach(z => { const fc = cyl(.43, .43, .03, skin, 0, 0, z, 24); fc.rotation.x = Math.PI / 2; dg.add(fc); const rr = new THREE.Mesh(new THREE.TorusGeometry(.43, .025, 6, 28), rim); rr.position.z = z; dg.add(rr); });
+      const tg = textTex(128, 128, c => { c.fillStyle = 'rgba(0,0,0,0)'; c.clearRect(0, 0, 128, 128); c.strokeStyle = '#c8321e'; c.lineWidth = 6; const cx2 = 64, cy2 = 64; [0, 1, 2].forEach(i => { c.fillStyle = ['#c8321e', '#2a5aa0', '#e8b84a'][i]; c.beginPath(); c.moveTo(cx2, cy2); c.arc(cx2, cy2, 40, i * 2.094, i * 2.094 + 2.094); c.fill(); }); });
+      [.28, -.28].forEach(z => { const tq = new THREE.Mesh(new THREE.CircleGeometry(.24, 24), new THREE.MeshBasicMaterial({ map: tg, transparent: true, side: THREE.DoubleSide })); tq.position.z = z; dg.add(tq); });
+      const sd = new THREE.Mesh(new THREE.CircleGeometry(.17, 24), new THREE.MeshBasicMaterial({ map: tg, transparent: true })); sd.position.set(.43, 0, 0); sd.rotation.y = Math.PI / 2; dg.add(sd);
+      for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; [-.22, .22].forEach(z => { const st2 = new THREE.Mesh(new THREE.SphereGeometry(.025, 6, 4), rim); st2.position.set(Math.cos(a) * .425, Math.sin(a) * .425, z); dg.add(st2); }); }
+      [[-.3, 1], [.3, -1]].forEach(([z, s]) => { const l = cyl(.035, .035, 1.0, legM, 0, 0, 0, 6); l.rotation.x = s * .25; g.add(l); l.position.set(dx, .45, z); });
+      DRUMS.push({ g: dg, x: px, hitT: -99 }); });
+  }
   exitPortal(g, m, wallZ, '#2a3a5a', false);
-  g.userData.tick = (t, dt) => { const bg = T - bullT; gold.emissiveIntensity = bg < 3 ? (1 - bg / 3) * (.45 + .25 * Math.sin(t * 14)) : 0; dome.position.y = T - btnPressT < .25 ? .9 : 1.0; dome.material.emissiveIntensity = .7 + Math.max(0, 1 - (T - btnPressT)) * 1.5; tickAcc += dt; if (tickAcc > 1.3) { tickAcc = 0; TICK.forEach(s => { s.p = Math.max(100, Math.round((s.p * (1 + (Math.random() - .48) * .012)) / 10) * 10); }); drawTickBoard(); } };
+  g.userData.tick = (t, dt) => { DRUMS.forEach(d => { const u = T - d.hitT, k = u >= 0 && u < .18 ? 1 - u / .18 : 0; d.g.scale.set(1 + k * .07, 1 + k * .07, 1 - k * .05); d.g.rotation.z = Math.sin(t * 50) * k * .03; }); const bg = T - bullT; gold.emissiveIntensity = bg < 3 ? (1 - bg / 3) * (.45 + .25 * Math.sin(t * 14)) : 0; dome.position.y = T - btnPressT < .25 ? .9 : 1.0; dome.material.emissiveIntensity = .7 + Math.max(0, 1 - (T - btnPressT)) * 1.5; tickAcc += dt; if (tickAcc > 1.3) { tickAcc = 0; TICK.forEach(s => { s.p = Math.max(100, Math.round((s.p * (1 + (Math.random() - .48) * .012)) / 10) * 10); }); drawTickBoard(); } };
   g.userData.env = { sky: false, fog: null, hemi: [0xffffff, 0x404860, 1.05], sun: 1.0, exposure: .95, bg: '#0e1424' };
   return g;
 }
@@ -1136,8 +1154,8 @@ function makeAvatar(L, acc) {
   const legPiv = x => { const p = new THREE.Group(); p.position.set(x, .44, 0); p.add(mk(GEO.leg, bot, 0, -.2, 0)); p.add(mk(GEO.shoe, shoe, 0, -.4, .05, 1, .6, 1.3)); body.add(p); return p; };
   P.legL = legPiv(-.12); P.legR = legPiv(.12);
   const upper = new THREE.Group(); upper.position.y = .44; body.add(upper); P.upper = upper;
-  const torso = mk(GEO.torso, top, 0, .36 - .44, 0); upper.add(torso);
-  const armPiv = x => { const p = new THREE.Group(); p.position.set(x, .78 - .44, 0); p.add(mk(GEO.arm, top, 0, -.15, 0)); p.add(mk(GEO.hand, skin, 0, -.31, 0)); upper.add(p); return p; };
+  const torso = mk(GEO.torso, top, 0, .36 - .44, 0); upper.add(torso); P.torso = torso;
+  const armPiv = x => { const p = new THREE.Group(); p.position.set(x, .78 - .44, 0); const sl = mk(GEO.arm, top, 0, -.15, 0); p.add(sl); p.userData.sleeve = sl; p.add(mk(GEO.hand, skin, 0, -.31, 0)); upper.add(p); return p; };
   P.armL = armPiv(-.27); P.armR = armPiv(.27);
   const head = new THREE.Group(); head.position.y = 1.22 - .44; upper.add(head); P.head = head;
   head.add(mk(GEO.head, skin, 0, 0, 0));
@@ -1229,6 +1247,12 @@ function poseAvatar(c, dt) {
       aL = P6[0]; aR = P6[1]; azL = P6[2]; azR = P6[3]; yawSet = P6[4]; htz = st % 2 ? .12 : -.12; dip = st === 3 ? .12 : 0;
     } else if (dkind === 'shuffle') {
       const w = dk * 13; lL = Math.max(0, Math.sin(w)) * .95; lR = Math.max(0, -Math.sin(w)) * .95; bx = Math.sin(dk * 3) * .3; dip = Math.abs(Math.sin(w)) * .07; aL = -.9 - Math.sin(w) * .7; aR = -.9 + Math.sin(w) * .7; azL = -.2; azR = .2; sway = Math.sin(dk * 3) * .08;
+    } else if (dkind === 'drum') {
+      const arm = hs => { for (const h of hs) { const u = dk - h; if (u > -.22 && u <= 0) return -2.55 + (u + .22) / .22 * 1.2; if (u > 0 && u < .16) return -1.35 - u / .16 * 1.2; } return -2.55; };
+      if (dk < .3) { aL = aR = -2.45 * dk / .3; } else if (dk < 3.45) { aR = arm(DRUM_R); aL = arm(DRUM_L); } else { aL = aR = -2.9; azL = -.45; azR = .45; dip = Math.abs(Math.sin(dk * 9)) * .05; }
+      if (MAP.id === 'krx' && dk < 3.45) yawSet = Math.PI / 2 - .3;
+      azL = dk < 3.45 ? -.2 : azL; azR = dk < 3.45 ? .2 : azR; htz = Math.sin(dk * 6) * .05;
+      const prev = c._dPrev ?? 0; c._dPrev = dk; if (MAP.id === 'krx') { const hit = [...new Set([...DRUM_R, ...DRUM_L])]; for (const h of hit) if (prev < h && dk >= h) drumHitAt(c, h === 3.15); }
     } else if (dkind === 'tap') {
       let a = 0; for (const o of [0, .26, .52]) { const v = dk - o; if (v > -.12 && v < .12) a = Math.max(a, 1 - Math.abs(v) / .12); }
       aR = -1.9 + a * .9; azR = .1; aL = -.9; azL = -.2; htz = .08; dip = .03;
@@ -1402,10 +1426,10 @@ async function initNet() {
   try {
     NET.world = NET.TR.joinRoom({ appId: APP, identity: 'none', ...(NET.TR.scale ? { use: [NET.TR.scale({ maxDirectPeers: 8 })] } : {}) }, 'world');
     NET.wState = NET.world.makeUserState('w', null, { maxBytes: 3072 });
-    NET.wState.onChange(() => { updCounts(); renderChs(); renderAffBoard(); if ($('#mapWin').style.display === 'block') renderMap(); if ($('#whoWin').style.display === 'block') renderWho(); });
+    NET.wState.onChange(() => { checkStateMega(); updCounts(); renderChs(); renderAffBoard(); if ($('#mapWin').style.display === 'block') renderMap(); if ($('#whoWin').style.display === 'block') renderWho(); });
     NET.world.onUserLeave(() => updCounts());
     NET.wMega = NET.world.makeAction('mega');
-    NET.wMega.onMessage((d, { userId }) => { if (!d || !rl('m' + userId, 3, 10000)) return; const all = !!d.all, ch = +d.ch || 0; if (!all && ch !== curCh) return; onMega({ n: str(d.n, NMAX) || '???', t: str(d.t, 80), ch, aff: AFF_KEYS.includes(d.aff) ? d.aff : '' }, all); });
+    NET.wMega.onMessage((d, { userId }) => { if (!d) return; if (d.id) { const mid = str(d.id, 12); if (megaSeen.has(mid)) return; megaSeen.add(mid); } if (!rl('m' + userId, 3, 10000)) return; const all = !!d.all, ch = +d.ch || 0; if (!all && ch !== curCh) return; onMega({ n: str(d.n, NMAX) || '???', t: str(d.t, 80), ch, aff: AFF_KEYS.includes(d.aff) ? d.aff : '' }, all); });
     NET.wWsp = NET.world.makeAction('wsp');
     NET.wWsp.onMessage((d, { userId }) => { if (!d || !rl('w' + userId)) return; const t = str(d.t, 80), n = str(d.n, NMAX) || '???'; if (!t || isBlocked(n)) return; logLine(`[귓속말] ${n} >> ${t}`, 'l-wsp', 'wsp'); SFX.wsp(); lastWspFrom = n; });
     NET.world.onError(e => { console.warn('world', e); if (e && e.code === 'identity-failed') setNet('연결 실패 (브라우저 보안 설정)', false); });
@@ -1451,7 +1475,9 @@ async function joinMapRoom() {
   } catch (e) { console.warn(e); NET.room = null; sys('연결에 실패했어요. 혼자 구경 모드로 진행해요.'); }
   pushWorld(); updCounts();
 }
-function pushWorld() { NET.wState && NET.wState.set({ ch: curCh, map: MAP.id, n: me.n, fame, a: me.aff || '' }); }
+function pushWorld() { NET.wState && NET.wState.set({ ch: curCh, map: MAP.id, n: me.n, fame, a: me.aff || '', ...(myMg && Date.now() - myMg.at < 90000 ? { mg: myMg } : {}) }); }
+var myMg = null, megaSeen = new Set();
+function checkStateMega() { const all = worldAll(); for (const k in all) { const v = all[k], g = v && v.mg; if (!g || typeof g !== 'object' || k === NET.wSelf) continue; const id = str(g.id, 12); if (!id || megaSeen.has(id)) continue; megaSeen.add(id); if (Math.abs(Date.now() - (+g.at || 0)) > 90000) continue; onMega({ n: str(v.n, NMAX) || '???', t: str(g.t, 80), ch: 1, aff: AFF_KEYS.includes(v.a) ? v.a : '' }, true); } }
 let lastSent = 0, lastPay = '';
 function sendMv(force, target) { if (!NET.room || !NET.mv) return; const p = { x: Math.round(me.x), y: Math.round(me.y), d: me.dir, a: ANIMS.indexOf(me.anim) }; const s = JSON.stringify(p), now = performance.now(); if (force || (s !== lastPay && now - lastSent > 90) || now - lastSent > 1000) { NET.mv.send(p, target ? { target } : undefined)?.catch?.(() => {}); if (!target) { lastSent = now; lastPay = s; } } }
 function pushProfile() { Object.assign(prof, { n: me.n, look: me.look, pet: me.pet, st: me.st, ch: curCh , aff: me.aff || '' , acc: me.acc || {} }); store.set('fm_prof3', prof); if (NET.prof) NET.prof.set(myProfile()); }
@@ -1508,7 +1534,7 @@ function doMega(t, all) {
   if (performance.now() - lastMega < 4000) { sys('확성기는 4초에 한 번만 쓸 수 있어요.'); return; }
   const k = all ? 'h' : 'm'; if (inv[k] <= 0) { sys(`${all ? '큰 확성기' : '확성기'}를 다 썼어요. 자정에 다시 채워져요.`); return; }
   inv[k]--; store.set('fm_inv_' + today(), inv); updStatus(); lastMega = performance.now();
-  const d = { n: me.n, t, ch: curCh, all, aff: me.aff || '' }; NET.wMega?.send(d)?.catch?.(() => {}); onMega(d, all); gainExp(all ? 15 : 8, all ? '큰 확성기' : '확성기');
+  const d = { n: me.n, t, ch: curCh, all, aff: me.aff || '' }; if (all) { d.id = Math.random().toString(36).slice(2, 12); megaSeen.add(d.id); myMg = { id: d.id, t, at: Date.now() }; pushWorld(); setTimeout(() => { myMg = null; pushWorld(); }, 95000); } NET.wMega?.send(d)?.catch?.(() => {}); onMega(d, all); gainExp(all ? 15 : 8, all ? '큰 확성기' : '확성기');
 }
 function onMega(d, all) { if (!d.t || isBlocked(d.n)) return; if (all) { const an = d.aff ? affName(d.aff) : ''; logLine(`[큰 확성기] ${an ? '[' + an + '] ' : ''}${d.n} : ${d.t}`, 'l-megaw', 'mega'); banner({ text: `${d.n} : ${d.t}`, aff: d.aff || '' }); } else logLine(`[확성기] ${d.n} : ${d.t}`, 'l-mega', 'mega'); SFX.mega(); }
 function sendChat() {
@@ -2200,9 +2226,20 @@ let fwLast = performance.now();
 const DANCE_LEN = 4.3, CAPS = [];
 const DANCES = { arrest: { n: '체포하겠어', ic: '🚨', key: 'V', len: 4.3, say: '체포하겠어! 🫵🚨' }, neon: { n: 'NEON', ic: '💡', key: 'N', len: 4.7, say: '✨ NEON ✨' }, takeL: { n: 'L을 가져가', ic: '🫵', key: 'L', len: 4.8, say: 'L을 가져가~ 🫵' },
   disco: { n: '디스코', ic: '🪩', key: '1', len: 4.6, say: '🪩 디스코 타임!', club: 1 }, robot: { n: '로봇 춤', ic: '🤖', key: '2', len: 4.4, say: '🤖 삐-빅 삐빅', club: 1 }, shuffle: { n: '셔플 댄스', ic: '🔥', key: '3', len: 4.4, say: '🔥 셔플 셔플!', club: 1 },
-  jeol: { n: '절', ic: '🙇', key: '', len: 3.2, say: '🙇', hidden: 1 }, tap: { n: '목탁', ic: '🪵', key: '', len: 1.0, say: '똑 똑 똑 🪵', hidden: 1 }, pull: { n: '타종', ic: '🔔', key: '', len: 1.3, say: '데엥~ 🔔', hidden: 1 } };
+  jeol: { n: '절', ic: '🙇', key: '', len: 3.2, say: '🙇', hidden: 1 }, drum: { n: '상장 북', ic: '🥁', key: '', len: 4.3, say: '🥁 둥! 둥! 둥둥둥!', hidden: 1 }, tap: { n: '목탁', ic: '🪵', key: '', len: 1.0, say: '똑 똑 똑 🪵', hidden: 1 }, pull: { n: '타종', ic: '🔔', key: '', len: 1.3, say: '데엥~ 🔔', hidden: 1 } };
+const REDJ = new THREE.MeshStandardMaterial({ color: '#c8141e', roughness: .55 }), STICKM = new THREE.MeshStandardMaterial({ color: '#e8d2a8', roughness: .5 }), STICKH = new THREE.MeshStandardMaterial({ color: '#c8321e', roughness: .5 });
+function ceremonyDress(c, len) {
+  const P = c.av && c.av.P; if (!P || !P.torso || P._dressed) return; P._dressed = true;
+  const parts = [P.torso, P.armL.userData.sleeve, P.armR.userData.sleeve].filter(Boolean), old = parts.map(p => p.material); parts.forEach(p => p.material = REDJ);
+  const extra = [];
+  const col = new THREE.Mesh(new THREE.ConeGeometry(.13, .2, 3), new THREE.MeshStandardMaterial({ color: '#ffffff' })); col.rotation.x = Math.PI; col.position.set(0, .28, .2); P.upper.add(col); extra.push([P.upper, col]);
+  const tie = new THREE.Mesh(new THREE.BoxGeometry(.06, .2, .02), new THREE.MeshStandardMaterial({ color: '#1d2a44' })); tie.position.set(0, .17, .23); P.upper.add(tie); extra.push([P.upper, tie]);
+  const cor = new THREE.Group(); [[0, 0, '#ffffff'], [.05, .04, '#ffd36b'], [-.05, .04, '#ff8fb1'], [0, -.05, '#ffffff']].forEach(([x, y, cc]) => { const f = new THREE.Mesh(new THREE.SphereGeometry(.045, 8, 6), new THREE.MeshStandardMaterial({ color: cc })); f.position.set(x, y, 0); cor.add(f); }); const rib = new THREE.Mesh(new THREE.BoxGeometry(.05, .14, .01), new THREE.MeshStandardMaterial({ color: '#e8b84a' })); rib.position.set(0, -.12, 0); cor.add(rib); cor.position.set(-.13, .2, .22); P.upper.add(cor); extra.push([P.upper, cor]);
+  [P.armL, P.armR].forEach(a => { const st = new THREE.Group(), s1 = new THREE.Mesh(new THREE.CylinderGeometry(.022, .022, .5, 6), STICKM), s2 = new THREE.Mesh(new THREE.SphereGeometry(.05, 8, 6), STICKH); s1.position.y = .22; s2.position.y = .47; st.add(s1, s2); st.position.set(0, -.33, .02); st.rotation.x = Math.PI / 2 - .2; a.add(st); extra.push([a, st]); });
+  setTimeout(() => { parts.forEach((p, i) => p.material = old[i]); extra.forEach(([pa, o]) => pa.remove(o)); P._dressed = false; }, len * 1000 + 2500);
+}
 function startDance(c, k = 'arrest') {
-  if (!DANCES[k]) return; c.danceT = T; c.danceK = k; c.danceLen = DANCES[k].len; c._dWh = 0; c._dSaid = 0; c._dS1 = 0; c.chair = false; say(c, DANCES[k].say); c.bubbleT = T + DANCES[k].len + .6;
+  if (!DANCES[k]) return; c.danceT = T; c.danceK = k; c.danceLen = DANCES[k].len; c._dWh = 0; c._dPrev = 0; if (k === 'drum') ceremonyDress(c, DANCES[k].len); c._dSaid = 0; c._dS1 = 0; c.chair = false; say(c, DANCES[k].say); c.bubbleT = T + DANCES[k].len + .6;
   if (k === 'takeL' && c.av && c.av.P.head) { const hd = c.av.P.head, lg = new THREE.Group(), lm = new THREE.MeshStandardMaterial({ color: '#ffd23f', emissive: '#c88a00', emissiveIntensity: .6 });
     const v1 = new THREE.Mesh(new THREE.BoxGeometry(.06, .26, .06), lm); v1.position.set(-.05, .05, 0); const h1 = new THREE.Mesh(new THREE.BoxGeometry(.18, .06, .06), lm); h1.position.set(.01, -.05, 0); lg.add(v1, h1);
     lg.position.set(.04, .22, .47); lg.scale.setScalar(1.5); hd.add(lg); setTimeout(() => hd.remove(lg), 2100); }
@@ -2234,6 +2271,20 @@ function confetti(px) {
 }
 let cfLast = performance.now();
 (function cfLoop(now) { const dt = Math.min(.05, ((now || performance.now()) - cfLast) / 1000); cfLast = now || performance.now(); for (let i = CONF.length - 1; i >= 0; i--) { const f = CONF[i]; f.t += dt; const a = f.pts.geometry.attributes.position; f.vel.forEach((v, j) => { a.array[j * 3] += (v[0] + Math.sin(f.t * 3 + v[3]) * .6) * dt; a.array[j * 3 + 1] += v[1] * dt; a.array[j * 3 + 2] += v[2] * dt; }); a.needsUpdate = true; f.pts.material.opacity = Math.max(0, 1 - Math.max(0, f.t - 3)); if (f.t > 4) { scene.remove(f.pts); f.pts.geometry.dispose(); f.pts.material.dispose(); CONF.splice(i, 1); } } requestAnimationFrame(cfLoop); })();
+const DRUMS = [];
+function drumBoom(big) { if (!sfxOn) return; try { const a = ac(), t = a.currentTime; const o = a.createOscillator(), g2 = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(big ? 120 : 150, t); o.frequency.exponentialRampToValueAtTime(big ? 48 : 60, t + .25); g2.gain.setValueAtTime(0, t); g2.gain.linearRampToValueAtTime(big ? .7 : .5, t + .005); g2.gain.exponentialRampToValueAtTime(.0001, t + (big ? .9 : .5)); o.connect(g2).connect(master); o.start(t); o.stop(t + 1);
+  const n = a.createBufferSource(), bf = a.createBuffer(1, a.sampleRate * .08, a.sampleRate), dd = bf.getChannelData(0); for (let i = 0; i < dd.length; i++) dd[i] = (Math.random() * 2 - 1) * (1 - i / dd.length) ** 3; n.buffer = bf; const ng = a.createGain(); ng.gain.value = big ? .35 : .22; const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400; n.connect(lp).connect(ng).connect(master); n.start(t); } catch {} }
+const DRUM_R = [.55, 1.35, 2.05, 2.25, 2.45, 3.15], DRUM_L = [.95, 1.75, 2.15, 2.35, 2.55, 3.15];
+function drumHitAt(c, big) { let best = null, bd = 1e9; DRUMS.forEach(d => { const q = Math.abs(d.x - c.x); if (q < bd) { bd = q; best = d; } }); if (best && bd < 60) best.hitT = T; drumBoom(big); }
+let drumLast = 0;
+function actDrum() {
+  if (Date.now() - drumLast < 5000) { toast('북은 5초에 한 번만 칠 수 있어요.'); return; }
+  if (me.danceT != null && T - me.danceT < (me.danceLen || DANCE_LEN)) return;
+  let bx = DRUMX[0]; DRUMX.forEach(x => { if (Math.abs(x - 34 - me.x) < Math.abs(bx - 34 - me.x)) bx = x; }); me.x = bx - 34; me.vx = 0; me.dir = 1;
+  dance('drum'); if (me.danceK !== 'drum' || T - me.danceT > .1) return; drumLast = Date.now();
+  sys('🥁 빨간 마이 입고 상장기념식 북 치는 중! 둥! 둥! 둥둥둥!');
+  setTimeout(() => { if (MAP.id === 'krx') { confetti(me.x); fanfare(); say(me, pickR(['🎉 축! 상장! 따상 가즈아!', '🎉 오늘부터 상장사!', '🎉 시초가 가즈아~!', '🎉 공모가 대비 따블!'])); me.bubbleT = T + 3; const nc = NPCS.find(n => n.n === '상장팀 최과장'); if (nc) say(nc, pickR(['축하드립니다 대표님! 👏', '북소리 좋네요! 따상 각!', '기념사진도 찍고 가세요~ 📸'])); } }, 3300);
+}
 function actListing() { if (Date.now() - lastListing < 8000) { toast('축하 버튼은 8초에 한 번만 누를 수 있어요.'); return; } lastListing = Date.now(); btnPressT = T; confetti(me.x); fanfare(); NET.fx?.send('confetti')?.catch?.(() => {}); actSay('🎉 축 상장! 따상 가즈아!', '빵빠레~ 상장 축하 꽃가루가 쏟아져요! (같은 장소 사람들도 보여요)'); }
 function actDanta() {
   if (dantaHold) { sys(`이미 ${dantaHold.s.n}를 들고 있어요. 결과를 기다려 주세요!`); return; }
@@ -2298,12 +2349,16 @@ function updTHud() {
   const h = '<div>' + l1 + '</div>' + l2 + l3; if (el._h !== h) { el._h = h; el.innerHTML = h; }
 }
 setInterval(updTHud, 1000);
+const JEOL_WISH = ['부처님, 이번 공모주 균등 10주만…', '수요예측 1000:1 넘게 해주세요', '밴드 상단 초과 확정 기원', '제 계좌 파란불 좀 꺼주세요', '물린 종목 본전만 오게 해주세요', '따상 한 번만… 딱 한 번만…', '상장일 시초가 +300% 기원', '정정신고서 그만 받게 해주세요', '예심 한 번에 통과 기원', '상장 철회만은 제발…', '부장님이 보고서 한 번에 통과시키게', '오늘 정시 퇴근하게 해주세요', '주말 출근 없게 해주세요', '연봉도 따상 기원', '청약 증거금 환불 빨리 들어오게', '확약 풀리는 날 주가 지켜주세요', '오늘 점심 메뉴 실패 안 하게', '단타 손절 그만하게 해주세요', '로또 1등… 아니면 2등이라도', '경쟁률 낮은 숨은 공모주 알려주세요', '보호예수 끝나도 매물 폭탄 없게', '추가매수 버튼에서 손 떼게 해주세요', '이번 달 카드값 무사 통과 기원', '내일은 빨간불 가득하게', '우리 팀 딜 전부 흥행 기원'];
+const BUDDHA_REPLY = ['부처님: 소원 접수되었습니다. 처리 기간은 3~5 영업일입니다.', '부처님이 미소 지으셨어요… 근데 돈은 안 주셨어요.', '부처님: 욕심은 밴드 하단부터 내려놓거라.', '부처님: 그 종목은… 나도 물렸느니라.', '부처님: 균등은 운, 비례는 증거금이니라.', '부처님: 손절도 수행이니라.', '부처님: 보고서는 결론부터 쓰거라.', '향 연기가 하트 모양으로 피어올랐어요. 길조예요!', '부처님: 오늘은 청약보다 낮잠이 이롭구나.', '부처님 손의 지폐가 살짝 흔들렸어요… 기분 탓일까요?'];
 function actJeol() {
   if (me.danceT != null && T - me.danceT < (me.danceLen || DANCE_LEN)) return;
   dance('jeol'); if (me.danceK !== 'jeol' || T - me.danceT > .1) return;
   const yb = yebulNow().on, tb = addBows(yb ? 2 : 1);
   const v = store.get('fm_108', { day: '', c: 0 }); if (v.day !== today()) { v.day = today(); v.c = 0; } v.c++; store.set('fm_108', v);
-  say(me, '🙇 ' + v.c + '배' + (yb ? ' · 공덕 2배' : '') + ' · ' + titleOf(tb)[1]); me.bubbleT = T + 3.5; setTimeout(() => sfx([[1150, .03]], 'triangle', .05), 1300);
+  const wish = v.c === 108 ? '108배 완주! 번뇌 상장폐지 완료 🎉' : pickR(JEOL_WISH);
+  actSay('🙏 ' + wish + ' · ' + v.c + '배째' + (yb ? ' (공덕×2)' : '')); me.bubbleT = T + 3.8;
+  if (Math.random() < .22 && v.c !== 108) setTimeout(() => { if (MAP.id === 'temple') sys('🪷 ' + pickR(BUDDHA_REPLY)); }, 2600); setTimeout(() => sfx([[1150, .03]], 'triangle', .05), 1300);
   qInc('bow'); if (yb) qInc('ybow');
   if (v.c === 108) { sys('🎉 오늘 108배 완주! 번뇌가 모두 사라졌어요. 성불하세요~'); setTimeout(() => { bellSwing = 1; bellSound(); fireworks(); }, 2800); }
 }
