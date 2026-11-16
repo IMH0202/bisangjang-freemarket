@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.0.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.1.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -245,6 +245,8 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 .affpick:hover{border-color:rgba(255,173,92,.7)}.affpick .sp{flex:1}.affpick small{color:var(--acc2);font-size:12px}.door.click:hover{background:#fff}
 .l-exp{color:#ffe08a;font-size:12px}
 #gbWin{width:min(540px,94vw)}#gbList{max-height:50vh;overflow:auto}
+#ownWin{width:min(420px,92vw)}.ownb{display:inline-block;background:linear-gradient(180deg,#ffe58a,#f0a020);color:#5a2a00;border-radius:999px;padding:1px 7px;margin-right:5px;font-size:10px;font-weight:900;vertical-align:middle;box-shadow:0 0 8px rgba(255,200,60,.8)}
+.dit.cashit{background:linear-gradient(160deg,rgba(255,215,90,.16),rgba(180,120,255,.14));border-color:rgba(255,210,120,.45)}.dit.cashit.lock{opacity:.75}
 #msWin{width:min(560px,94vw)}#msList{max-height:50vh;overflow:auto}.msi{background:rgba(160,130,240,.1)}.msi .h b{color:#b9a4ff}.msf{display:flex;gap:6px;margin-top:6px}.msf button{border:0;border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;background:rgba(255,255,255,.1);color:inherit}.msf .mslk.on{background:rgba(255,90,140,.3);color:#ffd0e0}.msf .mshd{opacity:.6}
 .gbi{padding:11px 4px;border-bottom:1px solid var(--line)}.gbi .h{display:flex;gap:8px;align-items:baseline}.gbi b{font-size:13.5px;color:#ffc48a}.gbi small{color:var(--sub);font-size:11.5px}.gbi p{margin:4px 0 0;font-size:13.5px;line-height:1.55;word-break:break-all}
 /* v0.4 */
@@ -348,7 +350,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 </div>
 <div class="hud glass" id="morepop">
   <button id="bGB">방명록</button><button id="bAff">소속 바꾸기</button><button id="bWho">접속자 목록</button><button id="bFind">사람 찾기</button><button id="bInfo">내 정보</button><button id="bChan" style="display:none">채널 이동</button>
-  <hr><button id="bInvite">친구 초대 링크 복사</button><button id="bSet">설정 · 차단 목록</button><button id="bHelp2">도움말</button>
+  <hr><button id="bCharLink">⭐ 내 캐릭터 링크 (북마크용)</button><button id="bInvite">친구 초대 링크 복사</button><button id="bSet">설정 · 차단 목록</button><button id="bHelp2">도움말</button>
 </div>
 <div class="hud glass" id="emopop"></div>
 <div class="hud" id="touchL"><button data-k="l">◀</button><button data-k="r">▶</button></div>
@@ -395,6 +397,10 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
   <div style="display:flex;gap:8px;margin:12px 0 6px"><input class="inp" id="gbTxt" maxlength="100" placeholder="한마디 남기기 (100자까지)"><button class="btn pri" id="gbPost" style="flex:none">남기기</button></div>
   <div id="gbList"></div>
 </div>
+<div class="modal glass" id="ownWin"><h3><span>👑 방장 로그인</span><span class="x" data-close>✕</span></h3>
+  <div class="muted">방장 열쇠를 넣으면 방장으로 로그인돼요. 브라우저가 비밀번호 저장을 물어보면 저장해 두세요. 다음부터 자동으로 채워져요.</div>
+  <form id="ownForm" autocomplete="on" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"><input class="inp" name="username" autocomplete="username" value="비상장자유시장 방장" readonly style="opacity:.6"><input class="inp" id="ownKey" name="password" type="password" autocomplete="current-password" placeholder="방장 열쇠"><button class="btn pri" type="submit">로그인</button></form>
+</div>
 <div class="modal glass" id="msWin"><h3><span>💭 마음의 소리 <span class="muted" id="msCnt"></span></span><span class="x" data-close>✕</span></h3>
   <div class="muted">이름 없이 익명으로 올라가요. 실명·회사 내부 정보·욕설·비방은 쓰지 말아주세요. 보기 싫은 글은 🙈로 내 화면에서 숨길 수 있어요.</div>
   <div style="display:flex;gap:8px;margin:12px 0 6px"><input class="inp" id="msTxt" maxlength="120" placeholder="아무도 모르게 한마디 (120자까지)"><button class="btn pri" id="msPost" style="flex:none">남기기</button></div>
@@ -421,7 +427,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 <div class="modal glass" id="infoWin"><h3>캐릭터 정보<span class="x" data-close>✕</span></h3><div id="infoBd"></div></div>
 <div class="modal glass" id="helpWin"><h3>도움말<span class="x" data-close>✕</span></h3>
   <b>조작</b><br>← → 이동 · Space/Alt 점프 · ↓ 엎드리기 · ↓+점프 발판 아래로<br>↑ 사다리·밧줄 오르기 / 문 들어가기 · Enter 채팅 · F1~F7 감정표현<br>이름표 클릭: 귓속말 · 상점 · 정보 · 단축키: Z 앉기 · X(또는 B) 공수 90도 인사 · 춤: V 체포하겠어 · N NEON · L L을 가져가 · 클럽 전용 1 디스코 · 2 로봇 · 3 셔플
-  <br><br><b>채팅 명령어</b><br>/w 닉네임 내용 · /r 내용 (답장) · /확 내용 (확성기) · /전확 내용 (큰 확성기) · /찾기 닉네임 · /춤 · /네온 · /엘 · /불꽃<br>/고정 내용 (말풍선 고정) · /고정해제 · /대화 닉네임 (1:1 대화 신청)
+  <br><br><b>채팅 명령어</b><br>/w 닉네임 내용 · /r 내용 (답장) · /확 내용 (확성기) · /전확 내용 (큰 확성기) · /찾기 닉네임 · /춤 · /네온 · /엘 · /불꽃<br>/고정 내용 (말풍선 고정) · /고정해제 · /대화 닉네임 (1:1 대화 신청) · /링크 (내 캐릭터 링크) · /방장
   
   <br><br><b>꾸미기</b><br>🛠️ 만들기: 인기도에 따라 열려요 (❤0 털모자·야구모자 … ❤30 황금 왕관, 총 32종). 인기도는 다른 사람이 이름표 메뉴에서 ❤를 눌러줘야 올라요.<br>🎰 오늘의 뽑기: 하루 1번, 입구 오른쪽 끝 기계 앞에서 ↑ 또는 /뽑기. 잠긴 아이템이 나올 수도 있어요.<br>🎆 불꽃놀이: /불꽃 (20초에 한 번) · 표정: F1~F7 · 🐾 펫: 꾸미기 → 펫 탭<br><br><b>사람과 어울리기</b><br>이름표를 누르면 1:1 대화 신청 · 귓속말 · 인기도 올리기/내리기 · 차단을 할 수 있어요.<br>인기도는 하루에 한 번, 같은 사람에게는 한 달에 한 번 줄 수 있어요.
   <br><br><span class="muted">서버 없이 브라우저끼리 직접(P2P) 연결해요. 그래픽·사운드·이름은 모두 이 게임용으로 새로 만든 것이고, NPC 좌판의 종목명은 가상이며 투자 권유가 아니에요. 채팅·귓속말·1:1 대화는 어디에도 저장되지 않고, 방명록만 접속한 사람들 브라우저에 저장돼요.</span></div>
@@ -444,7 +450,7 @@ const $ = s => document.querySelector(s);
 const G = 640, U = 40;                    // 게임 좌표(px) → 3D 단위 변환
 const X3 = px => px / U, Y3 = py => (G - py) / U;
 const APP = 'bisangjang-freemarket/v4';
-const BUILD = 'v2.0';
+const BUILD = 'v2.1';
 (async () => { try { if (location.protocol !== 'https:' || !location.hostname.endsWith('github.io')) return; const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }); const m = (await r.text()).match(/const BUILD = '([^']+)'/); if (m && m[1] !== BUILD && !location.search.includes('v=' + m[1])) location.replace(location.pathname + '?v=' + m[1] + location.hash); } catch {} })();
 const CHN = 1, NMAX = 14;
 const IS_POP = location.hash.includes('win');
@@ -1245,6 +1251,7 @@ const LVGEO = new THREE.CylinderGeometry(.75, .75, 8, 32, 1, true);
 function poseAvatar(c, dt) {
   const av = c.av; if (!av) return; const P = av.P, a = c.anim || 'stand', p = c.phase || 0, t = T;
   if (P.float) P.float.forEach(f => { f.m.position.y = f.y + Math.sin(T * 2.4) * .03; if (f.spin) f.m.rotation.y += f.spin * dt; });
+  if (P.fx) P.fx.forEach(f => f(T));
   const yawT = a === 'climb' ? Math.PI : a === 'prone' ? c.dir * Math.PI / 2 : c.dir * .75;
   av.yaw.rotation.y += (yawT - av.yaw.rotation.y) * Math.min(1, dt * 12);
   const bob = a === 'walk' ? Math.abs(Math.sin(p)) * .06 : (a === 'stand' || a === 'sit' || a === 'chair') ? Math.sin(t * 2.4 + (c.seed || 0)) * .015 : 0;
@@ -1336,6 +1343,7 @@ function poseAvatar(c, dt) {
 // ===================== 상태 =====================
 let T = 0, entered = false, MAP = MAPS.gate;
 const keys = {}; let jumpQ = false;
+(() => { try { const mm = location.hash.match(/[#&]c=([A-Za-z0-9_-]+)/); if (!mm) return; const o = JSON.parse(new TextDecoder().decode(ub64(mm[1]))); if (!o || typeof o !== 'object' || !o.n) return; const old = store.get('fm_prof3', {}) || {}; store.set('fm_prof3', { ...old, n: String(o.n).slice(0, 14), look: o.look || old.look, pet: o.pet ?? old.pet, aff: o.aff || old.aff || '', acc: o.acc || {}, st: o.st || old.st || null, ch: 1 }); if (o.cash && typeof o.cash === 'object') store.set('fm_cash', { ...(store.get('fm_cash', {}) || {}), ...o.cash }); if (o.pin) store.set('fm_pin', o.pin); history.replaceState(null, '', location.pathname + location.search + (location.hash.includes('win') ? '#win' : '')); } catch (e) { console.warn('charlink', e); } })();
 const prof = store.get('fm_prof3', { n: randName(), look: { s: 0, hc: 1, hs: 0, t: 0, b: 0, f: 0 }, pet: 1, st: null, ch: 1 });
 const me = { self: true, id: 'me', aff: prof.aff || '', n: prof.n, look: { f: 0, ...prof.look }, pet: prof.pet ?? 1, st: prof.st, x: 1190, y: G, vx: 0, vy: 0, dir: 1, anim: 'stand', phase: 0, onGround: true, dropT: 0, seed: 1.3, shop: null, chair: false, climb: null, climbCD: 0, pp: { x: 1270, y: G } };
 let curCh = 1;
@@ -1404,7 +1412,7 @@ function place(e, p) { e.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.
 function setTxt(el, t) { if (el._t !== t) { el._t = t; el.textContent = t; } }
 function overlayChar(c) {
   const fx = X3(c.x), fy = Y3(c.y);
-  const nt = anchor('n' + c.id, 'nt' + (c.self ? ' me' : c.npc ? ' npc' : '')); place(nt, proj(fx, fy - .02, .2)); { const tk = (c.n || '...') + '|' + (c.aff || ''); if (nt._in._k2 !== tk) { nt._in._k2 = tk; nt._in.textContent = ''; const bd = affBadge(c.aff); if (bd) nt._in.appendChild(bd); nt._in.appendChild(document.createTextNode(c.n || '...')); } }
+  const nt = anchor('n' + c.id, 'nt' + (c.self ? ' me' : c.npc ? ' npc' : '')); place(nt, proj(fx, fy - .02, .2)); { const tk = (c.n || '...') + '|' + (c.aff || '') + (c.isOwner ? '|o' : ''); if (nt._in._k2 !== tk) { nt._in._k2 = tk; nt._in.textContent = ''; if (c.isOwner) { const ob = document.createElement('span'); ob.className = 'ownb'; ob.textContent = '👑 방장'; nt._in.appendChild(ob); } const bd = affBadge(c.aff); if (bd) nt._in.appendChild(bd); nt._in.appendChild(document.createTextNode(c.n || '...')); } }
   if (!nt._in._bound) { nt._in._bound = true; nt._in.onclick = ev => { ev.stopPropagation(); charMenu(c, ev.clientX, ev.clientY); }; }
   nt._in._c = c;
   const hh = c.anim === 'prone' ? .9 : c.anim === 'chair' ? 2.4 : 2.15;
@@ -1489,7 +1497,7 @@ function worldOthers() { const a = worldAll(); return Object.keys(a).filter(k =>
 function chCounts() { const c = {}; for (let i = 1; i <= CHN; i++) c[i] = 0; const all = worldAll(); for (const k in all) { const v = all[k]; if (v && c[v.ch] != null) c[v.ch]++; } return c; }
 function mapCount(mid) { let n = 0; const all = worldAll(); for (const k in all) { const v = all[k]; if (v && v.ch === curCh && v.map === mid) n++; } return n; }
 function updCounts() { if (!entered) return; const c = chCounts(), total = Object.values(c).reduce((a, b) => a + b, 0); setNet(NET.room ? `이 장소 ${remotes.size + 1}명 · 전체 ${Math.max(total, 1)}명` : '오프라인 · 혼자 구경 중', !!NET.room); }
-function myProfile() { return { n: me.n, look: me.look, pet: me.pet, shop: me.shop, st: me.st, pin: me.pin || '', fame, aff: me.aff || '', acc: me.acc || {} }; }
+function myProfile() { const ct = {}; for (const s in (me.acc || {})) { const id = me.acc[s]; if (isCash(id) && myCash[id]) ct[id] = myCash[id]; } return { n: me.n, look: me.look, pet: me.pet, shop: me.shop, st: me.st, pin: me.pin || '', fame, aff: me.aff || '', acc: me.acc || {}, ct, ...(myOwnSig ? { own: myOwnSig } : {}) }; }
 function getRemote(id) { let r = remotes.get(id); if (!r) { r = { id: 'u' + id, uid: id, n: '...', look: cleanLook({}), x: -999, y: G, tx: null, ty: G, dir: 1, anim: 'stand', phase: 0, seed: Math.random() * 4, shop: null, pet: 0, seen: Date.now(), pp: { x: -999, y: G } }; remotes.set(id, r); } return r; }
 function clearRemotes() { remotes.forEach(dropAv); remotes.clear(); }
 async function joinMapRoom() {
@@ -1503,10 +1511,11 @@ async function joinMapRoom() {
       if (self || R !== NET.room) return;
       if (removed || !v) { const r = remotes.get(userId); if (r) dropAv(r); remotes.delete(userId); updCounts(); return; }
       const r = getRemote(userId), first = r.n === '...';
-      r.n = str(v.n, NMAX) || '익명'; r.pin = str(v.pin, 40).trim(); r.fame = Number.isInteger(v.fame) ? clamp(v.fame, -9999, 99999) : 0; r.aff = AFF_KEYS.includes(v.aff) ? v.aff : ''; r.acc = cleanAcc(v.acc); r.look = cleanLook(v.look); r.shop = cleanShop(v.shop); r.pet = int(v.pet, PETS.length); r.lv = clamp(+v.lv || 1, 1, 999); r.st = Array.isArray(v.st) ? v.st.slice(0, 4).map(x => clamp(+x || 4, 4, 13)) : null;
+      r.n = str(v.n, NMAX) || '익명'; r.pin = str(v.pin, 40).trim(); r.fame = Number.isInteger(v.fame) ? clamp(v.fame, -9999, 99999) : 0; r.aff = AFF_KEYS.includes(v.aff) ? v.aff : ''; r.acc = cleanAcc(v.acc); applyCash(r, v); r.look = cleanLook(v.look); r.shop = cleanShop(v.shop); r.pet = int(v.pet, PETS.length); r.lv = clamp(+v.lv || 1, 1, 999); r.st = Array.isArray(v.st) ? v.st.slice(0, 4).map(x => clamp(+x || 4, 4, 13)) : null;
       if (first) { sys(`${r.n}님이 들어왔어요.`); SFX.join(); }
       updCounts();
     });
+    NET.gift = R.makeAction('gift'); NET.gift.onMessage((d, { userId }) => { if (R !== NET.room || !rl('gf' + userId, 5, 30000)) return; onGift(d); });
     NET.mv = R.makeAction('mv');
     NET.mv.onMessage((d, { userId }) => { if (R !== NET.room || !d) return; const r = getRemote(userId); r.seen = Date.now(); r.tx = clamp(+d.x || 0, 0, MAP.W); r.ty = clamp(+d.y || G, 0, G); r.dir = d.d > 0 ? 1 : -1; r.anim = ANIMS[d.a] || 'stand'; if (r.x < -100) { r.x = r.tx; r.y = r.ty; r.pp.x = r.x - 30; r.pp.y = r.y; } });
     NET.chat = R.makeAction('chat');
@@ -1588,6 +1597,8 @@ function sendChat() {
   let m;
   if ((m = raw.match(/^\/(w|귓|ㄱ)\s+(.+)$/))) { const [to, t] = splitTarget(m[2]); return doWsp(to, t); }
   if ((m = raw.match(/^\/r\s+(.+)$/))) { if (!lastWspFrom) { sys('답장할 귓속말이 없어요.'); return; } return doWsp(lastWspFrom, m[1]); }
+  if (/^\/(방장|owner)$/.test(raw)) return openOwner();
+  if (/^\/(링크|캐릭터링크)$/.test(raw)) return copyCharLink();
   if ((m = raw.match(/^\/(전확|world)\s+(.+)$/))) return doMega(m[2], true);
   if ((m = raw.match(/^\/(확|mega)\s+(.+)$/))) return doMega(m[2], false);
   if ((m = raw.match(/^\/(찾기|find)\s*(.*)$/))) return doFind(m[2].trim());
@@ -1634,11 +1645,12 @@ function charMenu(c, x, y) {
   if (!entered) return; if (c.self) { showInfo(me); return; }
   const m = $('#ctxmenu'); m.innerHTML = ''; const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = c.n + (c.npc ? ' · NPC' : ''); m.appendChild(nm);
   const add = (label, fn) => { const it = document.createElement('div'); it.className = 'it'; it.textContent = label; it.onclick = () => { m.style.display = 'none'; fn(); }; m.appendChild(it); };
-  const hdr = document.createElement('div'); hdr.className = 'muted'; hdr.style.padding = '0 10px 6px'; hdr.textContent = c.npc ? '시장 사람' : `${c.aff ? affName(c.aff) + ' · ' : ''}❤ 인기도 ${c.fame || 0}`; m.appendChild(hdr);
+  const hdr = document.createElement('div'); hdr.className = 'muted'; hdr.style.padding = '0 10px 6px'; hdr.textContent = c.npc ? '시장 사람' : `${c.isOwner ? '👑 방장 · ' : ''}${c.aff ? affName(c.aff) + ' · ' : ''}❤ 인기도 ${c.fame || 0}`; m.appendChild(hdr);
   if (c.npc && c.talk) add('말 걸기', () => say(c, pick(c.talk)));
   if (!c.npc) add('💬 1:1 대화 신청', () => requestDm(c));
   add('귓속말', () => startWsp(c.n));
   if (!c.npc) { add('❤ 인기도 올리기', () => giveFame(c, 1)); add('💔 인기도 내리기', () => giveFame(c, -1)); }
+  if (!c.npc && ownerKey) add('🎁 캐시템 선물하기 (방장)', () => giftMenu(c, x, y));
   if (c.shop) add('상점 보기', () => showShop(c)); add('정보 보기', () => showInfo(c));
   if (!c.npc) add(isBlocked(c.n) ? '차단 풀기' : '차단하기', () => setBlock(c.n, !isBlocked(c.n)));
   m.style.left = Math.min(x, innerWidth - 170) + 'px'; m.style.top = Math.min(y, innerHeight - 190) + 'px'; m.style.display = 'block';
@@ -1652,7 +1664,7 @@ cv.addEventListener('click', e => {
 
 // ===================== 창 관리 =====================
 function openWin(id) { $('#' + id).style.display = 'block'; }
-function closeWins() { closeMore(); ['decoWin', 'affWin', 'chanWin', 'shopEdit', 'shopView', 'helpWin', 'infoWin', 'pinWin', 'mapWin', 'whoWin', 'setWin', 'gbWin', 'msWin'].forEach(id => $('#' + id).style.display = 'none'); $('#ctxmenu').style.display = 'none'; $('#emopop').style.display = 'none'; }
+function closeWins() { closeMore(); ['decoWin', 'affWin', 'chanWin', 'shopEdit', 'shopView', 'helpWin', 'infoWin', 'pinWin', 'mapWin', 'whoWin', 'setWin', 'gbWin', 'msWin', 'ownWin'].forEach(id => $('#' + id).style.display = 'none'); $('#ctxmenu').style.display = 'none'; $('#emopop').style.display = 'none'; }
 document.querySelectorAll('[data-close]').forEach(x => x.onclick = closeWins);
 $('#bHelp').onclick = () => openWin('helpWin');
 $('#bChan').onclick = () => { if (entered) openChan(); };
@@ -1828,7 +1840,7 @@ $('#bEnter').onclick = async () => {
   if (!n) { toast('닉네임을 입력해 주세요.'); return; }
   if (/^\[?NPC/i.test(n) || findNpc(n)) { toast('그 닉네임은 쓸 수 없어요.'); return; }
   if (!me.aff) { toast('소속을 골라주세요.'); openAff(); return; }
-  me.n = n.slice(0, NMAX); $('#intro').style.display = 'none'; bgmStart();
+  me.n = n.slice(0, NMAX); $('#intro').style.display = 'none'; bgmStart(); checkMyCash(); try { navigator.storage?.persist?.(); } catch {}
   entered = true; ['#info', '#chat', '#dock', '#affBoard'].forEach(s => $(s).classList.remove('hide')); renderAffBoard();
   sys('비상장 자유시장에 오신 걸 환영해요!'); sys('← → 이동 · Space 점프 · ↑ 사다리/문 · ↓ 엎드리기 · Enter 채팅 · F1~F7 감정표현');
   SFX.join();
@@ -2029,7 +2041,10 @@ function postGB() {
   toast('방명록을 남겼어요!'); SFX.join(); dailyExp('gb', 1, 20, '방명록');
 }
 $('#gbPost').onclick = postGB;
-$('#msPost').onclick = postMS; $('#msTxt').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') postMS(); if (e.key === 'Escape') closeWins(); });
+$('#msPost').onclick = postMS;
+$('#ownForm').addEventListener('submit', async e => { e.preventDefault(); if (await ownerLogin($('#ownKey').value)) { $('#ownKey').value = ''; closeWins(); } });
+$('#ownKey').addEventListener('keydown', e => e.stopPropagation());
+$('#bCharLink').onclick = () => { closeMore(); copyCharLink(); }; $('#msTxt').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') postMS(); if (e.key === 'Escape') closeWins(); });
 $('#gbTxt').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') postGB(); if (e.key === 'Escape') closeWins(); });
 $('#bGB').onclick = openGB;
 function setupGuestbook() {
@@ -2116,9 +2131,11 @@ const ITEMS = {
   heartgl: { n: '하트 선글라스', s: 'f', q: 10, ic: '😍' }, cape: { n: '빨간 망토', s: 'b', q: 10, ic: '🦸' },
   wizard: { n: '마법사 모자', s: 'h', q: 12, ic: '🧙' }, tophat: { n: '신사 모자', s: 'h', q: 15, ic: '🎩' }, devil: { n: '악마 뿔', s: 't', q: 15, ic: '😈' },
   wings: { n: '천사 날개', s: 'b', q: 20, ic: '🪽' }, batwings: { n: '박쥐 날개', s: 'b', q: 20, ic: '🦇' },
-  halo: { n: '천사링', s: 't', q: 25, ic: '😇' }, crown: { n: '황금 왕관', s: 'h', q: 30, ic: '👑' }
+  halo: { n: '천사링', s: 't', q: 25, ic: '😇' }, crown: { n: '황금 왕관', s: 'h', q: 30, ic: '👑' },
+  c_dcrown: { n: '다이아 왕관', s: 'h', q: 9999, ic: '💎', cash: 1, d: '반짝이는 다이아가 박힌 왕관' }, c_phoenix: { n: '황금 불사조 날개', s: 'b', q: 9999, ic: '🔥', cash: 1, d: '퍼덕이는 거대한 황금 날개' }, c_laser: { n: '레이저 선글라스', s: 'f', q: 9999, ic: '🔴', cash: 1, d: '빨간 빛이 나는 선글라스' }, c_aura: { n: '무지개 오라', s: 'a', q: 9999, ic: '🌈', cash: 1, d: '발밑에서 도는 무지개 빛' }, c_money: { n: '돈비 구름', s: 't', q: 9999, ic: '💸', cash: 1, d: '머리 위에서 금화가 쏟아지는 구름' }
 };
-const SLOTN = { h: '모자', f: '얼굴', e: '귀', t: '머리 위', n: '목', b: '등' };
+const SLOTN = { h: '모자', f: '얼굴', e: '귀', t: '머리 위', n: '목', b: '등', a: '오라' };
+const isCash = id => !!(ITEMS[id] && ITEMS[id].cash);
 const SLOTS = Object.keys(SLOTN);
 function cleanAcc(a) { const o = {}; if (a && typeof a === 'object') for (const s of SLOTS) { const id = a[s]; if (typeof id === 'string' && ITEMS[id] && ITEMS[id].s === s) o[s] = id; } return o; }
 let bag = (store.get('fm_bag', []) || []).filter(id => ITEMS[id]);
@@ -2167,6 +2184,26 @@ function addAcc(P, acc) {
   if (A.b === 'bag') { put(new THREE.Mesh(new RoundedBoxGeometry(.4, .38, .18, 3, .05), M('#d8583c')), 0, .14, -.32, up); [-1, 1].forEach(sd => { const st = put(new THREE.Mesh(new THREE.TorusGeometry(.14, .018, 6, 16, Math.PI), M('#8a3a22')), sd * .13, .2, -.12, up); st.rotation.y = Math.PI / 2; st.rotation.z = Math.PI / 2; }); }
   if (A.b === 'cape') { const c = put(new THREE.Mesh(new THREE.BoxGeometry(.5, .55, .02), M('#c0202a', { side: THREE.DoubleSide })), 0, .08, -.3, up); c.rotation.x = .25; }
   if (A.b === 'wings' || A.b === 'batwings') { const bat = A.b === 'batwings'; [-1, 1].forEach(sd => { const w = put(bat ? ext(heartShape(.24), .02, M('#2a2030')) : mk(GEO.ball, M('#fffaf0', { roughness: .55 }), 0, 0, 0, .4, .2, .05), sd * .34, .34, -.3, up); w.rotation.z = sd * (bat ? 2.5 : .6); w.rotation.y = -sd * .55; }); }
+  // ===== 캐시템 (방장 전용·선물) =====
+  P.fx = [];
+  const glowM = (c, e = 1.4) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: e, metalness: .3, roughness: .25 });
+  if (A.h === 'c_dcrown') { const gold = M('#f0c030', { metalness: .8, roughness: .2, emissive: '#7a5200', emissiveIntensity: .5 }), dia = new THREE.MeshStandardMaterial({ color: '#bfefff', emissive: '#7fdcff', emissiveIntensity: .9, metalness: .1, roughness: .05, transparent: true, opacity: .9 });
+    const ring = put(new THREE.Mesh(new THREE.CylinderGeometry(.28, .3, .16, 28, 1, true), gold), 0, .46, -.02); ring.material.side = THREE.DoubleSide;
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, tip = put(new THREE.Mesh(new THREE.ConeGeometry(.05, i % 2 ? .14 : .24, 8), gold), Math.sin(a) * .28, .6 + (i % 2 ? 0 : .05), Math.cos(a) * .28 - .02); const g2 = put(new THREE.Mesh(new THREE.OctahedronGeometry(i % 2 ? .035 : .05), dia), Math.sin(a) * .29, i % 2 ? .69 : .76, Math.cos(a) * .29 - .02); g2.castShadow = false; }
+    const big = put(new THREE.Mesh(new THREE.OctahedronGeometry(.09), dia), 0, .47, .3); big.scale.y = 1.4; big.castShadow = false; P.float.push({ m: big, y: .47, spin: 2 });
+    const sp = []; for (let i = 0; i < 6; i++) { const s = put(new THREE.Mesh(new THREE.OctahedronGeometry(.025), glowM('#ffffff', 2)), 0, .8, 0); s.castShadow = false; sp.push(s); }
+    P.fx.push(t => sp.forEach((s, i) => { const a = t * 1.6 + i * 1.05; s.position.set(Math.cos(a) * .42, .72 + Math.sin(t * 3 + i) * .08, Math.sin(a) * .42); s.scale.setScalar(.6 + .6 * Math.abs(Math.sin(t * 4 + i))); })); }
+  if (A.b === 'c_phoenix') { const wg = []; [-1, 1].forEach(sd => { const piv = new THREE.Group(); put(piv, sd * .16, .3, -.22, up); for (let i = 0; i < 6; i++) { const f = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8), glowM(['#ffd23f', '#ffb020', '#ff8a20', '#ff6a20', '#ff4a30', '#ffe07a'][i], .9)); f.scale.set(.42 - i * .03, .07, .035); f.position.set(sd * (.3 + i * .02), .05 - i * .08, -.04 * i); f.rotation.z = sd * (.55 - i * .2); f.castShadow = false; piv.add(f); } piv.rotation.y = -sd * .5; wg.push([piv, sd]); });
+    P.fx.push(t => wg.forEach(([p, sd]) => { p.rotation.z = sd * Math.sin(t * 5) * .28; p.rotation.y = -sd * (.5 + Math.sin(t * 5) * .15); })); }
+  if (A.f === 'c_laser') { const fr = M('#111', { metalness: .5, roughness: .3 }); put(new THREE.Mesh(new THREE.BoxGeometry(.6, .05, .04), fr), 0, .02, .42); [-1, 1].forEach(sd => { const l = put(new THREE.Mesh(new THREE.BoxGeometry(.2, .12, .03), glowM('#ff1a2a', 2.2)), sd * .15, -.02, .43); l.castShadow = false; const bm = put(new THREE.Mesh(new THREE.CylinderGeometry(.008, .02, 1.6, 6), new THREE.MeshBasicMaterial({ color: '#ff3040', transparent: true, opacity: .35, blending: THREE.AdditiveBlending, depthWrite: false })), sd * .15, -.02, 1.25); bm.rotation.x = Math.PI / 2; bm.castShadow = false; }); }
+  if (A.a === 'c_aura') { const og = new THREE.Group(); put(og, 0, -.42, 0, up); const balls = []; for (let i = 0; i < 14; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(.05, 8, 6), glowM(new THREE.Color().setHSL(i / 14, .9, .6).getStyle(), 1.8)); b.castShadow = false; og.add(b); balls.push(b); }
+    const disc = new THREE.Mesh(new THREE.RingGeometry(.45, .62, 40), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .35, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); disc.rotation.x = -Math.PI / 2; disc.position.y = .02; og.add(disc);
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(.55, .6, 1.8, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#c8a0ff', transparent: true, opacity: .1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); col.position.y = .9; og.add(col);
+    P.fx.push(t => { balls.forEach((b, i) => { const a = t * 1.8 + i / 14 * Math.PI * 2; b.position.set(Math.cos(a) * .58, .08 + ((t * .6 + i / 14) % 1) * 1.4, Math.sin(a) * .58); b.material.emissive.setHSL((i / 14 + t * .2) % 1, .9, .5); }); disc.material.color.setHSL((t * .2) % 1, .8, .7); col.material.color.setHSL((t * .2 + .5) % 1, .7, .7); }); }
+  if (A.t === 'c_money') { const cl = new THREE.Group(); [[0, 0, .17], [-.17, -.03, .13], [.17, -.03, .13], [.08, .08, .12], [-.08, .07, .11]].forEach(([x, y, r]) => { const b = new THREE.Mesh(GEO.ball, glowM('#ffe07a', .5)); b.scale.setScalar(r); b.position.set(x, y, 0); cl.add(b); }); put(cl, 0, 1.0, 0); P.float.push({ m: cl, y: 1.0, spin: 0 });
+    const coins = []; const cm = glowM('#ffcf3a', .8); for (let i = 0; i < 7; i++) { const c = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .012, 12), cm); c.castShadow = false; h.add(c); coins.push(c); }
+    P.fx.push(t => coins.forEach((c, i) => { const u = (t * .7 + i / 7) % 1; c.position.set(Math.sin(i * 2.3) * .22, .95 - u * 1.5, Math.cos(i * 1.7) * .15); c.rotation.set(t * 4 + i, t * 3, 0); c.visible = u < .92; })); }
+
 }
 
 // ---------- 3D 소품: 문방구 뽑기 기계 ----------
@@ -2190,7 +2227,53 @@ const canPull = () => store.get('fm_pull', '') !== today();
 function openDeco(tab) { if (!entered) return; if (tab) decoTab = tab; renderDeco(); openWin('decoWin'); }
 function own(id) { return bag.includes(id); }
 function addBag(id) { if (!own(id)) { bag.push(id); store.set('fm_bag', bag); } }
-function equip(id, on) { const it = ITEMS[id]; if (!it) return; me.acc = { ...me.acc }; if (on) me.acc[it.s] = id; else delete me.acc[it.s]; prof.acc = me.acc; pushProfile(); SFX.click(); renderDeco(); }
+var OWNER_PUB = { kty: 'EC', crv: 'P-256', x: 'D8h9MAu1L6aNTkfr6_H1j45vQq8cG-ut-jrriuTNfTk', y: 'RnegBvLhZ33DN_W5rBEyQerwaTEdFL7jOs2qaXfJkqs' };
+var ownerKey = null, ownerPubKey = null, vCache = new Map(), myCash = store.get('fm_cash', {}) || {}, myOwnSig = '';
+function b64u(buf) { let s = ''; new Uint8Array(buf).forEach(c => s += String.fromCharCode(c)); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function ub64(s) { s = String(s).replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; const b = atob(s); return Uint8Array.from(b, c => c.charCodeAt(0)); }
+async function pubKey() { return ownerPubKey || (ownerPubKey = await crypto.subtle.importKey('jwk', OWNER_PUB, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify'])); }
+async function vSig(msg, sig) { const k = msg + '#' + sig; if (vCache.has(k)) return vCache.get(k); let ok = false; try { ok = await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, await pubKey(), ub64(sig), new TextEncoder().encode(msg)); } catch {} vCache.set(k, ok); return ok; }
+const vSync = (msg, sig) => vCache.get(msg + '#' + sig) === true;
+async function oSign(msg) { const s = b64u(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, ownerKey, new TextEncoder().encode(msg))); vCache.set(msg + '#' + s, true); return s; }
+const giftMsg = (n, id) => 'gift|' + n + '|' + id, ownMsg = n => 'owner|' + n;
+async function ownerLogin(d, quiet) {
+  try { d = String(d || '').trim(); if (!d) throw 0; const k = await crypto.subtle.importKey('jwk', { ...OWNER_PUB, d, ext: true }, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']); const tm = 'chk|' + Date.now(), ts = b64u(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k, new TextEncoder().encode(tm))); if (!(await vSig(tm, ts))) throw 0;
+    ownerKey = k; store.set('fm_owner', d); await ownerSelf(); if (!quiet) { sys('👑 방장으로 로그인했어요! 캐시템을 전부 쓸 수 있고, 다른 사람 이름표 메뉴에서 선물할 수 있어요.'); toast('👑 방장 로그인 완료'); fanfare(); } return true; }
+  catch { if (!quiet) toast('방장 열쇠가 맞지 않아요.'); return false; }
+}
+async function ownerSelf() { if (!ownerKey || !me.n) return; myOwnSig = await oSign(ownMsg(me.n)); me.isOwner = true; for (const id of Object.keys(ITEMS).filter(isCash)) myCash[id] = await oSign(giftMsg(me.n, id)); store.set('fm_cash', myCash); pushProfile(); if ($('#decoWin').style.display === 'block') renderDeco(); }
+async function checkMyCash() {
+  if (store.get('fm_owner', '')) { if (await ownerLogin(store.get('fm_owner', ''), true)) return; }
+  me.isOwner = false; myOwnSig = ''; let ch = false;
+  for (const id of Object.keys(myCash)) { if (!isCash(id) || !(await vSig(giftMsg(me.n, id), myCash[id]))) { delete myCash[id]; ch = true; } }
+  const acc = { ...me.acc }; for (const s in acc) if (isCash(acc[s]) && !myCash[acc[s]]) { delete acc[s]; ch = true; }
+  if (ch) { me.acc = acc; prof.acc = acc; store.set('fm_cash', myCash); pushProfile(); }
+}
+function applyCash(r, v) {
+  const ct = v && v.ct && typeof v.ct === 'object' ? v.ct : {}, acc = r.acc, pend = [];
+  for (const s in acc) { const id = acc[s]; if (!isCash(id)) continue; const sig = str(ct[id], 120), msg = giftMsg(r.n, id); if (!sig) { delete acc[s]; continue; } if (!vSync(msg, sig)) { delete acc[s]; pend.push([s, id, msg, sig]); } }
+  const os = str(v && v.own, 120); r.isOwner = !!os && vSync(ownMsg(r.n), os); if (os && !r.isOwner) pend.push(['own', '', ownMsg(r.n), os]);
+  if (pend.length) { const nm = r.n; Promise.all(pend.map(p => vSig(p[2], p[3]))).then(res => { if (r.n !== nm) return; pend.forEach((p, i) => { if (!res[i]) return; if (p[0] === 'own') r.isOwner = true; else r.acc = { ...r.acc, [p[0]]: p[1] }; }); }); }
+}
+function openOwner() { if (!entered) { toast('먼저 입장해 주세요.'); return; } if (ownerKey) { sys('👑 이미 방장으로 로그인돼 있어요.'); return; } openWin('ownWin'); setTimeout(() => $('#ownKey').focus(), 50); }
+function giftMenu(c, x, y) {
+  const m = $('#ctxmenu'); m.innerHTML = ''; const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = '🎁 ' + c.n + '님에게 선물'; m.appendChild(nm);
+  Object.keys(ITEMS).filter(isCash).forEach(id => { const it = document.createElement('div'); it.className = 'it'; it.textContent = ITEMS[id].ic + ' ' + ITEMS[id].n; it.onclick = () => { m.style.display = 'none'; giveCash(c, id); }; m.appendChild(it); });
+  m.style.left = Math.min(x, innerWidth - 190) + 'px'; m.style.top = Math.min(y, innerHeight - 230) + 'px'; m.style.display = 'block';
+}
+async function giveCash(c, id) {
+  if (!ownerKey || !NET.gift) { toast('지금은 선물할 수 없어요.'); return; } if (c.n === '...' || !c.uid) return;
+  const s = await oSign(giftMsg(c.n, id)); NET.gift.send({ n: c.n, i: id, s }, c.uid)?.catch?.(() => {});
+  actSay('🎁 ' + c.n + '님에게 [' + ITEMS[id].n + '] 선물!', '🎁 ' + c.n + '님에게 캐시템 [' + ITEMS[id].ic + ' ' + ITEMS[id].n + ']을(를) 선물했어요.'); fanfare();
+}
+function onGift(d) {
+  if (!d || str(d.n, NMAX) !== me.n || !isCash(d.i)) return; const id = d.i, sig = str(d.s, 120);
+  vSig(giftMsg(me.n, id), sig).then(ok => { if (!ok) return; const had = !!myCash[id]; myCash[id] = sig; store.set('fm_cash', myCash); if (had) return; const it = ITEMS[id]; me.acc = { ...me.acc, [it.s]: id }; prof.acc = me.acc; pushProfile();
+    sys('🎁 방장님이 캐시템 [' + it.ic + ' ' + it.n + ']을(를) 선물했어요! 바로 착용했어요. (꾸미기 → 💎 캐시템 탭에서 벗을 수 있어요)'); toast('🎁 캐시템 선물 도착: ' + it.n); fanfare(); confetti(me.x); });
+}
+function charCode() { const o = { n: me.n, look: me.look, pet: me.pet, aff: me.aff || '', acc: me.acc || {}, st: me.st, pin: me.pin || '', cash: myCash }; return b64u(new TextEncoder().encode(JSON.stringify(o))); }
+function copyCharLink() { if (!entered) return; const u = location.origin + location.pathname + '#c=' + charCode(); navigator.clipboard?.writeText(u).then(() => toast('⭐ 내 캐릭터 링크를 복사했어요. 북마크해 두세요!'), () => prompt('이 링크를 북마크해 두세요', u)); sys('⭐ 내 캐릭터 링크를 복사했어요. 이 링크로 열면 기록이 지워져도 캐릭터·소속·꾸미기·캐시템이 그대로 돌아와요. 나만 쓰는 링크라 남에게 주지 마세요.'); }
+function equip(id, on) { const it = ITEMS[id]; if (!it) return; if (on && isCash(id) && !myCash[id]) { toast('👑 방장에게 선물받아야 쓸 수 있어요.'); return; } me.acc = { ...me.acc }; if (on) me.acc[it.s] = id; else delete me.acc[it.s]; prof.acc = me.acc; pushProfile(); SFX.click(); renderDeco(); }
 function itemCard(id, mode) {
   const it = ITEMS[id], has = own(id), on = me.acc[it.s] === id, ok = fame >= it.q;
   const d = document.createElement('div'); d.className = 'dit' + (has ? ' own' : '') + (on ? ' on' : '') + (!has && !ok ? ' lock' : '');
@@ -2204,8 +2287,14 @@ function itemCard(id, mode) {
 }
 function renderDeco() {
   const tabs = $('#decoTabs'); tabs.innerHTML = '';
-  [['make', '🛠️ 만들기'], ['bag', `🎒 가방 (${bag.length})`], ['pet', '🐾 펫'], ['gacha', `🎰 오늘의 뽑기${canPull() ? ' · 1' : ''}`]].forEach(([k, t]) => { const c = document.createElement('div'); c.className = 'chip' + (decoTab === k ? ' on' : ''); c.textContent = t; c.onclick = () => { decoTab = k; renderDeco(); }; tabs.appendChild(c); });
+  [['make', '🛠️ 만들기'], ['bag', `🎒 가방 (${bag.length})`], ['cash', '💎 캐시템'], ['pet', '🐾 펫'], ['gacha', `🎰 오늘의 뽑기${canPull() ? ' · 1' : ''}`]].forEach(([k, t]) => { const c = document.createElement('div'); c.className = 'chip' + (decoTab === k ? ' on' : ''); c.textContent = t; c.onclick = () => { decoTab = k; renderDeco(); }; tabs.appendChild(c); });
   const bd = $('#decoBd'); bd.innerHTML = '';
+  if (decoTab === 'cash') {
+    const info = document.createElement('div'); info.className = 'dinfo'; info.innerHTML = ownerKey ? '<span>👑 <b>방장</b>이에요. 전부 쓸 수 있고, 다른 사람 이름표를 눌러 <b>🎁 캐시템 선물하기</b>로 원하는 사람에게만 줄 수 있어요.</span>' : '<span>👑 방장만 쓸 수 있는 특별 아이템이에요. 방장에게 선물받으면 여기서 착용할 수 있어요.</span>'; bd.appendChild(info);
+    const gr = document.createElement('div'); gr.className = 'dgrid'; bd.appendChild(gr);
+    Object.keys(ITEMS).filter(isCash).forEach(id => { const it = ITEMS[id], has = !!myCash[id], on = me.acc[it.s] === id, d = document.createElement('div'); d.className = 'dit cashit' + (has ? ' own' : ' lock') + (on ? ' on' : ''); const ic = document.createElement('div'); ic.className = 'gic'; ic.textContent = it.ic; const nm = document.createElement('b'); nm.textContent = it.n; const sl = document.createElement('span'); sl.textContent = it.d; d.append(ic, nm, sl); if (has) d.appendChild(mkBtn(on ? '벗기' : '착용', () => equip(id, !on), !on)); else { const l = document.createElement('span'); l.textContent = '🔒 방장 선물 전용'; l.style.marginTop = '4px'; d.appendChild(l); } gr.appendChild(d); });
+    return;
+  }
   if (decoTab === 'pet') {
     const info = document.createElement('div'); info.className = 'dinfo'; info.innerHTML = '<span>같이 다닐 펫을 골라요. 언제든 바꿀 수 있어요.</span>'; bd.appendChild(info);
     const gr = document.createElement('div'); gr.className = 'dgrid'; bd.appendChild(gr);
@@ -2213,7 +2302,7 @@ function renderDeco() {
     return;
   }
   if (decoTab === 'make') {
-    const ids = Object.keys(ITEMS).sort((a, b) => ITEMS[a].q - ITEMS[b].q), made = ids.filter(id => fame >= ITEMS[id].q).length, nextQ = ids.map(id => ITEMS[id].q).find(q => q > fame);
+    const ids = Object.keys(ITEMS).filter(id => !isCash(id)).sort((a, b) => ITEMS[a].q - ITEMS[b].q), made = ids.filter(id => fame >= ITEMS[id].q).length, nextQ = ids.map(id => ITEMS[id].q).find(q => q > fame);
     const info = document.createElement('div'); info.className = 'dinfo';
     info.innerHTML = `<b>❤ ${fame}</b><span>내 인기도로 <b style="color:var(--ink);font-size:13px">${made} / ${ids.length}</b>개를 만들 수 있어요.${nextQ != null ? ` 인기도 ${nextQ}가 되면 ${ids.filter(id => ITEMS[id].q === nextQ).map(id => ITEMS[id].n).join(', ')}이(가) 열려요.` : ' 전부 열렸어요!'}</span>`;
     bd.appendChild(info);
@@ -2229,7 +2318,7 @@ function renderDeco() {
   }
 }
 function rollItem() {
-  const pool = Object.keys(ITEMS).filter(id => !own(id)), src = pool.length ? pool : Object.keys(ITEMS);
+  const pool = Object.keys(ITEMS).filter(id => !own(id) && !isCash(id)), src = pool.length ? pool : Object.keys(ITEMS).filter(id => !isCash(id));
   const w = src.map(id => 1 / Math.pow(1 + ITEMS[id].q, .75)); let t = Math.random() * w.reduce((a, b) => a + b, 0);
   for (let i = 0; i < src.length; i++) { if (t < w[i]) return src[i]; t -= w[i]; } return src[0];
 }
