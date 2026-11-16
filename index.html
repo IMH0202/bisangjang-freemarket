@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>비상장 자유시장</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.1.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v2.2.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{--ink:#f7efe4;--sub:#d9c8b4;--acc:#f28b3c;--acc2:#ffad5c;--glass:rgba(36,25,18,.66);--line:rgba(255,236,214,.14)}
 *{box-sizing:border-box}
@@ -64,6 +64,8 @@ button{font:inherit;color:inherit}
 @keyframes mshake{from{transform:translateY(-50%) rotate(-16deg) scale(1)}to{transform:translateY(-50%) rotate(-4deg) scale(1.12)}}
 @keyframes mpop2{0%{transform:translateX(-50%) scale(.35);opacity:0}60%{transform:translateX(-50%) scale(1.07);opacity:1}100%{transform:translateX(-50%) scale(1)}}
 #megabar:before{content:'📣';position:absolute;left:24px;top:50%;transform:translateY(-50%) rotate(-12deg);font-size:52px;text-shadow:none;animation:mshake .45s ease-in-out infinite alternate}
+#info,#chat,#dock,#affBoard,#tHud,#megabar,#morepop,#dancepop,#emopop,.hud{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#info,#chat,#dock,#affBoard,#morepop,#dancepop{background:rgba(30,22,16,.86)!important}
 #megabar .mbaff{display:inline-flex;vertical-align:middle;height:36px;padding:0 10px;margin:-6px 10px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.25);text-shadow:none}
 #megabar .mbaff img{max-height:24px}
 #megabar .mban{font-size:.62em;font-weight:900;opacity:.95;margin-right:12px;padding-right:12px;border-right:2px solid rgba(255,255,255,.55);vertical-align:middle}
@@ -415,7 +417,7 @@ table.sh input{width:100%;font:inherit;font-size:13px;border:1px solid var(--lin
 <div class="modal glass" id="whoWin"><h3><span>접속자 목록 <span class="muted" id="whoCnt"></span></span><span class="x" data-close>✕</span></h3><div id="whoList"></div></div>
 <div class="modal glass" id="setWin"><h3>설정<span class="x" data-close>✕</span></h3>
   <div class="lab">그래픽 품질</div><div class="chips" id="qChips" style="grid-template-columns:repeat(3,1fr)"></div>
-  <div class="muted" style="margin-top:6px">화면이 버벅이면 '낮음'으로 바꿔보세요. 그림자와 빛 번짐을 끄고 해상도를 낮춰요.</div>
+  <div class="muted" style="margin-top:6px">기본은 '낮음'이에요(그림자·빛 번짐 끔). 컴퓨터가 좋으면 '보통'·'높음'으로 올려보세요. 버벅이면 알아서 한 단계씩 내려가요.</div>
   <div class="lab">소리</div><div class="chips" id="sChips" style="grid-template-columns:repeat(2,1fr)"></div>
   <div class="crow" style="margin-top:10px"><span>음악 크기</span><input type="range" id="bgmVolR" min="0" max="100" style="flex:1;accent-color:#f28b3c"></div>
   <div class="lab">차단한 사람</div><div id="blockList" class="muted"></div>
@@ -442,6 +444,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // =====================================================================
 //  비상장 자유시장 v0.3 (3D) — 모델·텍스처·사운드 전부 코드로 생성
@@ -450,7 +453,7 @@ const $ = s => document.querySelector(s);
 const G = 640, U = 40;                    // 게임 좌표(px) → 3D 단위 변환
 const X3 = px => px / U, Y3 = py => (G - py) / U;
 const APP = 'bisangjang-freemarket/v4';
-const BUILD = 'v2.1';
+const BUILD = 'v2.2';
 (async () => { try { if (location.protocol !== 'https:' || !location.hostname.endsWith('github.io')) return; const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }); const m = (await r.text()).match(/const BUILD = '([^']+)'/); if (m && m[1] !== BUILD && !location.search.includes('v=' + m[1])) location.replace(location.pathname + '?v=' + m[1] + location.hash); } catch {} })();
 const CHN = 1, NMAX = 14;
 const IS_POP = location.hash.includes('win');
@@ -586,7 +589,7 @@ function bgmStop() { if (!bgmCur) return; fadeOutTrack(bgmCur, .6); bgmCur = nul
 const cv = $('#cv');
 const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
@@ -945,7 +948,7 @@ function buildPlaza(m) {
 let spotWho = null, podWho = null, spotMeT = 0, spotDjT = 0, spotLock = null, spotRetT = -99; const spotCur = { x: 700, y: 0, on: false };
 const hsh = i => { let x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 function spotPos() { const tt = Date.now() / 1000, seg = 5, i = Math.floor(tt / seg), u = (tt - i * seg) / 1.6, p = j => 220 + hsh(j) * 1080; const a = p(i), b = p(i + 1); if (u >= 1) return { x: b, mv: false }; const e = u * u * (3 - 2 * u); return { x: a + (b - a) * e, mv: true }; }
-function onSpot(w, pod) {
+function onSpot(w, pod) { if (SIMTICK) return;
   if (w === me && performance.now() - spotMeT < 6000) return; if (w === me) spotMeT = performance.now();
   sfx([[523, .06], [659, .06], [784, .06], [1046, .2]], 'sawtooth', .03);
   if (w === me) sys(pod ? '🌟 주인공 무대에 올라왔어요! 춤춰 보세요 (V N L · 1 2 3)' : '🌟 스포트라이트에 잡혔어요! 지금 춤춰 보세요 (V N L · 1 2 3)'); else if (pod) sys(`🌟 ${w.n}님이 주인공 무대에 올랐어요!`);
@@ -990,7 +993,7 @@ function buildClub(m) {
   const BH0 = 13, beam = new THREE.Mesh(new THREE.ConeGeometry(1.2, BH0, 28, 1, true), new THREE.MeshBasicMaterial({ color: '#fff2c0', transparent: true, opacity: .12, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); g.add(beam);
   const ring = new THREE.Mesh(new THREE.RingGeometry(1.05, 1.3, 40), new THREE.MeshBasicMaterial({ color: '#fff2c0', transparent: true, opacity: .8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); ring.rotation.x = -Math.PI / 2; g.add(ring);
   const disc = new THREE.Mesh(new THREE.CircleGeometry(1.05, 40), new THREE.MeshBasicMaterial({ color: '#fff2c0', transparent: true, opacity: .25, blending: THREE.AdditiveBlending, depthWrite: false })); disc.rotation.x = -Math.PI / 2; g.add(disc);
-  const lamp = new THREE.Group(); lamp.add(box(.7, .5, .7, M('#2a2a30', { metalness: .7, roughness: .3 }), 0, 0, 0)); const lens = cyl(.28, .28, .06, new THREE.MeshBasicMaterial({ color: '#fff2c0' }), 0, -.27, 0, 20); lamp.add(lens); g.add(lamp);
+  const lamp = new THREE.Group(); lamp.add(box(.7, .5, .7, M('#2a2a30', { metalness: .7, roughness: .3 }), 0, 0, 0)); const lens = cyl(.28, .28, .06, new THREE.MeshBasicMaterial({ color: '#fff2c0' }), 0, -.27, 0, 20); lamp.add(lens); lamp.userData.dyn = true; g.add(lamp);
   g.add(box(W - 2, .12, .12, M('#3a3a44', { metalness: .7 }), W / 2, 13.3, .3));
   const spotTick = (t, dt) => {
     const path = spotPos(), isD = c => c && c.danceT != null && T - c.danceT < (c.danceLen || DANCE_LEN);
@@ -1092,7 +1095,7 @@ function buildTemple(m) {
   const cush = (x, z) => { g.add(cyl(.46, .48, .1, cushM, x, .05, z, 24)); g.add(cyl(.3, .3, .104, cushT, x, .053, z, 20)); };
   TCUSH.forEach(px => cush(X3(px), .15));
   const monks = [], robes = ['#7a5a6a', '#5f7a5c', '#646a7c', '#8a6a4a', '#5a6a8a', '#7a6a5a'], rr = rnd(7);
-  [[-.75, 1], [-1.55, 0]].forEach(([z, full]) => TCUSH.forEach((px, i) => { const x = X3(px) + (z < -1 ? .7 : 0); if (!full && Math.abs(x - BX) < 3.3) return; cush(x, z); if (rr() < .82) { const mk = makeMonk(robes[Math.floor(rr() * robes.length)]); mk.position.set(x, .08, z); g.add(mk); monks.push({ o: mk, ph: rr() * 20, per: 9 + rr() * 7 }); } }));
+  [[-.75, 1], [-1.55, 0]].forEach(([z, full]) => TCUSH.forEach((px, i) => { const x = X3(px) + (z < -1 ? .7 : 0); if (!full && Math.abs(x - BX) < 3.3) return; cush(x, z); if (rr() < .82) { const mk = makeMonk(robes[Math.floor(rr() * robes.length)]); mk.position.set(x, .08, z); mk.userData.dyn = true; g.add(mk); monks.push({ o: mk, ph: rr() * 20, per: 9 + rr() * 7 }); } }));
   // 목탁
   const mx = X3(480); g.add(box(1.4, .7, .9, M('#5a2a1c'), mx, .35, -1.6)); const mok = new THREE.Mesh(new THREE.SphereGeometry(.32, 16, 12), M('#b8743a', { roughness: .5 })); mok.scale.set(1.2, .85, 1); mok.position.set(mx, .95, -1.6); g.add(mok);
   g.add(cyl(.42, .45, .1, M('#c4762a', { roughness: .9 }), mx, .05, -.2, 24));
@@ -1181,7 +1184,41 @@ function buildKrx(m) {
 }
 const PLACE_BUILD = { plaza: buildPlaza, club: buildClub, temple: buildTemple, krx: buildKrx };
 const mapCache = {};
-function mapGroup(m) { return mapCache[m.id] || (mapCache[m.id] = PLACE_BUILD[m.theme] ? PLACE_BUILD[m.theme](m) : m.theme === 'out' ? buildGate() : buildRoom(m)); }
+function mapGroup(m) { if (mapCache[m.id]) return mapCache[m.id]; const g = PLACE_BUILD[m.theme] ? PLACE_BUILD[m.theme](m) : m.theme === 'out' ? buildGate() : buildRoom(m); mergeStatic(g); return mapCache[m.id] = g; }
+var SIMTICK = false;
+function mergeStatic(g) {
+  try {
+    g.updateMatrixWorld(true);
+    const isDynAnc = o => { for (let p = o; p && p !== g; p = p.parent) if (p.userData && p.userData.dyn) return true; return false; };
+    const snap = () => { const m = new Map(); g.traverse(o => { if (o.isMesh) m.set(o, o.matrixWorld.elements.map(v => v.toFixed(4)).join(',') + (o.visible ? 1 : 0)); }); return m; };
+    const base = snap(), dyn = new Set(), tick = g.userData.tick;
+    if (tick) {
+      const sv = { T, bellSwing, bellHitT, mokHitT, bullT, btnPressT }, dh = DRUMS.map(d => d.hitT); SIMTICK = true;
+      try { bellSwing = 1; bellHitT = mokHitT = bullT = btnPressT = T; DRUMS.forEach(d => d.hitT = T);
+        for (const ofs of [.03, .1, .2, .35, .55, .62, .7, 1, 1.4, 2, 3.3, 5.1, 7.2, 9.3, 11.4, 13.5, 15.6]) { T = sv.T + ofs; tick(T, .016); g.updateMatrixWorld(true); for (const [o, v] of snap()) if (base.get(o) !== v) dyn.add(o); }
+      } finally { T = sv.T; bellSwing = 0; bellHitT = sv.bellHitT; mokHitT = sv.mokHitT; bullT = sv.bullT; btnPressT = sv.btnPressT; DRUMS.forEach((d, i) => d.hitT = dh[i] ?? -99); try { tick(T, .016); } catch {} SIMTICK = false; g.updateMatrixWorld(true); }
+    }
+    g.traverse(o => { if (!o.isMesh || !o.castShadow || !o.geometry) return; if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const r = (o.geometry.boundingSphere?.radius || 0) * o.matrixWorld.getMaxScaleOnAxis(); if (r < .32) o.castShadow = false; });
+    const inv = g.matrixWorld.clone().invert(), groups = new Map(), tmp = new THREE.Matrix4();
+    g.traverse(o => {
+      if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || dyn.has(o) || isDynAnc(o) || !o.visible) return;
+      const mt = o.material; if (!mt || Array.isArray(mt) || mt.isShaderMaterial || mt.transparent || o.userData.keep) return;
+      const geo = o.geometry; if (!geo || !geo.attributes.position || geo.morphAttributes?.position) return;
+      tmp.multiplyMatrices(inv, o.matrixWorld); if (tmp.determinant() <= 0) return;
+      const key = mt.uuid + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0) + '|' + Object.keys(geo.attributes).sort().join(',') + '|' + (geo.index ? 'i' : 'n');
+      if (!groups.has(key)) groups.set(key, []); groups.get(key).push([o, tmp.clone()]);
+    });
+    let before = 0, after = 0;
+    for (const list of groups.values()) {
+      if (list.length < 2) continue;
+      const geos = list.map(([o, mx]) => { const c = o.geometry.clone(); c.clearGroups(); c.applyMatrix4(mx); return c; });
+      const merged = mergeGeometries(geos, false); geos.forEach(c => c.dispose()); if (!merged) continue;
+      const o0 = list[0][0], mm = new THREE.Mesh(merged, o0.material); mm.castShadow = o0.castShadow; mm.receiveShadow = o0.receiveShadow; mm.matrixAutoUpdate = false; g.add(mm);
+      list.forEach(([o]) => o.parent && o.parent.remove(o)); before += list.length; after++;
+    }
+    g.userData.merged = [before, after];
+  } catch (e) { console.warn('mergeStatic', e); }
+}
 let curGroup = null;
 function setEnv(env) {
   sky.visible = env.sky; scene.background = env.bg ? new THREE.Color(env.bg) : null;
@@ -1191,11 +1228,11 @@ function setEnv(env) {
 
 // ===================== 아바타 =====================
 const GEO = {
-  head: new THREE.SphereGeometry(.42, 36, 26), eye: new THREE.SphereGeometry(1, 14, 10),
-  arm: new THREE.CapsuleGeometry(.075, .2, 4, 10), leg: new THREE.CapsuleGeometry(.1, .2, 4, 10), hand: new THREE.SphereGeometry(.075, 12, 10), shoe: new THREE.SphereGeometry(.12, 14, 10),
-  torso: new THREE.LatheGeometry([[0, 0], [.27, 0], [.31, .08], [.28, .3], [.2, .47], [0, .5]].map(([x, y]) => new THREE.Vector2(x, y)), 28),
-  cap: new THREE.SphereGeometry(.455, 36, 18, 0, Math.PI * 2, 0, Math.PI * .52), backHair: new THREE.SphereGeometry(.45, 28, 18),
-  mouth: new THREE.TorusGeometry(.045, .013, 6, 14, Math.PI), blush: new THREE.CircleGeometry(.055, 16), spike: new THREE.ConeGeometry(.12, .38, 10), ball: new THREE.SphereGeometry(1, 16, 12)
+  head: new THREE.SphereGeometry(.42, 22, 16), eye: new THREE.SphereGeometry(1, 8, 6),
+  arm: new THREE.CapsuleGeometry(.075, .2, 2, 7), leg: new THREE.CapsuleGeometry(.1, .2, 2, 7), hand: new THREE.SphereGeometry(.075, 8, 6), shoe: new THREE.SphereGeometry(.12, 9, 7),
+  torso: new THREE.LatheGeometry([[0, 0], [.27, 0], [.31, .08], [.28, .3], [.2, .47], [0, .5]].map(([x, y]) => new THREE.Vector2(x, y)), 16),
+  cap: new THREE.SphereGeometry(.455, 22, 10, 0, Math.PI * 2, 0, Math.PI * .52), backHair: new THREE.SphereGeometry(.45, 18, 12),
+  mouth: new THREE.TorusGeometry(.045, .013, 4, 8, Math.PI), blush: new THREE.CircleGeometry(.055, 10), spike: new THREE.ConeGeometry(.12, .38, 7), ball: new THREE.SphereGeometry(1, 10, 8)
 };
 const EYEM = new THREE.MeshStandardMaterial({ color: '#1d1414', roughness: .3 }), WHITEM = new THREE.MeshBasicMaterial({ color: '#ffffff' }), BLUSHM = new THREE.MeshBasicMaterial({ color: '#ff9aa0', transparent: true, opacity: .45, depthWrite: false });
 function mk(geo, mat, x, y, z, sx, sy, sz) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (sx) m.scale.set(sx, sy ?? sx, sz ?? sx); m.castShadow = true; return m; }
@@ -1356,11 +1393,14 @@ const remotes = new Map();
 function rollStats() { const s = [4, 4, 4, 4]; let left = 9; while (left > 0) { const i = Math.floor(Math.random() * 4); if (s[i] < 13) { s[i]++; left--; } } return s; }
 if (!me.st) me.st = rollStats();
 const actors = new THREE.Group(); scene.add(actors);
+const BLOB_G = new THREE.CircleGeometry(.42, 18), BLOB_M = new THREE.MeshBasicMaterial({ color: '#000000', transparent: true, opacity: .22, depthWrite: false });
 function ensureAv(c) {
   const key = JSON.stringify([c.look || {}, c.acc || {}]);
   if (c.av && c.av.key !== key) { actors.remove(c.av.root); c.av = null; }
-  if (!c.av) { c.av = makeAvatar(c.look || {}, c.acc); actors.add(c.av.root); c.av.root.position.set(X3(c.x), Y3(c.y), 0); }
-  if ((c.petM?.userData.type ?? 0) !== (c.pet || 0)) { if (c.petM) actors.remove(c.petM); c.petM = makePet(c.pet || 0); c.petM.userData.type = c.pet || 0; actors.add(c.petM); }
+  if (!c.av) { c.av = makeAvatar(c.look || {}, c.acc); actors.add(c.av.root); c.av.root.position.set(X3(c.x), Y3(c.y), 0);
+    const big = new Set([GEO.head, GEO.torso, GEO.backHair, GEO.cap]); c.av.root.traverse(o => { if (o.isMesh) { o.castShadow = !!c.self && big.has(o.geometry); o.receiveShadow = false; } });
+    if (!c.self) { const bl = new THREE.Mesh(BLOB_G, BLOB_M); bl.rotation.x = -Math.PI / 2; bl.position.y = .015; bl.renderOrder = -1; c.av.root.add(bl); } }
+  if ((c.petM?.userData.type ?? 0) !== (c.pet || 0)) { if (c.petM) actors.remove(c.petM); c.petM = makePet(c.pet || 0); c.petM.userData.type = c.pet || 0; c.petM.traverse(o => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; } }); actors.add(c.petM); }
 }
 function dropAv(c) { if (c.av) { actors.remove(c.av.root); c.av = null; } if (c.petM) { actors.remove(c.petM); c.petM = null; } }
 
@@ -1534,7 +1574,7 @@ function pushWorld() { NET.wState && NET.wState.set({ ch: curCh, map: MAP.id, n:
 var myMg = null, megaSeen = new Set();
 function checkStateMega() { const all = worldAll(); for (const k in all) { const v = all[k], g = v && v.mg; if (!g || typeof g !== 'object' || k === NET.wSelf) continue; const id = str(g.id, 12); if (!id || megaSeen.has(id)) continue; megaSeen.add(id); if (Math.abs(Date.now() - (+g.at || 0)) > 90000) continue; onMega({ n: str(v.n, NMAX) || '???', t: str(g.t, 80), ch: 1, aff: AFF_KEYS.includes(v.a) ? v.a : '' }, true); } }
 let lastSent = 0, lastPay = '';
-function sendMv(force, target) { if (!NET.room || !NET.mv) return; const p = { x: Math.round(me.x), y: Math.round(me.y), d: me.dir, a: ANIMS.indexOf(me.anim) }; const s = JSON.stringify(p), now = performance.now(); if (force || (s !== lastPay && now - lastSent > 90) || now - lastSent > 1000) { NET.mv.send(p, target ? { target } : undefined)?.catch?.(() => {}); if (!target) { lastSent = now; lastPay = s; } } }
+function sendMv(force, target) { if (!NET.room || !NET.mv) return; const p = { x: Math.round(me.x), y: Math.round(me.y), d: me.dir, a: ANIMS.indexOf(me.anim) }; const s = JSON.stringify(p), now = performance.now(); if (force || (s !== lastPay && now - lastSent > 110) || now - lastSent > 1000) { NET.mv.send(p, target ? { target } : undefined)?.catch?.(() => {}); if (!target) { lastSent = now; lastPay = s; } } }
 function pushProfile() { Object.assign(prof, { n: me.n, look: me.look, pet: me.pet, st: me.st, ch: curCh , aff: me.aff || '' , acc: me.acc || {} }); store.set('fm_prof3', prof); if (NET.prof) NET.prof.set(myProfile()); }
 async function leaveAll() { try { await NET.room?.leave(); } catch {} try { await NET.world?.leave(); } catch {} NET.room = null; NET.world = null; }
 addEventListener('pagehide', () => { NET.room?.leave(); NET.world?.leave(); });
@@ -1587,8 +1627,9 @@ function doFind(name) {
 }
 function doMega(t, all) {
   if (performance.now() - lastMega < 4000) { sys('확성기는 4초에 한 번만 쓸 수 있어요.'); return; }
-  const k = all ? 'h' : 'm'; if (inv[k] <= 0) { sys(`${all ? '큰 확성기' : '확성기'}를 다 썼어요. 자정에 다시 채워져요.`); return; }
-  inv[k]--; store.set('fm_inv_' + today(), inv); updStatus(); lastMega = performance.now();
+  const k = all ? 'h' : 'm', bonus = all ? store.get('fm_bonusH', 0) : 0;
+  if (!ownerKey) { if (inv[k] <= 0 && bonus <= 0) { sys(`${all ? '큰 확성기' : '확성기'}를 다 썼어요. 자정에 다시 채워져요.`); return; } if (inv[k] > 0) { inv[k]--; store.set('fm_inv_' + today(), inv); } else store.set('fm_bonusH', bonus - 1); }
+  updStatus(); lastMega = performance.now();
   const d = { n: me.n, t, ch: curCh, all, aff: me.aff || '' }; if (all) { d.id = Math.random().toString(36).slice(2, 12); megaSeen.add(d.id); myMg = { id: d.id, t, at: Date.now() }; pushWorld(); setTimeout(() => { myMg = null; pushWorld(); }, 95000); } NET.wMega?.send(d)?.catch?.(() => {}); onMega(d, all); gainExp(all ? 15 : 8, all ? '큰 확성기' : '확성기');
 }
 function onMega(d, all) { if (!d.t || isBlocked(d.n)) return; if (all) { const an = d.aff ? affName(d.aff) : ''; logLine(`[큰 확성기] ${an ? '[' + an + '] ' : ''}${d.n} : ${d.t}`, 'l-megaw', 'mega'); banner({ text: `${d.n} : ${d.t}`, aff: d.aff || '' }); } else logLine(`[확성기] ${d.n} : ${d.t}`, 'l-mega', 'mega'); SFX.mega(); }
@@ -1650,7 +1691,7 @@ function charMenu(c, x, y) {
   if (!c.npc) add('💬 1:1 대화 신청', () => requestDm(c));
   add('귓속말', () => startWsp(c.n));
   if (!c.npc) { add('❤ 인기도 올리기', () => giveFame(c, 1)); add('💔 인기도 내리기', () => giveFame(c, -1)); }
-  if (!c.npc && ownerKey) add('🎁 캐시템 선물하기 (방장)', () => giftMenu(c, x, y));
+  if (!c.npc && ownerKey) { add('🎁 캐시템 선물하기 (방장)', () => giftMenu(c, x, y)); add('📣 큰 확성기 선물하기 (방장)', () => megaGiftMenu(c, x, y)); }
   if (c.shop) add('상점 보기', () => showShop(c)); add('정보 보기', () => showInfo(c));
   if (!c.npc) add(isBlocked(c.n) ? '차단 풀기' : '차단하기', () => setBlock(c.n, !isBlocked(c.n)));
   m.style.left = Math.min(x, innerWidth - 170) + 'px'; m.style.top = Math.min(y, innerHeight - 190) + 'px'; m.style.display = 'block';
@@ -1785,7 +1826,7 @@ function updCam(dt) { const g = camGoal(), k = Math.min(1, dt * (entered ? 5 : 2
 
 // ===================== 루프 =====================
 function syncAv(c, dt) { ensureAv(c); const r = c.av.root; r.position.set(X3(c.x), Y3(c.y), 0); poseAvatar(c, dt); petFollow(c, dt); }
-let lastF = performance.now(), miniT = 0;
+let lastF = performance.now(), miniT = 0, perfF = 0;
 function frame(now) {
   const dt = clamp((now - lastF) / 1000, 0, .05); lastF = Math.max(lastF, now); T += dt; frameNo++;
   try {
@@ -1798,7 +1839,9 @@ function frame(now) {
     curGroup?.userData.tick?.(T, dt);
     updCam(dt);
     if (entered) sendMv(false);
-    composer.render(dt);
+    if (!renderer.shadowMap.autoUpdate) renderer.shadowMap.needsUpdate = frameNo % 2 === 0;
+    if (bloom.enabled) composer.render(dt); else renderer.render(scene, camera);
+    perfF++;
     if (entered) { [me, ...remotes.values(), ...NPCS.filter(n => n.map === MAP.id)].forEach(c => { if (c.x > -100) overlayChar(c); }); overlayStatic(); }
     overlaySweep();
     if (entered && (miniT++ % 6 === 0)) drawMini();
@@ -1832,7 +1875,7 @@ $('#bRand').onclick = () => { $('#nm').value = randName(); SFX.click(); };
 document.addEventListener('pointerdown', () => { if (!entered && bgmOn) bgmStart(); }, { once: true });
 function updStatus() {
    
-  $('#mapname').textContent = MAP.name; $('#cM').textContent = inv.m; $('#cH').textContent = inv.h; $('#fameTxt').textContent = '❤ ' + fame;
+  $('#mapname').textContent = MAP.name; $('#cM').textContent = ownerKey ? '∞' : inv.m; $('#cH').textContent = ownerKey ? '∞' : inv.h + store.get('fm_bonusH', 0); $('#fameTxt').textContent = '❤ ' + fame;
 }
 updStatus();
 $('#bEnter').onclick = async () => {
@@ -1982,23 +2025,31 @@ function renderWho(fa = whoFA) {
   if (!NET.wState) { const e = document.createElement('div'); e.className = 'muted'; e.style.padding = '10px 4px'; e.textContent = '오프라인이라 다른 사람 목록을 불러올 수 없어요.'; box.appendChild(e); }
 }
 // 설정
-let quality = store.get('fm_q', 'high');
+let quality = store.get('fm_q3', 'low'), autoLv = store.get('fm_lowlv', 0); if (!['low', 'mid', 'high'].includes(quality)) quality = 'low';
+const LOW_SC = [1, .85, .72];
 function applyQuality() {
-  const q = quality; renderer.setPixelRatio(q === 'high' ? Math.min(devicePixelRatio, 1.75) : q === 'mid' ? Math.min(devicePixelRatio, 1.25) : 1);
+  const q = quality;
+  let pr = q === 'high' ? Math.min(devicePixelRatio, 1.5) : q === 'mid' ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 1) * LOW_SC[clamp(autoLv, 0, LOW_SC.length - 1)];
+  const px = innerWidth * innerHeight, cap = q === 'low' ? 1.3e6 : 1.8e6; if (q !== 'high' && px * pr * pr > cap) pr = Math.sqrt(cap / px);
+  renderer.setPixelRatio(pr);
   const sh = q !== 'low';
+  const msz = q === 'high' ? 2048 : 1024; if (sun.shadow.mapSize.x !== msz) { sun.shadow.mapSize.set(msz, msz); sun.shadow.map?.dispose(); sun.shadow.map = null; }
+  renderer.shadowMap.autoUpdate = q === 'high';
   if (renderer.shadowMap.enabled !== sh) { renderer.shadowMap.enabled = sh; sun.castShadow = sh; [scene, ...Object.values(mapCache)].forEach(root => root.traverse(o => { const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; ms.forEach(m => m.needsUpdate = true); })); }
   bloom.enabled = q === 'high'; resize();
 }
 function renderSet() {
-  const QS = ['high', 'mid', 'low'];
-  chips('#qChips', ['높음', '보통', '낮음'], () => QS.indexOf(quality), i => { quality = QS[i]; store.set('fm_q', quality); applyQuality(); toast(`그래픽 품질: ${['높음', '보통', '낮음'][i]}`); });
+  const QS = ['low', 'mid', 'high'], QN = ['낮음 (기본)', '보통', '높음'];
+  chips('#qChips', QN, () => QS.indexOf(quality), i => { quality = QS[i]; store.set('fm_q3', quality); applyQuality(); toast('그래픽 품질: ' + QN[i]); });
   const sc = $('#sChips'); sc.innerHTML = '';
   [[`배경음악 ${bgmOn ? '켬' : '눔'}`, bgmOn, '#bBgm'], [`효과음 ${sfxOn ? '켬' : '눔'}`, sfxOn, '#bSnd']].forEach(([t, on, id]) => { const b = document.createElement('div'); b.className = 'chip' + (on ? ' on' : ''); b.textContent = t; b.onclick = () => { $(id).click(); renderSet(); }; sc.appendChild(b); });
   const bl = $('#blockList'); bl.innerHTML = ''; if (!blocked.size) bl.textContent = '아무도 없어요. 이름표를 눌러 차단할 수 있어요.';
   blocked.forEach(n => { const d = document.createElement('div'); d.className = 'who'; const s = document.createElement('div'); s.className = 'nm2'; s.textContent = n; const sp = document.createElement('div'); sp.className = 'sp'; d.append(s, sp, mkBtn('차단 풀기', () => { setBlock(n, false); renderSet(); })); bl.appendChild(d); });
 }
-let fpsN = 0, fpsWarned = false; (function cnt() { fpsN++; requestAnimationFrame(cnt); })();
-setInterval(() => { const fps = fpsN / 5; fpsN = 0; if (!entered || fpsWarned || quality === 'low' || document.hidden) return; if (fps > 1 && fps < 28) { fpsWarned = true; toast('화면이 버벅이면 더보기 → 설정에서 그래픽을 낮춰보세요'); } }, 5000);
+let fpsWarned = false, autoGood = 0, fpsBad = 0;
+setInterval(() => { const fps = perfF / 2.5; perfF = 0; if (!entered || document.hidden || fps < 2) return;
+  if (quality !== 'low') { if (fps < 30) { if (++fpsBad >= 2) { fpsBad = 0; quality = quality === 'high' ? 'mid' : 'low'; store.set('fm_q3', quality); applyQuality(); toast('화면이 버벅여서 그래픽을 \'' + (quality === 'mid' ? '보통' : '낮음') + '\'으로 낮췄어요'); } } else fpsBad = 0; return; }
+  if (fps < 40 && autoLv < LOW_SC.length - 1) { autoLv++; autoGood = 0; store.set('fm_lowlv', autoLv); applyQuality(); } else if (fps > 57) { if (++autoGood >= 4 && autoLv > 0) { autoLv--; autoGood = 0; store.set('fm_lowlv', autoLv); applyQuality(); } } else autoGood = 0; }, 2500);
 // 더보기 메뉴
 function closeMore() { $('#morepop').style.display = 'none'; }
 $('#bMore').onclick = () => { const p = $('#morepop'); if (p.style.display === 'flex') { closeMore(); return; } p.style.display = 'flex'; const r = $('#bMore').getBoundingClientRect(); p.style.left = Math.min(innerWidth - p.offsetWidth - 8, r.right - p.offsetWidth + 20) + 'px'; p.style.bottom = (innerHeight - r.top + 12) + 'px'; };
@@ -2241,7 +2292,7 @@ async function ownerLogin(d, quiet) {
     ownerKey = k; store.set('fm_owner', d); await ownerSelf(); if (!quiet) { sys('👑 방장으로 로그인했어요! 캐시템을 전부 쓸 수 있고, 다른 사람 이름표 메뉴에서 선물할 수 있어요.'); toast('👑 방장 로그인 완료'); fanfare(); } return true; }
   catch { if (!quiet) toast('방장 열쇠가 맞지 않아요.'); return false; }
 }
-async function ownerSelf() { if (!ownerKey || !me.n) return; myOwnSig = await oSign(ownMsg(me.n)); me.isOwner = true; for (const id of Object.keys(ITEMS).filter(isCash)) myCash[id] = await oSign(giftMsg(me.n, id)); store.set('fm_cash', myCash); pushProfile(); if ($('#decoWin').style.display === 'block') renderDeco(); }
+async function ownerSelf() { if (!ownerKey || !me.n) return; Object.keys(ITEMS).filter(id => !isCash(id)).forEach(id => addBag(id)); try { updStatus(); } catch {} myOwnSig = await oSign(ownMsg(me.n)); me.isOwner = true; for (const id of Object.keys(ITEMS).filter(isCash)) myCash[id] = await oSign(giftMsg(me.n, id)); store.set('fm_cash', myCash); pushProfile(); if ($('#decoWin').style.display === 'block') renderDeco(); }
 async function checkMyCash() {
   if (store.get('fm_owner', '')) { if (await ownerLogin(store.get('fm_owner', ''), true)) return; }
   me.isOwner = false; myOwnSig = ''; let ch = false;
@@ -2261,12 +2312,24 @@ function giftMenu(c, x, y) {
   Object.keys(ITEMS).filter(isCash).forEach(id => { const it = document.createElement('div'); it.className = 'it'; it.textContent = ITEMS[id].ic + ' ' + ITEMS[id].n; it.onclick = () => { m.style.display = 'none'; giveCash(c, id); }; m.appendChild(it); });
   m.style.left = Math.min(x, innerWidth - 190) + 'px'; m.style.top = Math.min(y, innerHeight - 230) + 'px'; m.style.display = 'block';
 }
+function megaGiftMenu(c, x, y) {
+  const m = $('#ctxmenu'); m.innerHTML = ''; const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = '📣 ' + c.n + '님에게 큰 확성기'; m.appendChild(nm);
+  [1, 3, 5, 10, 30].forEach(n => { const it = document.createElement('div'); it.className = 'it'; it.textContent = '큰 확성기 ' + n + '개'; it.onclick = () => { m.style.display = 'none'; giveMega(c, n); }; m.appendChild(it); });
+  m.style.left = Math.min(x, innerWidth - 190) + 'px'; m.style.top = Math.min(y, innerHeight - 230) + 'px'; m.style.display = 'block';
+}
+async function giveMega(c, n) {
+  if (!ownerKey || !NET.gift) { toast('지금은 선물할 수 없어요.'); return; } if (c.n === '...' || !c.uid) return;
+  const nonce = Math.random().toString(36).slice(2, 12), s = await oSign('mega|' + c.n + '|' + n + '|' + nonce); NET.gift.send({ k: 'mega', n: c.n, c: n, o: nonce, s }, c.uid)?.catch?.(() => {});
+  actSay('📣 ' + c.n + '님에게 큰 확성기 ' + n + '개 선물!', '📣 ' + c.n + '님에게 큰 확성기 ' + n + '개를 선물했어요.'); fanfare();
+}
 async function giveCash(c, id) {
   if (!ownerKey || !NET.gift) { toast('지금은 선물할 수 없어요.'); return; } if (c.n === '...' || !c.uid) return;
   const s = await oSign(giftMsg(c.n, id)); NET.gift.send({ n: c.n, i: id, s }, c.uid)?.catch?.(() => {});
   actSay('🎁 ' + c.n + '님에게 [' + ITEMS[id].n + '] 선물!', '🎁 ' + c.n + '님에게 캐시템 [' + ITEMS[id].ic + ' ' + ITEMS[id].n + ']을(를) 선물했어요.'); fanfare();
 }
 function onGift(d) {
+  if (d && d.k === 'mega') { if (str(d.n, NMAX) !== me.n) return; const n = Number.isInteger(d.c) ? clamp(d.c, 1, 99) : 0, o = str(d.o, 16), s = str(d.s, 120); if (!n || !o) return; const used = store.get('fm_megaN', []); if (used.includes(o)) return;
+    vSig('mega|' + me.n + '|' + n + '|' + o, s).then(ok => { if (!ok) return; const u2 = store.get('fm_megaN', []); if (u2.includes(o)) return; u2.push(o); store.set('fm_megaN', u2.slice(-300)); store.set('fm_bonusH', store.get('fm_bonusH', 0) + n); updStatus(); sys('📣 방장님이 큰 확성기 ' + n + '개를 선물했어요! (자정에 사라지지 않아요)'); toast('📣 큰 확성기 ' + n + '개 도착!'); fanfare(); confetti(me.x); }); return; }
   if (!d || str(d.n, NMAX) !== me.n || !isCash(d.i)) return; const id = d.i, sig = str(d.s, 120);
   vSig(giftMsg(me.n, id), sig).then(ok => { if (!ok) return; const had = !!myCash[id]; myCash[id] = sig; store.set('fm_cash', myCash); if (had) return; const it = ITEMS[id]; me.acc = { ...me.acc, [it.s]: id }; prof.acc = me.acc; pushProfile();
     sys('🎁 방장님이 캐시템 [' + it.ic + ' ' + it.n + ']을(를) 선물했어요! 바로 착용했어요. (꾸미기 → 💎 캐시템 탭에서 벗을 수 있어요)'); toast('🎁 캐시템 선물 도착: ' + it.n); fanfare(); confetti(me.x); });
@@ -2275,7 +2338,7 @@ function charCode() { const o = { n: me.n, look: me.look, pet: me.pet, aff: me.a
 function copyCharLink() { if (!entered) return; const u = location.origin + location.pathname + '#c=' + charCode(); navigator.clipboard?.writeText(u).then(() => toast('⭐ 내 캐릭터 링크를 복사했어요. 북마크해 두세요!'), () => prompt('이 링크를 북마크해 두세요', u)); sys('⭐ 내 캐릭터 링크를 복사했어요. 이 링크로 열면 기록이 지워져도 캐릭터·소속·꾸미기·캐시템이 그대로 돌아와요. 나만 쓰는 링크라 남에게 주지 마세요.'); }
 function equip(id, on) { const it = ITEMS[id]; if (!it) return; if (on && isCash(id) && !myCash[id]) { toast('👑 방장에게 선물받아야 쓸 수 있어요.'); return; } me.acc = { ...me.acc }; if (on) me.acc[it.s] = id; else delete me.acc[it.s]; prof.acc = me.acc; pushProfile(); SFX.click(); renderDeco(); }
 function itemCard(id, mode) {
-  const it = ITEMS[id], has = own(id), on = me.acc[it.s] === id, ok = fame >= it.q;
+  const it = ITEMS[id], has = own(id), on = me.acc[it.s] === id, ok = fame >= it.q || !!ownerKey;
   const d = document.createElement('div'); d.className = 'dit' + (has ? ' own' : '') + (on ? ' on' : '') + (!has && !ok ? ' lock' : '');
   const rq = document.createElement('i'); rq.className = 'req'; rq.textContent = '❤ ' + it.q; if (it.q) d.appendChild(rq);
   const ic = document.createElement('div'); ic.className = 'gic'; ic.textContent = it.ic; const nm = document.createElement('b'); nm.textContent = it.n; const sl = document.createElement('span'); sl.textContent = SLOTN[it.s];
@@ -2473,7 +2536,7 @@ function actQuest() {
   SFX.click();
 }
 let ybRung = '', ybSaid = '', tHudT = 0, bellHitT = -99, mokHitT = -99;
-function templeTick() {
+function templeTick() { if (SIMTICK) return;
   const yb = yebulNow();
   if (yb.on && ybRung !== yb.key) { ybRung = yb.key; if (yb.left > 170) { [0, 2400, 4800].forEach(d => setTimeout(() => { if (MAP.id === 'temple') { bellHitT = T; setTimeout(() => { bellSwing = 1; bellSound(); }, 620); } }, d)); } if (ybSaid !== yb.key) { ybSaid = yb.key; sys('🔔 예불 시간이에요! ' + Math.ceil(yb.left / 60) + '분 동안 절 한 번이 공덕 2배예요. 방석 위에서 ↑'); const sn = NPCS.find(n => n.n === '따상사 스님'); if (sn) say(sn, '예불 시간이라네. 다 함께 절을 올리세 🙏'); } }
   const now = performance.now(); if (now - tHudT < 400) return; tHudT = now; updTHud();
